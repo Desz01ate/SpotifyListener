@@ -1,0 +1,168 @@
+﻿<Window x:Class="SpotifyListener.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:clr="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:SpotifyListener"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="520" Width="800"
+        Icon="./Resources/spotify.ico">
+    <Window.Resources>
+        <Style x:Key="PathButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Black"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Path x:Key="vPlay"
+              Data="M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
+		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z 
+              M293.909,187.215l-111.818-73.591C162.792,100.926,147,109.445,147,132.545V287.42c0,23.1,15.813,31.647,35.147,18.998
+		L293.86,233.31C313.187,220.647,313.208,199.913,293.909,187.215z M279.006,217.868l-99.295,64.981
+		c-6.44,4.221-11.711,1.372-11.711-6.328V143.437c0-7.7,5.264-10.535,11.697-6.3l99.33,65.366
+		C285.46,206.731,285.453,213.647,279.006,217.868z">
+        </Path>
+        <Path x:Key="vBack" Data="M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
+		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z
+              M98.147,233.275l83.713,54.782c19.334,12.656,35.14,4.102,35.14-18.998V251.51l55.86,36.554
+		c19.334,12.656,35.14,4.102,35.14-18.998V150.941c0-23.1-15.792-31.612-35.084-18.914L217,168.819v-17.885
+		c0-23.1-15.792-31.612-35.084-18.914l-83.839,55.167C78.792,199.885,78.813,220.626,98.147,233.275z M112.973,202.531
+		l71.337-46.935c6.426-4.228,11.69-1.393,11.69,6.3v31.878c0,7.7,5.264,10.535,11.704,6.3l67.606-44.478
+		c6.426-4.228,11.69-1.393,11.69,6.3v96.327c0,7.7-5.264,10.549-11.718,6.335l-67.564-44.226c-6.44-4.214-11.718-1.365-11.718,6.335
+		v31.556c0,7.7-5.264,10.549-11.718,6.328l-71.288-46.655C106.547,213.675,106.547,206.759,112.973,202.531z"/>
+        <Path x:Key="vNext" Data="M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
+		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z
+              M321.916,187.187l-83.832-55.167C218.792,119.329,203,127.841,203,150.941v17.885l-55.916-36.799
+		C127.792,119.329,112,127.841,112,150.941v118.125c0,23.1,15.813,31.647,35.147,18.998L203,251.51v17.556
+		c0,23.1,15.813,31.647,35.147,18.998l83.713-54.782C341.187,220.626,341.208,199.885,321.916,187.187z M307.006,217.896
+		l-71.295,46.655c-6.44,4.221-11.711,1.365-11.711-6.328v-31.556c0-7.7-5.271-10.549-11.718-6.335l-67.564,44.226
+		c-6.447,4.214-11.718,1.358-11.718-6.335v-96.327c0-7.7,5.264-10.535,11.697-6.3l67.606,44.478
+		c6.433,4.228,11.697,1.393,11.697-6.3v-31.878c0-7.7,5.264-10.535,11.697-6.3l71.33,46.935
+		C313.46,206.759,313.453,213.675,307.006,217.896z"/>
+        <Path x:Key="vVolume"
+              Data="M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
+		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z
+              M276.43,120.575c-4.802,0-10.164,1.456-15.82,4.536L188.412,164.5H133c-19.25,0-35,15.75-35,35v21c0,19.25,15.75,35,35,35
+		h55.412l72.198,39.389c5.656,3.08,11.018,4.536,15.82,4.536c12.418,0,21.056-9.772,21.056-26.425V147
+		C297.486,130.34,288.855,120.575,276.43,120.575z M276.486,265.622c0,7.7-5.53,10.983-12.292,7.294l-53.438-29.148
+		c-6.762-3.689-13.349-7.28-14.644-7.987c-1.295-0.714-3.556-1.288-5.026-1.288c-1.477,0-8.981,0-16.681,0H133c-7.7,0-14-6.3-14-14
+		v-21c0-7.7,6.3-14,14-14h41.412c7.7,0,15.204,0,16.681,0c1.47,0,3.731-0.574,5.026-1.288c1.295-0.707,7.882-4.291,14.644-7.987
+		l53.438-29.148c6.762-3.689,12.292-0.406,12.292,7.294v111.258H276.486z" />
+        <Path x:Key="vFacebook" Data="M 21.125 0 L 4.875 0 C 2.183594 0 0 2.183594 0 4.875 L 0 21.125 C 0 23.816406 2.183594 26 4.875 26 L 21.125 26 C 23.816406 26 26 23.816406 26 21.125 L 26 4.875 C 26 2.183594 23.816406 0 21.125 0 Z M 20.464844 14.003906 L 18.03125 14.003906 L 18.03125 23.007813 L 13.96875 23.007813 L 13.96875 14.003906 L 12.390625 14.003906 L 12.390625 10.96875 L 13.96875 10.96875 L 13.96875 9.035156 C 13.96875 6.503906 15.019531 5 18.007813 5 L 21.03125 5 L 21.03125 8.023438 L 19.273438 8.023438 C 18.113281 8.023438 18.035156 8.453125 18.035156 9.265625 L 18.03125 10.96875 L 20.796875 10.96875 Z "/>
+        <Geometry x:Key="playPath">M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
+		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z 
+              M293.909,187.215l-111.818-73.591C162.792,100.926,147,109.445,147,132.545V287.42c0,23.1,15.813,31.647,35.147,18.998
+		L293.86,233.31C313.187,220.647,313.208,199.913,293.909,187.215z M279.006,217.868l-99.295,64.981
+		c-6.44,4.221-11.711,1.372-11.711-6.328V143.437c0-7.7,5.264-10.535,11.697-6.3l99.33,65.366
+		C285.46,206.731,285.453,213.647,279.006,217.868z</Geometry>
+        <Geometry x:Key="backPath">M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
+		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z
+              M98.147,233.275l83.713,54.782c19.334,12.656,35.14,4.102,35.14-18.998V251.51l55.86,36.554
+		c19.334,12.656,35.14,4.102,35.14-18.998V150.941c0-23.1-15.792-31.612-35.084-18.914L217,168.819v-17.885
+		c0-23.1-15.792-31.612-35.084-18.914l-83.839,55.167C78.792,199.885,78.813,220.626,98.147,233.275z M112.973,202.531
+		l71.337-46.935c6.426-4.228,11.69-1.393,11.69,6.3v31.878c0,7.7,5.264,10.535,11.704,6.3l67.606-44.478
+		c6.426-4.228,11.69-1.393,11.69,6.3v96.327c0,7.7-5.264,10.549-11.718,6.335l-67.564-44.226c-6.44-4.214-11.718-1.365-11.718,6.335
+		v31.556c0,7.7-5.264,10.549-11.718,6.328l-71.288-46.655C106.547,213.675,106.547,206.759,112.973,202.531z</Geometry>
+        <Geometry x:Key="nextPath">M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
+		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z
+              M321.916,187.187l-83.832-55.167C218.792,119.329,203,127.841,203,150.941v17.885l-55.916-36.799
+		C127.792,119.329,112,127.841,112,150.941v118.125c0,23.1,15.813,31.647,35.147,18.998L203,251.51v17.556
+		c0,23.1,15.813,31.647,35.147,18.998l83.713-54.782C341.187,220.626,341.208,199.885,321.916,187.187z M307.006,217.896
+		l-71.295,46.655c-6.44,4.221-11.711,1.365-11.711-6.328v-31.556c0-7.7-5.271-10.549-11.718-6.335l-67.564,44.226
+		c-6.447,4.214-11.718,1.358-11.718-6.335v-96.327c0-7.7,5.264-10.535,11.697-6.3l67.606,44.478
+		c6.433,4.228,11.697,1.393,11.697-6.3v-31.878c0-7.7,5.264-10.535,11.697-6.3l71.33,46.935
+		C313.46,206.759,313.453,213.675,307.006,217.896z</Geometry>
+        <Geometry x:Key="volumePath">M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
+		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z
+              M276.43,120.575c-4.802,0-10.164,1.456-15.82,4.536L188.412,164.5H133c-19.25,0-35,15.75-35,35v21c0,19.25,15.75,35,35,35
+		h55.412l72.198,39.389c5.656,3.08,11.018,4.536,15.82,4.536c12.418,0,21.056-9.772,21.056-26.425V147
+		C297.486,130.34,288.855,120.575,276.43,120.575z M276.486,265.622c0,7.7-5.53,10.983-12.292,7.294l-53.438-29.148
+		c-6.762-3.689-13.349-7.28-14.644-7.987c-1.295-0.714-3.556-1.288-5.026-1.288c-1.477,0-8.981,0-16.681,0H133c-7.7,0-14-6.3-14-14
+		v-21c0-7.7,6.3-14,14-14h41.412c7.7,0,15.204,0,16.681,0c1.47,0,3.731-0.574,5.026-1.288c1.295-0.707,7.882-4.291,14.644-7.987
+		l53.438-29.148c6.762-3.689,12.292-0.406,12.292,7.294v111.258H276.486z</Geometry>
+        <Style x:Key="VolumeStyle"
+               TargetType="{x:Type Path}">
+            <Setter Property="Stretch"
+                    Value="Uniform" />
+            <Setter Property="Data"
+                    Value="{Binding Data, Source={StaticResource vVolume}}" />
+        </Style>
+        <Style x:Key="PlayStyle"
+               TargetType="{x:Type Path}">
+            <Setter Property="Stretch"
+                    Value="Uniform" />
+            <Setter Property="Data"
+                    Value="{Binding Data, Source={StaticResource vPlay}}" />
+        </Style>
+        <Style x:Key="BackStyle"
+               TargetType="{x:Type Path}">
+            <Setter Property="Stretch"
+                    Value="Uniform" />
+            <Setter Property="Data"
+                    Value="{Binding Data, Source={StaticResource vBack}}" />
+        </Style>
+        <Style x:Key="NextStyle"
+               TargetType="{x:Type Path}">
+            <Setter Property="Stretch"
+                    Value="Uniform" />
+            <Setter Property="Data"
+                    Value="{Binding Data, Source={StaticResource vNext}}" />
+        </Style>
+        <Style x:Key="FacebookStyle"
+               TargetType="{x:Type Path}">
+            <Setter Property="Stretch"
+                    Value="Uniform" />
+            <Setter Property="Data"
+                    Value="{Binding Data, Source={StaticResource vFacebook}}" />
+        </Style>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="SaveAs" Executed="CommandBinding_Executed"></CommandBinding>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="S" Modifiers="Alt"  Command="SaveAs"></KeyBinding>
+    </Window.InputBindings>
+    <Grid Margin="1,1,1,1" Name="MainWindowGrid">
+        <Image x:Name="AlbumImage" Margin="0,40,0,0" Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <Button Content="Button" Visibility="Hidden" HorizontalAlignment="Left" Margin="54,78,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Label x:Name="lbl_Track" Content="Label" HorizontalAlignment="Center" Margin="0,310,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="20" FontWeight="Bold" HorizontalContentAlignment="Center" BorderThickness="1">
+        </Label>
+        <Label x:Name="lbl_Album" Content="Label" HorizontalAlignment="Center" Margin="0,350,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="18" HorizontalContentAlignment="Center"/>
+        <Label x:Name="lbl_Artist" Content="Label" HorizontalAlignment="Center" Margin="0,380,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="18" HorizontalContentAlignment="Center"/>
+        <ProgressBar x:Name="PlayProgress" Opacity="0.7" HorizontalAlignment="Center" Height="32" Margin="0,423,0,20" VerticalAlignment="Top" Width="630" MouseDoubleClick="PlayProgress_Click">
+            <ProgressBar.Background>
+                <SolidColorBrush Color="#FFE6E6E6" Opacity="0.3"/>
+            </ProgressBar.Background>
+        </ProgressBar>
+        <Label x:Name="lbl_CurrentTime" Content="Label" HorizontalAlignment="Center" Margin="15,423,723,20" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" HorizontalContentAlignment="Center"/>
+        <Label x:Name="lbl_TimeLeft" Content="Label" HorizontalAlignment="Center" Margin="723,423,15,20" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" HorizontalContentAlignment="Center"/>
+        <Menu Name="menu1" Margin="0,0,0,0" Width="0" Height="0">
+            <MenuItem Header="_File" >
+                <MenuItem Name="menuOpen" Header="_Open..." Command="Open" InputGestureText="Ctrl+O"  />
+                <MenuItem Name="menuSaveAs" Header="_Save as..." Command="SaveAs" InputGestureText="Ctrl+S"  />
+            </MenuItem>
+        </Menu>
+        <local:PathButton x:Name="BackPath" Data="{StaticResource backPath}" Background="Transparent" BorderBrush="Transparent" Opacity="0" Margin="100,150,0,0" VerticalAlignment="Top" Width="40" Height="40" RenderTransformOrigin="1,2" Click="BackPath_Click" Focusable="False" Style="{StaticResource PathButtonStyle}"/>
+        <local:PathButton x:Name="PlayPath" Data="{StaticResource playPath}" Background="Transparent" BorderBrush="Transparent" Opacity="0" Margin="300,150,0,0" VerticalAlignment="Top" Width="40" Height="40" RenderTransformOrigin="1,2" Click="PlayPath_Click" Focusable="False" Style="{StaticResource PathButtonStyle}"/>
+        <local:PathButton x:Name="NextPath" Data="{StaticResource nextPath}" Background="Transparent" BorderBrush="Transparent" Opacity="0" Margin="500,150,0,0" VerticalAlignment="Top" Width="40" Height="40" RenderTransformOrigin="1,2" Click="NextPath_Click" Focusable="False" Style="{StaticResource PathButtonStyle}"/>
+        <local:PathButton x:Name="VolumePath" Data="{StaticResource volumePath}" Background="Transparent" Opacity="0" Margin="50,225,0,0" VerticalAlignment="Top" Width="25" Height="25" RenderTransformOrigin="1,2" Click="VolumePath_Click" Focusable="False" Style="{StaticResource PathButtonStyle}"/>
+        <ProgressBar x:Name="VolumeProgress" Opacity="0" Margin="350,231,36,0" VerticalAlignment="Top" Width="220" Height="15" RenderTransformOrigin="1,2" HorizontalContentAlignment="Center" MouseDown="VolumeProgress_MouseDown">
+            <ProgressBar.Background>
+                <SolidColorBrush Color="#FFE6E6E6" Opacity="0.3"/>
+            </ProgressBar.Background>
+        </ProgressBar>
+    </Grid>
+</Window>
