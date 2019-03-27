@@ -29,6 +29,7 @@ namespace SpotifyListener
             public HeadsetCustom HeadsetGrid = HeadsetCustom.Create();
             private IChroma Chroma;
             public static ChromaWrapper GetInstance { get; } = new ChromaWrapper();
+            public bool IsError { get; private set; }
 
             public void SetIndividualKeys()
             {
@@ -45,7 +46,15 @@ namespace SpotifyListener
             }
             private ChromaWrapper()
             {
-                Chroma = ColoreProvider.CreateNativeAsync().Result;
+                try
+                {
+                    Chroma = ColoreProvider.CreateNativeAsync().Result;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    IsError = true;
+                }
             }
             /// <summary>
             /// Apply effects to devices

@@ -35,6 +35,7 @@ namespace SpotifyListener
         public string Album { get; private set; }
         public string Artist { get; private set; }
         public string URL { get; private set; }
+        public string ArtworkURL { get; private set; }
         public int Position_ms { get; set; }
         public int Duration_ms { get; private set; }
         private int _volume = 0;
@@ -51,8 +52,10 @@ namespace SpotifyListener
             }
         }
         public Image AlbumArtwork { get; private set; }
+
         public bool IsPlaying { get; private set; }
-        public SpotifyAPI.Web.Models.Device ActiveDevice { get; private set; }
+        public SpotifyAPI.Web.Models.Device ActiveDevice => AvailableDevices.Where(x => x.IsActive).FirstOrDefault();
+        public List<SpotifyAPI.Web.Models.Device> AvailableDevices { get; private set; }
         private System.Windows.Forms.Timer _refreshTokenTimer = new System.Windows.Forms.Timer();
         private bool Expired = false;
         [JsonIgnore]
@@ -129,8 +132,7 @@ namespace SpotifyListener
                 Album = currentTrack.Item.Album.Name;
                 Artist = string.Join(",", currentTrack.Item.Artists.Select(x => x.Name));
 
-                var devices = await client.GetDevicesAsync();
-                ActiveDevice = devices.Devices.Where(x => x.IsActive).FirstOrDefault();
+                AvailableDevices = (await client.GetDevicesAsync()).Devices;
 
                 Volume = ActiveDevice.VolumePercent;
 
@@ -146,6 +148,7 @@ namespace SpotifyListener
                 }
                 if (AlbumArtwork == null)
                 {
+                    ArtworkURL = currentTrack.Item.Album.Images[0].Url;
                     var client = new HttpClient();
                     var byteArray = await client.GetByteArrayAsync(currentTrack.Item.Album.Images[0].Url);
                     Image image = (Image)((new ImageConverter()).ConvertFrom(byteArray));
@@ -224,6 +227,20 @@ namespace SpotifyListener
         public async Task SetPositionAsync(int asMillisecond)
         {
             await client.SeekPlaybackAsync(asMillisecond, ActiveDevice.Id);
+        }
+        public double CalculatedPosition
+        {
+            get
+            {
+                try
+                {
+                    return Math.Round(((double)Position_ms / Duration_ms) * 10, 2);
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
         }
     }
 }

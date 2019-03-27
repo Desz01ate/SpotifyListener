@@ -76,11 +76,8 @@
     <ApplicationIcon>Resources\spotify.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Colore, Version=6.0.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Colore.6.0.0-rc0005\lib\net451\Colore.dll</HintPath>
-    </Reference>
-    <Reference Include="Facebook, Version=6.0.10.0, Culture=neutral, PublicKeyToken=58cb4f2111d1e6de, processorArchitecture=MSIL">
-      <HintPath>..\packages\Facebook.7.0.6\lib\net45\Facebook.dll</HintPath>
+    <Reference Include="Colore, Version=6.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colore.6.0.0-rc0002\lib\net451\Colore.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.8.4.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.8.4\lib\Net45\HtmlAgilityPack.dll</HintPath>
@@ -91,14 +88,14 @@
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
+    <Reference Include="LineAPI">
+      <HintPath>..\..\..\..\Visual Studio Code Repository\linenotify\linenotify\bin\Release\LineAPI.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio, Version=1.8.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.8.4\lib\net35\NAudio.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="RestSharp, Version=106.3.1.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.106.3.1\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="SciChart.Wpf.UI.Transitionz, Version=1.0.9.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SciChart.Wpf.UI.Transitionz.1.0.9\lib\net46\SciChart.Wpf.UI.Transitionz.dll</HintPath>

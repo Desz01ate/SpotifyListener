@@ -1,12 +1,10 @@
 ﻿using SpotifyListener.ChromaExtension;
 using NAudio.CoreAudioApi;
 using Newtonsoft.Json;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -17,6 +15,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using LineAPI;
+using Component;
+using System.Dynamic;
 
 namespace SpotifyListener
 {
@@ -29,14 +30,13 @@ namespace SpotifyListener
         Timer ChromaTimer = new Timer();
         Timer WebServiceCommandTimer = new Timer();
         private static string endpoint = "https://ituneslistenerapi20180912032938.azurewebsites.net/";
-        private static RestClient client = new RestClient(endpoint);
         private static HttpClient traditionClient = new HttpClient();
-        private static RestRequest getCommandRequest = new RestRequest("api/music/command", Method.GET);
         private static Music player;
         //private static HttpClient client = new HttpClient();
         private static MMDevice ActiveDevice;
         private static ChromaWrapper Chroma = ChromaWrapper.GetInstance;
         private System.Drawing.Color borderColor = System.Drawing.Color.White;
+        private MessagingAPI messagingAPI;
         private SolidColorBrush playColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
         private SolidColorBrush pauseColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#FF5a5a"));
         private byte previousVolume = 0;
@@ -54,24 +54,39 @@ namespace SpotifyListener
                 if (File.Exists("url.json"))
                     HTMLHelper.UrlMemoized = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText("url.json"));
                 InitializeComponent();
+
                 player = new Music(Properties.Settings.Default.AccessToken, Properties.Settings.Default.RefreshToken);
+                messagingAPI = new MessagingAPI("https://7d2d9000.ap.ngrok.io");
                 VolumePath.Fill = playColor;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
                 player.OnTrackChanged += delegate
                 {
                     Dispatcher.BeginInvoke(new MethodInvoker(UpdateUI));
+                    dynamic body = new ExpandoObject();
+                    body.Title = player.Track;
+                    body.Album = player.Album;
+                    body.Artist = player.Artist;
+                    body.URL = player.URL;
+                    //body.LyricsURL = "https://www.google.com";
+                    body.ImageURL = player.ArtworkURL;
+
+                    messagingAPI.Execute("/api/Track", body);
                 };
                 ActiveDevice = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
                 InitializeDiscord(); //discord RPC api only work with x64 system
                                      //
                 TrackDetailTimer.Interval = 500;
                 TrackDetailTimer.Tick += TrackDetailTimer_Tick;
-                ChromaTimer.Interval = (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);//TimeSpan.FromMilliseconds((int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0));
-                //ChromaTimer.Tick += ChromaTimer_Tick;
-                WebServiceCommandTimer.Interval = 1000;
-                WebServiceCommandTimer.Tick += WebServiceTimer_TickAsync;
                 TrackDetailTimer.Start();
-                ChromaTimer.Start();
+
+                if (!Chroma.IsError)
+                {
+                    ChromaTimer.Interval = (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);//TimeSpan.FromMilliseconds((int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0));
+                    ChromaTimer.Tick += ChromaTimer_Tick;
+                    ChromaTimer.Start();
+                }
+                
+                
                 //WebServiceCommandTimer.Start();
                 //
                 //
@@ -289,58 +304,58 @@ namespace SpotifyListener
 
             }
         }
-        //private void ChromaTimer_Tick(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        if (!Properties.Settings.Default.ChromaSDKEnable)
-        //        {
-        //            Chroma.SDKDisable();
-        //            return;
-        //        }
-        //        var density = Properties.Settings.Default.AdaptiveDensity && player.PlayerEngine.PlayerState == ITPlayerState.ITPlayerStatePlaying ? ActiveDevice.AudioMeterInformation.MasterPeakValue : (Properties.Settings.Default.Density / 10.0);
-        //        Chroma.LoadColor(player, density);
-        //        Chroma.SetDevicesBackground();
-        //        if (Properties.Settings.Default.RenderPeakVolumeEnable)
-        //        {
-        //            if (Properties.Settings.Default.SymmetricRenderEnable)
-        //            {
-        //                Chroma.MouseGrid.SetPeakVolumeSymmetric(Chroma.VolumeColor, ActiveDevice.AudioMeterInformation.MasterPeakValue);
-        //                Chroma.KeyboardGrid.SetPeakVolumeSymmetric(Chroma.VolumeColor, ActiveDevice.AudioMeterInformation.MasterPeakValue);
-        //            }
-        //            else if (Properties.Settings.Default.PeakChroma)
-        //            {
-        //                Chroma.MouseGrid.SetChromaPeakVolume(ActiveDevice.AudioMeterInformation.MasterPeakValue);
-        //                Chroma.KeyboardGrid.SetChromaPeakVolume(ActiveDevice.AudioMeterInformation.MasterPeakValue);
-        //            }
-        //            else
-        //            {
-        //                Chroma.MouseGrid.SetPeakVolume(Chroma.VolumeColor, ActiveDevice.AudioMeterInformation.MasterPeakValue);
-        //                Chroma.KeyboardGrid.SetPeakVolume(Chroma.VolumeColor, ActiveDevice.AudioMeterInformation.MasterPeakValue);
-        //                //Chroma.SetPeakVolume_Mouse(ActiveDevice.AudioMeterInformation.MasterPeakValue);
-        //                //Chroma.SetPeakVolume_Keyboard(ActiveDevice.AudioMeterInformation.MasterPeakValue);
-        //                //Chroma.SetPeakVolume_Headset_Mousepad();
-        //            }
-        //            Chroma.HeadsetGrid.SetPeakVolume(Chroma.VolumeColor);
-        //            Chroma.MousepadGrid.SetPeakVolume(Chroma.VolumeColor);
-        //        }
-        //        else
-        //        {
-        //            Chroma.MouseGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.PositionColor_Background, player.CalculatedPosition, Properties.Settings.Default.ReverseLEDRender);
-        //            Chroma.KeyboardGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.BackgroundColor, player.CalculatedPosition);
-        //            Chroma.MouseGrid.SetVolumeScale(Chroma.VolumeColor, player.Volume, Properties.Settings.Default.ReverseLEDRender);
-        //        }
-        //        Chroma.KeyboardGrid.SetVolumeScale(Properties.Settings.Default.Volume.ToColoreColor(), player.Volume);
-        //        Chroma.KeyboardGrid.SetPlayingTime(TimeSpan.FromSeconds(player.PlayerEngine.PlayerPosition));
-        //        Chroma.MousepadGrid.SetPeakVolume(Chroma.VolumeColor);
-        //        Chroma.HeadsetGrid.SetPeakVolume(Chroma.VolumeColor);
-        //        Chroma.Apply();
-        //    }
-        //    catch (Exception chromaEx)
-        //    {
-        //        Chroma.SDKDisable();
-        //    }
-        //}
+        private void ChromaTimer_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!Properties.Settings.Default.ChromaSDKEnable)
+                {
+                    Chroma.SDKDisable();
+                    return;
+                }
+                var density = Properties.Settings.Default.AdaptiveDensity && player.IsPlaying ? ActiveDevice.AudioMeterInformation.MasterPeakValue : (Properties.Settings.Default.Density / 10.0);
+                Chroma.LoadColor(player, density);
+                Chroma.SetDevicesBackground();
+                if (Properties.Settings.Default.RenderPeakVolumeEnable)
+                {
+                    if (Properties.Settings.Default.SymmetricRenderEnable)
+                    {
+                        Chroma.MouseGrid.SetPeakVolumeSymmetric(Chroma.VolumeColor, ActiveDevice.AudioMeterInformation.MasterPeakValue);
+                        Chroma.KeyboardGrid.SetPeakVolumeSymmetric(Chroma.VolumeColor, ActiveDevice.AudioMeterInformation.MasterPeakValue);
+                    }
+                    else if (Properties.Settings.Default.PeakChroma)
+                    {
+                        Chroma.MouseGrid.SetChromaPeakVolume(ActiveDevice.AudioMeterInformation.MasterPeakValue);
+                        Chroma.KeyboardGrid.SetChromaPeakVolume(ActiveDevice.AudioMeterInformation.MasterPeakValue);
+                    }
+                    else
+                    {
+                        Chroma.MouseGrid.SetPeakVolume(Chroma.VolumeColor, ActiveDevice.AudioMeterInformation.MasterPeakValue);
+                        Chroma.KeyboardGrid.SetPeakVolume(Chroma.VolumeColor, ActiveDevice.AudioMeterInformation.MasterPeakValue);
+                        //Chroma.SetPeakVolume_Mouse(ActiveDevice.AudioMeterInformation.MasterPeakValue);
+                        //Chroma.SetPeakVolume_Keyboard(ActiveDevice.AudioMeterInformation.MasterPeakValue);
+                        //Chroma.SetPeakVolume_Headset_Mousepad();
+                    }
+                    Chroma.HeadsetGrid.SetPeakVolume(Chroma.VolumeColor);
+                    Chroma.MousepadGrid.SetPeakVolume(Chroma.VolumeColor);
+                }
+                else
+                {
+                    Chroma.MouseGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.PositionColor_Background, player.CalculatedPosition, Properties.Settings.Default.ReverseLEDRender);
+                    Chroma.KeyboardGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.BackgroundColor, player.CalculatedPosition);
+                    Chroma.MouseGrid.SetVolumeScale(Chroma.VolumeColor, player.Volume, Properties.Settings.Default.ReverseLEDRender);
+                }
+                Chroma.KeyboardGrid.SetVolumeScale(Properties.Settings.Default.Volume.ToColoreColor(), player.Volume);
+                Chroma.KeyboardGrid.SetPlayingTime(TimeSpan.FromSeconds(player.Position_ms));
+                Chroma.MousepadGrid.SetPeakVolume(Chroma.VolumeColor);
+                Chroma.HeadsetGrid.SetPeakVolume(Chroma.VolumeColor);
+                Chroma.Apply();
+            }
+            catch (Exception chromaEx)
+            {
+                Chroma.SDKDisable();
+            }
+        }
 
         private void TrackDetailTimer_Tick(object sender, EventArgs e)
         {
@@ -351,6 +366,7 @@ namespace SpotifyListener
                 Task.Run(async delegate
                 {
                     await player.GetAsync();
+
                 });
 
                 if (Properties.Settings.Default.DiscordRichPresenceEnable)
@@ -453,7 +469,7 @@ namespace SpotifyListener
         }
         private void PlayProgress_Click(object sender, EventArgs e)
         {
-           player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue());
+            player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue());
         }
 
         private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
