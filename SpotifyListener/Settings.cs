@@ -15,6 +15,7 @@ namespace SpotifyListener
         public static bool AlbumCoverRenderEnable = false;
         public static bool RenderPeakVolumeEnable = false;
         public static bool RenderPeakVolumeSymmetricEnable = false;
+        public static bool ChromaPeakEnable = false;
         public static bool Adaptive = false;
         public Settings()
         {
@@ -30,6 +31,7 @@ namespace SpotifyListener
             AlbumCoverRenderEnable = Properties.Settings.Default.AlbumCoverRenderEnable;
             RenderPeakVolumeEnable = Properties.Settings.Default.RenderPeakVolumeEnable;
             RenderPeakVolumeSymmetricEnable = Properties.Settings.Default.SymmetricRenderEnable;
+            ChromaPeakEnable = Properties.Settings.Default.PeakChroma;
             RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyleIndex;
             RenderModeCombobox.SelectedIndex = Adaptive ? 1 : 0;
 
@@ -61,10 +63,11 @@ namespace SpotifyListener
             Properties.Settings.Default.RenderPeakVolumeEnable = RenderPeakVolumeEnable;
             Properties.Settings.Default.AlbumCoverRenderEnable = AlbumCoverRenderEnable;
             Properties.Settings.Default.SymmetricRenderEnable = RenderPeakVolumeSymmetricEnable;
+            Properties.Settings.Default.PeakChroma = ChromaPeakEnable;
             Properties.Settings.Default.RenderStyleIndex = (byte)RenderStyleCombobox.SelectedIndex;
 
 
-            Properties.Settings.Default.AccessToken = RefreshTokenTextbox.Text;
+            
             Properties.Settings.Default.DiscordPlayDetail = DiscordPlayDetail.Text;
             Properties.Settings.Default.DiscordPlayState = DiscordPlayState.Text;
             Properties.Settings.Default.DiscordPauseDetail = DiscordPauseDetail.Text;
@@ -78,7 +81,12 @@ namespace SpotifyListener
             Properties.Settings.Default.NetworkEnable = NetworkEnable.Checked;
             Properties.Settings.Default.AlbumColorMode = (byte)AlbumColorMode.SelectedIndex;
             Properties.Settings.Default.Save();
-            Extension.Restart();
+            if(Properties.Settings.Default.RefreshToken != RefreshTokenTextbox.Text)
+            {
+                Properties.Settings.Default.RefreshToken = RefreshTokenTextbox.Text;
+                Extension.Restart();
+            }
+            
             Dispose();
         }
 
@@ -142,6 +150,7 @@ namespace SpotifyListener
         {
             AlbumCoverRenderEnable = false;
             RenderPeakVolumeEnable = false;
+            ChromaPeakEnable = false;
             RenderPeakVolumeSymmetricEnable = false;
             var selectedIndex = ((ComboBox)sender).SelectedIndex;
             /*
@@ -158,22 +167,33 @@ namespace SpotifyListener
                     break;
                 case 1:
                     RenderPeakVolumeEnable = true;
+                    ChromaPeakEnable = false;
                     break;
                 case 2:
                     RenderPeakVolumeEnable = true;
                     RenderPeakVolumeSymmetricEnable = true;
+                    ChromaPeakEnable = false;
                     break;
                 case 3:
                     AlbumCoverRenderEnable = true;
+                    ChromaPeakEnable = false;
                     break;
                 case 4:
                     AlbumCoverRenderEnable = true;
                     RenderPeakVolumeEnable = true;
+                    ChromaPeakEnable = false;
                     break;
                 case 5:
                     AlbumCoverRenderEnable = true;
                     RenderPeakVolumeEnable = true;
                     RenderPeakVolumeSymmetricEnable = true;
+                    ChromaPeakEnable = false;
+                    break;
+                case 6:
+                    AlbumCoverRenderEnable = false;
+                    RenderPeakVolumeEnable = true;
+                    RenderPeakVolumeSymmetricEnable = false;
+                    ChromaPeakEnable = true;
                     break;
             }
         }

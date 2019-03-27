@@ -29,8 +29,6 @@ namespace SpotifyListener
         Timer TrackDetailTimer = new Timer();
         Timer ChromaTimer = new Timer();
         Timer WebServiceCommandTimer = new Timer();
-        private static string endpoint = "https://ituneslistenerapi20180912032938.azurewebsites.net/";
-        private static HttpClient traditionClient = new HttpClient();
         private static Music player;
         //private static HttpClient client = new HttpClient();
         private static MMDevice ActiveDevice;
@@ -85,8 +83,8 @@ namespace SpotifyListener
                     ChromaTimer.Tick += ChromaTimer_Tick;
                     ChromaTimer.Start();
                 }
-                
-                
+
+
                 //WebServiceCommandTimer.Start();
                 //
                 //
@@ -274,36 +272,6 @@ namespace SpotifyListener
                 System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
         }
-        private async void WebServiceTimer_TickAsync(object sender, EventArgs e)
-        {
-            try
-            {
-                var response = await traditionClient.GetAsync($@"{endpoint}/api/command");//client.Execute(getCommandRequest);
-                var result = await response.Content.ReadAsStringAsync();
-                if (result.Contains("NEXT"))
-                {
-                    NextPath_Click(null, null);
-                    //player.PlayerEngine.NextTrack();
-                    return;
-                }
-                else if (result.Contains("PREVIOUS"))
-                {
-                    BackPath_Click(null, null);
-                    //player.PlayerEngine.PreviousTrack();
-                    return;
-                }
-                else if (result.Contains("PLAY_PAUSE"))
-                {
-                    PlayPath_Click(null, null);
-                    //player.PlayerEngine.PlayPause();
-                    return;
-                }
-            }
-            catch
-            {
-
-            }
-        }
         private void ChromaTimer_Tick(object sender, EventArgs e)
         {
             try
@@ -314,7 +282,7 @@ namespace SpotifyListener
                     return;
                 }
                 var density = Properties.Settings.Default.AdaptiveDensity && player.IsPlaying ? ActiveDevice.AudioMeterInformation.MasterPeakValue : (Properties.Settings.Default.Density / 10.0);
-                Chroma.LoadColor(player, density);
+                Chroma.LoadColor(player, player.IsPlaying, density);
                 Chroma.SetDevicesBackground();
                 if (Properties.Settings.Default.RenderPeakVolumeEnable)
                 {
@@ -346,7 +314,7 @@ namespace SpotifyListener
                     Chroma.MouseGrid.SetVolumeScale(Chroma.VolumeColor, player.Volume, Properties.Settings.Default.ReverseLEDRender);
                 }
                 Chroma.KeyboardGrid.SetVolumeScale(Properties.Settings.Default.Volume.ToColoreColor(), player.Volume);
-                Chroma.KeyboardGrid.SetPlayingTime(TimeSpan.FromSeconds(player.Position_ms));
+                Chroma.KeyboardGrid.SetPlayingTime(TimeSpan.FromMilliseconds(player.Position_ms));
                 Chroma.MousepadGrid.SetPeakVolume(Chroma.VolumeColor);
                 Chroma.HeadsetGrid.SetPeakVolume(Chroma.VolumeColor);
                 Chroma.Apply();

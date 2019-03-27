@@ -172,6 +172,7 @@
       <DependentUpon>ColorSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="CryptographicExtesion.cs" />
+    <Compile Include="Interfaces\IChromaArtwork.cs" />
     <Compile Include="Interfaces\IMusic.cs" />
     <Compile Include="LockBitmap.cs" />
     <Compile Include="PathButton.cs" />

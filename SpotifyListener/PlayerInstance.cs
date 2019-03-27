@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using ColoreColor = Colore.Data.Color;
+
 
 namespace SpotifyListener
 {
@@ -17,17 +17,8 @@ namespace SpotifyListener
         Pause,
         Stop
     }
-    public struct StandardColor
-    {
-        public Color Standard { get; set; }
-        public Color Complemented { get; set; }
-    }
-    public struct DevicesColor
-    {
-        public ColoreColor Standard { get; set; }
-        public ColoreColor Complemented { get; set; }
-    }
-    public class Music : EventArgs, IMusic
+
+    public class Music : EventArgs, IMusic, IChromaRender
     {
         private SpotifyAPI.Web.SpotifyWebAPI client = null;
 
@@ -58,10 +49,12 @@ namespace SpotifyListener
         public List<SpotifyAPI.Web.Models.Device> AvailableDevices { get; private set; }
         private System.Windows.Forms.Timer _refreshTokenTimer = new System.Windows.Forms.Timer();
         private bool Expired = false;
+        private StandardColor _standardColor = new StandardColor();
         [JsonIgnore]
-        public StandardColor Album_StandardColor = new StandardColor();
+        public StandardColor Album_StandardColor => _standardColor;
+        private DevicesColor _razerColor = new DevicesColor();
         [JsonIgnore]
-        public DevicesColor Album_RazerColor = new DevicesColor();
+        public DevicesColor Album_RazerColor => _razerColor;
 
         public event EventHandler OnTrackChanging;
         public event EventHandler OnTrackChanged;
@@ -154,10 +147,10 @@ namespace SpotifyListener
                     Image image = (Image)((new ImageConverter()).ConvertFrom(byteArray));
                     client.Dispose();
                     AlbumArtwork = image;
-                    Album_StandardColor.Standard = albumColoreMode == 0 ? AlbumArtwork.DominantColor() : AlbumArtwork.AverageColor();
-                    Album_StandardColor.Complemented = Album_StandardColor.Standard.ComplementColor();
-                    Album_RazerColor.Standard = Album_StandardColor.Standard.SoftColor().ToColoreColor();
-                    Album_RazerColor.Complemented = Album_StandardColor.Standard.ToColoreColor();
+                    _standardColor.Standard = albumColoreMode == 0 ? AlbumArtwork.DominantColor() : AlbumArtwork.AverageColor();
+                    _standardColor.Complemented = Album_StandardColor.Standard.ComplementColor();
+                    _razerColor.Standard = Album_StandardColor.Standard.SoftColor().ToColoreColor();
+                    _razerColor.Complemented = Album_StandardColor.Standard.ToColoreColor();
                     OnTrackChanged.Invoke(currentTrack, null);
                 };
             }

@@ -3,12 +3,10 @@ using Colore.Effects.Headset;
 using Colore.Effects.Keyboard;
 using Colore.Effects.Mouse;
 using Colore.Effects.Mousepad;
+using SpotifyListener.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ColoreColor = Colore.Data.Color;
 
 namespace SpotifyListener
@@ -52,8 +50,8 @@ namespace SpotifyListener
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
                     IsError = true;
+                    Debug.WriteLine(ex);
                 }
             }
             /// <summary>
@@ -90,7 +88,7 @@ namespace SpotifyListener
             /// </summary>
             /// <param name="player">player instance</param>
             /// <param name="density">density for adaptive color</param>
-            public virtual void LoadColor(Music player, double density)
+            public virtual void LoadColor(IChromaRender player,bool isPlaying, double density)
             {
                 if (Properties.Settings.Default.AlbumCoverRenderEnable)
                 {
@@ -106,7 +104,7 @@ namespace SpotifyListener
                     PositionColor_Foreground = Properties.Settings.Default.Position_Foreground.ToColoreColor();
                     PositionColor_Background = Properties.Settings.Default.Position_Background.ToColoreColor();
                     VolumeColor = Properties.Settings.Default.Volume.ToColoreColor();
-                    BackgroundColor = !player.IsPlaying ? BackgroundColor_Pause : BackgroundColor_Playing;
+                    BackgroundColor = !isPlaying ? BackgroundColor_Pause : BackgroundColor_Playing;
 
                 }
                 if (Properties.Settings.Default.PeakChroma) BackgroundColor = ColoreColor.Black;
@@ -137,18 +135,50 @@ namespace SpotifyListener
                 public static readonly GridLed[] RightStrip_Reverse = new[] { GridLed.RightSide7, GridLed.RightSide6, GridLed.RightSide5, GridLed.RightSide4, GridLed.RightSide3, GridLed.RightSide2, GridLed.RightSide1 };
             }
             static ColoreColor[] colors = new ColoreColor[] {
-                ColoreColor.Red,
-                ColoreColor.Orange,
-                ColoreColor.Yellow,
-                ColoreColor.Green,
-                ColoreColor.Blue,
-                ColoreColor.Purple,
-                ColoreColor.Blue,
-                ColoreColor.Green,
-                ColoreColor.Yellow,
-                ColoreColor.Orange,
-                ColoreColor.Red
-            };
+//RED->GREEN
+new ColoreColor(255,0  ,0),
+//new ColoreColor(255,32 ,0),
+//new ColoreColor(255,64 ,0),
+//new ColoreColor(255,96 ,0),
+new ColoreColor(255,128,0),
+//new ColoreColor(255,160,0),
+//new ColoreColor(255,192,0),
+//new ColoreColor(255,224,0),
+new ColoreColor(255,255,0),
+//new ColoreColor(224,255,0),
+//new ColoreColor(192,255,0),
+//new ColoreColor(160,255,0),
+new ColoreColor(128,255,0),
+//new ColoreColor(96 ,255,0),
+//new ColoreColor(64 ,255,0),
+//new ColoreColor(32 ,255,0),
+//GREEN->BLUE
+new ColoreColor(0,255,0),
+//new ColoreColor(0,255,32 ),
+//new ColoreColor(0,255,64 ),
+//new ColoreColor(0,255,96 ),
+new ColoreColor(0,255,128),
+//new ColoreColor(0,255,160),
+//new ColoreColor(0,255,192),
+//new ColoreColor(0,255,224),
+new ColoreColor(0,255,255),
+//new ColoreColor(0,224,255),
+//new ColoreColor(0,192,255),
+//new ColoreColor(0,160,255),
+new ColoreColor(0,128,255),
+//new ColoreColor(0,96 ,255),
+//new ColoreColor(0,64 ,255),
+//new ColoreColor(0,32 ,255),
+//BLUE->RED
+new ColoreColor(0,0  ,255),
+//new ColoreColor(32 ,0  ,224),
+//new ColoreColor(64 ,0  ,192),
+//new ColoreColor(96 ,0  ,160),
+new ColoreColor(128,0  ,128),
+//new ColoreColor(160,0  ,96 ),
+//new ColoreColor(192,0  ,64 ),
+//new ColoreColor(224,0  ,32 ),
+        };
             public static void SetPeakVolume(this ref MouseCustom MouseGrid, ColoreColor VolumeColor, float volume)
             {
                 var absolutePosition = Math.Round((volume * Constant.LeftStrip.Length), 0);
@@ -178,8 +208,9 @@ namespace SpotifyListener
                     MouseGrid[Constant.RightStrip_Reverse[i]] = color;
                     MouseGrid[Constant.LeftStrip_Reverse[i]] = color;
                 }
-                changeRate += (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
-                if (changeRate >= 44)
+                var speed = (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
+                changeRate += speed;//
+                if (changeRate >= 20)
                 {
                     colors = colors.SubArray(1, colors.Length - 1).Add(colors[0]);
                     changeRate = 0;

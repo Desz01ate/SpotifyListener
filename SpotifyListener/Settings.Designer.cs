@@ -352,7 +352,8 @@
             "Custom - Symmetric Peak Volume Meter",
             "Album Cover - Progression + Volume",
             "Album Cover - Peak Volume Meter",
-            "Album Cover - Symmetric Peak Volume Meter"});
+            "Album Cover - Symmetric Peak Volume Meter",
+            "Chroma - Peak Volume Meter"});
             this.RenderStyleCombobox.Location = new System.Drawing.Point(425, 28);
             this.RenderStyleCombobox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.RenderStyleCombobox.Name = "RenderStyleCombobox";

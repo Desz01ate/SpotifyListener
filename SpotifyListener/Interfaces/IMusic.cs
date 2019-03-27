@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SpotifyListener.Interfaces
 {
-    interface IMusic
+    interface IMusic 
     {
         string Track { get; }
         string Album { get; }
