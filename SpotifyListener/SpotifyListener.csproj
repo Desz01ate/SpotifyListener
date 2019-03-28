@@ -172,6 +172,9 @@
       <DependentUpon>ColorSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="CryptographicExtesion.cs" />
+    <Compile Include="DeviceSelection.xaml.cs">
+      <DependentUpon>DeviceSelection.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Interfaces\IChromaArtwork.cs" />
     <Compile Include="Interfaces\IMusic.cs" />
     <Compile Include="LockBitmap.cs" />
@@ -182,6 +185,10 @@
     <Compile Include="Settings.Designer.cs">
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
+    <Page Include="DeviceSelection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

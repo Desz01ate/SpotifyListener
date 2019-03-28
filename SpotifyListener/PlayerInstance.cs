@@ -46,7 +46,7 @@ namespace SpotifyListener
 
         public bool IsPlaying { get; private set; }
         public SpotifyAPI.Web.Models.Device ActiveDevice => AvailableDevices.Where(x => x.IsActive).FirstOrDefault();
-        public List<SpotifyAPI.Web.Models.Device> AvailableDevices { get; private set; }
+        public List<SpotifyAPI.Web.Models.Device> AvailableDevices { get; private set; } = new List<SpotifyAPI.Web.Models.Device>();
         private System.Windows.Forms.Timer _refreshTokenTimer = new System.Windows.Forms.Timer();
         private bool Expired = false;
         private StandardColor _standardColor = new StandardColor();
@@ -58,6 +58,7 @@ namespace SpotifyListener
 
         public event EventHandler OnTrackChanging;
         public event EventHandler OnTrackChanged;
+        public event EventHandler OnDeviceChanged;
 
         public Music(string accessToken, string refreshToken)
         {
@@ -125,7 +126,12 @@ namespace SpotifyListener
                 Album = currentTrack.Item.Album.Name;
                 Artist = string.Join(",", currentTrack.Item.Artists.Select(x => x.Name));
 
-                AvailableDevices = (await client.GetDevicesAsync()).Devices;
+                var devices = (await client.GetDevicesAsync()).Devices;
+                if (devices.Except(AvailableDevices).Count() > 0)
+                {
+                    AvailableDevices = devices;
+                }
+
 
                 Volume = ActiveDevice.VolumePercent;
 
@@ -234,6 +240,11 @@ namespace SpotifyListener
                     return 0;
                 }
             }
+        }
+        public async Task SetActiveDeviceAsync(string id)
+        {
+            await client.ResumePlaybackAsync(id, "", null, "", 0);
+            OnDeviceChanged(null, null);
         }
     }
 }

@@ -41,6 +41,7 @@ namespace SpotifyListener
         private System.Windows.Media.Brush RedBrush = (new BrushConverter().ConvertFromString("#FF0000")) as System.Windows.Media.Brush;
         DoubleAnimation fadeAnimation = new DoubleAnimation() { From = 0, To = 1, Duration = TimeSpan.FromSeconds(1) };
         DoubleAnimation slideLeft = new DoubleAnimation() { To = -150, Duration = TimeSpan.FromMilliseconds(500) };
+        private List<System.Windows.Controls.Button> setDeviceButtons = new List<System.Windows.Controls.Button>();
 
         public MainWindow()
         {
@@ -247,6 +248,7 @@ namespace SpotifyListener
                         NextPath.BeginAnimation(OpacityProperty, fadeInAnimation);
                         VolumePath.BeginAnimation(OpacityProperty, fadeInAnimation);
                         VolumeProgress.BeginAnimation(OpacityProperty, fadeInAnimation);
+                        lbl_change_device.Visibility = Visibility.Visible;
                     };
                     MouseLeave += (_s, _e) =>
                     {
@@ -264,6 +266,7 @@ namespace SpotifyListener
                         NextPath.BeginAnimation(OpacityProperty, fadeOutAnimation);
                         VolumePath.BeginAnimation(OpacityProperty, fadeOutAnimation);
                         VolumeProgress.BeginAnimation(OpacityProperty, fadeOutAnimation);
+                        lbl_change_device.Visibility = Visibility.Hidden;
                     };
                 };
             }
@@ -325,6 +328,7 @@ namespace SpotifyListener
             }
         }
 
+
         private void TrackDetailTimer_Tick(object sender, EventArgs e)
         {
 
@@ -333,7 +337,17 @@ namespace SpotifyListener
                 ActiveDevice = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
                 Task.Run(async delegate
                 {
-                    await player.GetAsync();
+                    try
+                    {
+                        await player.GetAsync();
+                    }
+                    catch (HttpRequestException http_ex)
+                    {
+                        TrackDetailTimer.Stop();
+                        System.Windows.Forms.MessageBox.Show("Please connect to the internet, otherwise this application will not work.", "Internet connection required", MessageBoxButtons.OK);
+                        System.Windows.Application.Current.Shutdown();
+
+                    }
 
                 });
 
@@ -347,6 +361,7 @@ namespace SpotifyListener
             }
             catch
             {
+
             }
         }
 
@@ -412,6 +427,7 @@ namespace SpotifyListener
             lbl_Artist.Foreground = fontColor;
             lbl_CurrentTime.Foreground = fontColor;
             lbl_TimeLeft.Foreground = fontColor;
+            lbl_change_device.Foreground = fontColor;
             GC.Collect();
         }
 
@@ -549,6 +565,11 @@ namespace SpotifyListener
         private void VolumeProgress_MouseDown(object sender, MouseButtonEventArgs e)
         {
             player.Volume = (int)VolumeProgress.CalculateRelativeValue();
+        }
+
+        private void ChangeDevice_Click(object sender, MouseButtonEventArgs e)
+        {
+            new DeviceSelection(player.AvailableDevices, (id) => player.SetActiveDeviceAsync(id)).Show();
         }
     }
 }
