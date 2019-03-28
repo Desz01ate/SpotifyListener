@@ -18,7 +18,6 @@ namespace SpotifyListener.Interfaces
         int Volume { get; }
         Image AlbumArtwork { get; }
         bool IsPlaying { get; }
-        event EventHandler OnTrackChanging;
         event EventHandler OnTrackChanged;
         void Get(int albumColorMode);
         Task GetAsync(int albumColorMode);

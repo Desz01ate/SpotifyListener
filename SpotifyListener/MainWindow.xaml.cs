@@ -71,6 +71,10 @@ namespace SpotifyListener
 
                     messagingAPI.Execute("/api/Track", body);
                 };
+                player.OnDeviceChanged += delegate
+                {
+                    Dispatcher.BeginInvoke(new MethodInvoker(UpdateUI));
+                };
                 ActiveDevice = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
                 InitializeDiscord(); //discord RPC api only work with x64 system
                                      //
@@ -407,13 +411,16 @@ namespace SpotifyListener
                 AlbumImage.Source = (player.AlbumArtwork as Bitmap).ToBitmapImage();
                 this.Icon = AlbumImage.Source;
                 this.Background = new ImageBrush(player.AlbumArtwork.Blur(10));//, this.Height / this.Width));
+                Background.Opacity = 0.6;
             }
             catch
             {
 
             }
             this.Title = $"Listening to {player.Track} by {player.Artist} on {player.ActiveDevice.Name}";
-            var fontColor = (System.Windows.Media.Brush)(new BrushConverter().ConvertFromString(player.Album_StandardColor.Standard.ContrastColor().ToHex()));
+            var fontColor = System.Windows.Media.Brushes.WhiteSmoke;//(System.Windows.Media.Brush)(new BrushConverter().ConvertFromString(player.Album_StandardColor.Standard.ContrastColor().ToHex()));
+            var fontBackColor = (System.Windows.Media.Brush)(new BrushConverter().ConvertFromString(player.Album_StandardColor.Standard.ToHex()));
+            fontBackColor.Opacity = 0.5;
             BackPath.Fill = fontColor;
             PlayPath.Fill = fontColor;
             NextPath.Fill = fontColor;
@@ -428,6 +435,15 @@ namespace SpotifyListener
             lbl_CurrentTime.Foreground = fontColor;
             lbl_TimeLeft.Foreground = fontColor;
             lbl_change_device.Foreground = fontColor;
+
+            //lbl_Track.Background = fontBackColor;
+            //lbl_Album.Background = fontBackColor;
+            //lbl_Artist.Background = fontBackColor;
+            //lbl_CurrentTime.Background = fontBackColor;
+            //lbl_TimeLeft.Background = fontBackColor;
+            //lbl_change_device.Background = fontBackColor;
+
+
             GC.Collect();
         }
 
@@ -569,7 +585,8 @@ namespace SpotifyListener
 
         private void ChangeDevice_Click(object sender, MouseButtonEventArgs e)
         {
-            new DeviceSelection(player.AvailableDevices, (id) => player.SetActiveDeviceAsync(id)).Show();
+            var ds = new DeviceSelection(player);
+            ds.ShowDialog();
         }
     }
 }

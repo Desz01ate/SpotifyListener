@@ -45,7 +45,10 @@ namespace SpotifyListener
         public Image AlbumArtwork { get; private set; }
 
         public bool IsPlaying { get; private set; }
-        public SpotifyAPI.Web.Models.Device ActiveDevice => AvailableDevices.Where(x => x.IsActive).FirstOrDefault();
+        public SpotifyAPI.Web.Models.Device ActiveDevice
+        {
+            get; private set;
+        } = new SpotifyAPI.Web.Models.Device();//=> AvailableDevices.Where(x => x.IsActive).FirstOrDefault();
         public List<SpotifyAPI.Web.Models.Device> AvailableDevices { get; private set; } = new List<SpotifyAPI.Web.Models.Device>();
         private System.Windows.Forms.Timer _refreshTokenTimer = new System.Windows.Forms.Timer();
         private bool Expired = false;
@@ -56,7 +59,6 @@ namespace SpotifyListener
         [JsonIgnore]
         public DevicesColor Album_RazerColor => _razerColor;
 
-        public event EventHandler OnTrackChanging;
         public event EventHandler OnTrackChanged;
         public event EventHandler OnDeviceChanged;
 
@@ -96,26 +98,6 @@ namespace SpotifyListener
         public void Get(int albumColorMode = 0)
         {
             GetAsync(albumColorMode).RunSynchronously();
-            //var currentTrack = client.GetPlayingTrack();
-            //if (currentTrack.IsPlaying)
-            //{
-            //    Track = currentTrack.Item.Name;
-            //    Album = currentTrack.Item.Album.Name;
-            //    Artist = string.Join(",", currentTrack.Item.Artists.Select(x => x.Name));
-            //    var testURL = currentTrack.Item.ExternUrls.FirstOrDefault();
-            //    URL = testURL.Equals(default(KeyValuePair<string, string>)) ? string.Empty : testURL.Value;
-            //    if (AlbumArtwork == null)
-            //    {
-            //        var client = new HttpClient();
-            //        var byteArray = client.GetByteArrayAsync(currentTrack.Item.Album.Images[0].Url).Result;
-            //        Image image = (Image)((new ImageConverter()).ConvertFrom(byteArray));
-            //        client.Dispose();
-            //        AlbumArtwork = image;
-            //    };
-
-            //}
-            //IsPlaying = currentTrack.IsPlaying;
-            //OnTrackChanged.Invoke(currentTrack, null);
         }
         public async Task GetAsync(int albumColoreMode = 0)
         {
@@ -131,7 +113,12 @@ namespace SpotifyListener
                 {
                     AvailableDevices = devices;
                 }
-
+                var currentActiveDevice = devices.Find(x => x.IsActive);
+                if (ActiveDevice.Id != currentActiveDevice.Id)
+                {
+                    ActiveDevice = currentActiveDevice;
+                    OnDeviceChanged(ActiveDevice, null);
+                }
 
                 Volume = ActiveDevice.VolumePercent;
 
@@ -176,7 +163,7 @@ namespace SpotifyListener
             }
             else
             {
-                client.ResumePlayback(ActiveDevice.Id, "", null, "", 0);
+                client.ResumePlayback(ActiveDevice.Id, "", null, "", Position_ms);
             }
             IsPlaying = !IsPlaying;
         }
@@ -188,7 +175,7 @@ namespace SpotifyListener
             }
             else
             {
-                await client.ResumePlaybackAsync("", "", null, "", 0);
+                await client.ResumePlaybackAsync("", "", null, "", Position_ms);
             }
             IsPlaying = !IsPlaying;
         }
@@ -243,8 +230,7 @@ namespace SpotifyListener
         }
         public async Task SetActiveDeviceAsync(string id)
         {
-            await client.ResumePlaybackAsync(id, "", null, "", 0);
-            OnDeviceChanged(null, null);
+            await client.ResumePlaybackAsync(id, "", null, "", Position_ms);
         }
     }
 }
