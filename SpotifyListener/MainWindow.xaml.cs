@@ -410,7 +410,7 @@ namespace SpotifyListener
             {
                 AlbumImage.Source = (player.AlbumArtwork as Bitmap).ToBitmapImage();
                 this.Icon = AlbumImage.Source;
-                this.Background = new ImageBrush(player.AlbumArtwork.Blur(10));//, this.Height / this.Width));
+                this.Background = new ImageBrush(player.AlbumArtwork.Blur(10, this.Height / this.Width));
                 Background.Opacity = 0.6;
             }
             catch

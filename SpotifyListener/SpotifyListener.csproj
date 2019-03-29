@@ -89,7 +89,7 @@
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="LineAPI">
-      <HintPath>..\..\..\..\Visual Studio Code Repository\linenotify\linenotify\bin\Release\LineAPI.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\LineAPI.dll</HintPath>
     </Reference>
     <Reference Include="NAudio, Version=1.8.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.8.4\lib\net35\NAudio.dll</HintPath>

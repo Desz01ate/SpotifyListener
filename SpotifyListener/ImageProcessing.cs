@@ -143,15 +143,18 @@ namespace SpotifyListener
                 return ((Bitmap)image).ToBitmapImage();
             try
             {
-                if (diffOffset != -1)
+                var baseBitmap = (Bitmap)image;
+                baseBitmap.SetResolution(120, 120);
+
+                if (0 < diffOffset && diffOffset < 1)
                 {
-                    var newImage = new Bitmap(image.Width, (int)(image.Width * diffOffset));
+                    var newImage = new Bitmap(baseBitmap.Width, (int)(baseBitmap.Width * diffOffset));
                     var drawer = Graphics.FromImage(newImage);
-                    drawer.DrawImage(image, 0, 0, new Rectangle(0, (int)((image.Width * (1 - diffOffset)) / 2), image.Width, image.Width), GraphicsUnit.Pixel);
+                    drawer.DrawImage(baseBitmap, 0, 0, new Rectangle(0, (int)((baseBitmap.Width * (1 - diffOffset)) / 2), baseBitmap.Width, baseBitmap.Width), GraphicsUnit.Pixel);
                     image = newImage;
                 }
                 var blur = new GaussianBlur.GaussianBlur(image as Bitmap);
-                var result = blur.Process(blurSize);
+                var result = blur.(blurSize);
                 try
                 {
                     return result.ToBitmapImage();
