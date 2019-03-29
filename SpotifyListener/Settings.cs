@@ -214,5 +214,10 @@ namespace SpotifyListener
             await Task.Delay(5000);
             AccessTokenTextBox.PasswordChar = '*';
         }
+
+        private void ColorSettingsButton_Click(object sender, EventArgs e)
+        {
+            new ColorSettings().ShowDialog();
+        }
     }
 }

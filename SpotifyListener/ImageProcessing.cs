@@ -154,7 +154,7 @@ namespace SpotifyListener
                     image = newImage;
                 }
                 var blur = new GaussianBlur.GaussianBlur(image as Bitmap);
-                var result = blur.(blurSize);
+                var result = blur.Process(blurSize);
                 try
                 {
                     return result.ToBitmapImage();

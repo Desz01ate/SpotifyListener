@@ -238,6 +238,13 @@ namespace SpotifyListener
                     };
                     MouseEnter += (_s, _e) =>
                     {
+                        #region exceptional visibility case              
+                        lbl_settings.Visibility = Visibility.Visible;
+                        lbl_change_device.Visibility = Visibility.Visible;
+                        lbl_CurrentTime.Visibility = Visibility.Visible;
+                        lbl_TimeLeft.Visibility = Visibility.Visible;
+                        PlayProgress.Visibility = Visibility.Visible;
+                        #endregion
                         //Width = 950;
                         TranslateTransform t1 = new TranslateTransform(), t2 = new TranslateTransform();
                         AlbumImage.RenderTransform = t1;
@@ -252,7 +259,12 @@ namespace SpotifyListener
                         NextPath.BeginAnimation(OpacityProperty, fadeInAnimation);
                         VolumePath.BeginAnimation(OpacityProperty, fadeInAnimation);
                         VolumeProgress.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        lbl_change_device.Visibility = Visibility.Visible;
+
+                        lbl_settings.BeginAnimation(OpacityProperty, fadeInAnimation);
+                        lbl_change_device.BeginAnimation(OpacityProperty, fadeInAnimation);
+                        lbl_CurrentTime.BeginAnimation(OpacityProperty, fadeInAnimation);
+                        lbl_TimeLeft.BeginAnimation(OpacityProperty, fadeInAnimation);
+                        PlayProgress.BeginAnimation(OpacityProperty, fadeInAnimation);
                     };
                     MouseLeave += (_s, _e) =>
                     {
@@ -270,7 +282,12 @@ namespace SpotifyListener
                         NextPath.BeginAnimation(OpacityProperty, fadeOutAnimation);
                         VolumePath.BeginAnimation(OpacityProperty, fadeOutAnimation);
                         VolumeProgress.BeginAnimation(OpacityProperty, fadeOutAnimation);
-                        lbl_change_device.Visibility = Visibility.Hidden;
+
+                        lbl_settings.BeginAnimation(OpacityProperty, fadeOutAnimation);
+                        lbl_change_device.BeginAnimation(OpacityProperty, fadeOutAnimation);
+                        lbl_CurrentTime.BeginAnimation(OpacityProperty, fadeOutAnimation);
+                        lbl_TimeLeft.BeginAnimation(OpacityProperty, fadeOutAnimation);
+                        PlayProgress.BeginAnimation(OpacityProperty, fadeOutAnimation);
                     };
                 };
             }
@@ -369,11 +386,6 @@ namespace SpotifyListener
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            new Settings().Show();
-        }
-
         private async Task UpdatePresenceAsync()
         {
             try
@@ -435,7 +447,7 @@ namespace SpotifyListener
             lbl_CurrentTime.Foreground = fontColor;
             lbl_TimeLeft.Foreground = fontColor;
             lbl_change_device.Foreground = fontColor;
-
+            lbl_settings.Foreground = fontColor;
             //lbl_Track.Background = fontBackColor;
             //lbl_Album.Background = fontBackColor;
             //lbl_Artist.Background = fontBackColor;
@@ -474,7 +486,7 @@ namespace SpotifyListener
 
         private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            new Settings().Show();
+            //new Settings().Show();
         }
 
         private void MainWindowGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -587,6 +599,11 @@ namespace SpotifyListener
         {
             var ds = new DeviceSelection(player);
             ds.ShowDialog();
+        }
+
+        private void Settings_Click(object sender, MouseButtonEventArgs e)
+        {
+            new Settings().ShowDialog();
         }
     }
 }
