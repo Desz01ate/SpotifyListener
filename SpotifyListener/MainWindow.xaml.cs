@@ -48,10 +48,15 @@ namespace SpotifyListener
             try
             {
                 ResizeMode = ResizeMode.CanMinimize;
-                if (!Directory.Exists(Extension.ImageDirectory))
-                    Directory.CreateDirectory(Extension.ImageDirectory);
-                if (File.Exists("url.json"))
-                    HTMLHelper.UrlMemoized = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText("url.json"));
+                //if (!Directory.Exists(Extension.ImageDirectory))
+                //    Directory.CreateDirectory(Extension.ImageDirectory);
+                //if (File.Exists("url.json"))
+                //    HTMLHelper.UrlMemoized = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText("url.json"));
+                if (string.IsNullOrWhiteSpace(Properties.Settings.Default.RefreshToken))
+                {
+                    System.Windows.MessageBox.Show("You must set refresh token, otherwise this application can't fetch data from Spotify server.", "SpotifyListener", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    new Settings().ShowDialog();
+                }
                 InitializeComponent();
 
                 player = new Music(Properties.Settings.Default.AccessToken, Properties.Settings.Default.RefreshToken);
@@ -305,25 +310,26 @@ namespace SpotifyListener
                     Chroma.SDKDisable();
                     return;
                 }
-                var density = Properties.Settings.Default.AdaptiveDensity && player.IsPlaying ? ActiveDevice.AudioMeterInformation.MasterPeakValue : (Properties.Settings.Default.Density / 10.0);
+                var volume = ActiveDevice.AudioMeterInformation.MasterPeakValue * (Properties.Settings.Default.VolumeScale / 10.0f);
+                var density = Properties.Settings.Default.AdaptiveDensity && player.IsPlaying ? volume * 0.7f : (Properties.Settings.Default.Density / 10.0);
                 Chroma.LoadColor(player, player.IsPlaying, density);
                 Chroma.SetDevicesBackground();
                 if (Properties.Settings.Default.RenderPeakVolumeEnable)
                 {
                     if (Properties.Settings.Default.SymmetricRenderEnable)
                     {
-                        Chroma.MouseGrid.SetPeakVolumeSymmetric(Chroma.VolumeColor, ActiveDevice.AudioMeterInformation.MasterPeakValue);
-                        Chroma.KeyboardGrid.SetPeakVolumeSymmetric(Chroma.VolumeColor, ActiveDevice.AudioMeterInformation.MasterPeakValue);
+                        Chroma.MouseGrid.SetPeakVolumeSymmetric(Chroma.VolumeColor, volume);
+                        Chroma.KeyboardGrid.SetPeakVolumeSymmetric(Chroma.VolumeColor, volume);
                     }
                     else if (Properties.Settings.Default.PeakChroma)
                     {
-                        Chroma.MouseGrid.SetChromaPeakVolume(ActiveDevice.AudioMeterInformation.MasterPeakValue);
-                        Chroma.KeyboardGrid.SetChromaPeakVolume(ActiveDevice.AudioMeterInformation.MasterPeakValue);
+                        Chroma.MouseGrid.SetChromaPeakVolume(volume);
+                        Chroma.KeyboardGrid.SetChromaPeakVolume(volume);
                     }
                     else
                     {
-                        Chroma.MouseGrid.SetPeakVolume(Chroma.VolumeColor, ActiveDevice.AudioMeterInformation.MasterPeakValue);
-                        Chroma.KeyboardGrid.SetPeakVolume(Chroma.VolumeColor, ActiveDevice.AudioMeterInformation.MasterPeakValue);
+                        Chroma.MouseGrid.SetPeakVolume(Chroma.VolumeColor, volume);
+                        Chroma.KeyboardGrid.SetPeakVolume(Chroma.VolumeColor, volume);
                         //Chroma.SetPeakVolume_Mouse(ActiveDevice.AudioMeterInformation.MasterPeakValue);
                         //Chroma.SetPeakVolume_Keyboard(ActiveDevice.AudioMeterInformation.MasterPeakValue);
                         //Chroma.SetPeakVolume_Headset_Mousepad();
@@ -334,7 +340,7 @@ namespace SpotifyListener
                 else
                 {
                     Chroma.MouseGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.PositionColor_Background, player.CalculatedPosition, Properties.Settings.Default.ReverseLEDRender);
-                    Chroma.KeyboardGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.BackgroundColor, player.CalculatedPosition);
+                    Chroma.KeyboardGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.PositionColor_Background, player.CalculatedPosition);
                     Chroma.MouseGrid.SetVolumeScale(Chroma.VolumeColor, player.Volume, Properties.Settings.Default.ReverseLEDRender);
                 }
                 Chroma.KeyboardGrid.SetVolumeScale(Properties.Settings.Default.Volume.ToColoreColor(), player.Volume);
@@ -422,7 +428,7 @@ namespace SpotifyListener
             {
                 AlbumImage.Source = (player.AlbumArtwork as Bitmap).ToBitmapImage();
                 this.Icon = AlbumImage.Source;
-                this.Background = new ImageBrush(player.AlbumArtwork.Blur(10, this.Height / this.Width));
+                this.Background = new ImageBrush(player.AlbumArtwork.Blur(Properties.Settings.Default.BlurRadial, this.Height / this.Width));
                 Background.Opacity = 0.6;
             }
             catch
@@ -592,12 +598,13 @@ namespace SpotifyListener
 
         private void VolumeProgress_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            player.Volume = (int)VolumeProgress.CalculateRelativeValue();
+            var value = (int)VolumeProgress.CalculateRelativeValue();
+            player.Volume = value;
         }
 
         private void ChangeDevice_Click(object sender, MouseButtonEventArgs e)
         {
-            var ds = new DeviceSelection(player);
+            var ds = new DeviceSelection(player, this.Left, this.Top);
             ds.ShowDialog();
         }
 

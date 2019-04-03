@@ -38,8 +38,8 @@ namespace SpotifyListener
             }
             set
             {
-                var test = client.SetVolume(value, ActiveDevice.Id);
                 _volume = value;
+                var test = client.SetVolume(_volume, ActiveDevice.Id);
             }
         }
         public Image AlbumArtwork { get; private set; }
@@ -104,10 +104,6 @@ namespace SpotifyListener
             var currentTrack = await client.GetPlayingTrackAsync();
             if (currentTrack.IsPlaying)
             {
-                Track = currentTrack.Item.Name;
-                Album = currentTrack.Item.Album.Name;
-                Artist = string.Join(",", currentTrack.Item.Artists.Select(x => x.Name));
-
                 var devices = (await client.GetDevicesAsync()).Devices;
                 if (devices.Except(AvailableDevices).Count() > 0)
                 {
@@ -119,8 +115,11 @@ namespace SpotifyListener
                     ActiveDevice = currentActiveDevice;
                     OnDeviceChanged(ActiveDevice, null);
                 }
+                if (currentActiveDevice.VolumePercent != Volume)
+                {
+                    Volume = ActiveDevice.VolumePercent;
+                }
 
-                Volume = ActiveDevice.VolumePercent;
 
                 Duration_ms = currentTrack.Item.DurationMs;
                 Position_ms = currentTrack.ProgressMs;
@@ -134,16 +133,28 @@ namespace SpotifyListener
                 }
                 if (AlbumArtwork == null)
                 {
-                    ArtworkURL = currentTrack.Item.Album.Images[0].Url;
-                    var client = new HttpClient();
-                    var byteArray = await client.GetByteArrayAsync(currentTrack.Item.Album.Images[0].Url);
-                    Image image = (Image)((new ImageConverter()).ConvertFrom(byteArray));
-                    client.Dispose();
-                    AlbumArtwork = image;
+                    Track = currentTrack.Item.Name;
+                    Album = currentTrack.Item.Album.Name;
+                    Artist = string.Join(",", currentTrack.Item.Artists.Select(x => x.Name));
+
+                    if (currentTrack.Item.Album.Images.Count() > 0)
+                    {
+                        ArtworkURL = currentTrack.Item.Album.Images[0].Url;
+                        var client = new HttpClient();
+                        var byteArray = await client.GetByteArrayAsync(ArtworkURL);
+                        Image image = (Image)((new ImageConverter()).ConvertFrom(byteArray));
+                        client.Dispose();
+                        AlbumArtwork = image;
+                    }
+                    else
+                    {
+                        AlbumArtwork = await HTMLHelper.GetImage(Track, Album, Artist);
+                    }
+
                     _standardColor.Standard = albumColoreMode == 0 ? AlbumArtwork.DominantColor() : AlbumArtwork.AverageColor();
-                    _standardColor.Complemented = Album_StandardColor.Standard.ComplementColor();
-                    _razerColor.Standard = Album_StandardColor.Standard.SoftColor().ToColoreColor();
-                    _razerColor.Complemented = Album_StandardColor.Standard.ToColoreColor();
+                    _standardColor.Complemented = _standardColor.Standard.InverseColor();
+                    _razerColor.Standard = _standardColor.Standard.ToColoreColor();//.SoftColor().ToColoreColor();
+                    _razerColor.Complemented = _standardColor.Complemented.ToColoreColor();
                     OnTrackChanged.Invoke(currentTrack, null);
                 };
             }

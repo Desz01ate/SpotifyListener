@@ -346,5 +346,29 @@ namespace SpotifyListener.Properties {
                 this["AccessToken"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int BlurRadial {
+            get {
+                return ((int)(this["BlurRadial"]));
+            }
+            set {
+                this["BlurRadial"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int VolumeScale {
+            get {
+                return ((int)(this["VolumeScale"]));
+            }
+            set {
+                this["VolumeScale"] = value;
+            }
+        }
     }
 }

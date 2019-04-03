@@ -53,6 +53,8 @@ namespace SpotifyListener
             ChromaSDKEnable_CheckedChanged(null, EventArgs.Empty);
             DiscordRichPresenceEnable_CheckedChanged(null, EventArgs.Empty);
             NetworkEnable_CheckedChanged(NetworkEnable, EventArgs.Empty);
+            trackbar_BlurRadial.Value = Properties.Settings.Default.BlurRadial;
+            trackbar_VolumeScale.Value = Properties.Settings.Default.VolumeScale;
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -67,7 +69,7 @@ namespace SpotifyListener
             Properties.Settings.Default.RenderStyleIndex = (byte)RenderStyleCombobox.SelectedIndex;
 
 
-            
+
             Properties.Settings.Default.DiscordPlayDetail = DiscordPlayDetail.Text;
             Properties.Settings.Default.DiscordPlayState = DiscordPlayState.Text;
             Properties.Settings.Default.DiscordPauseDetail = DiscordPauseDetail.Text;
@@ -80,13 +82,15 @@ namespace SpotifyListener
             Properties.Settings.Default.RenderFPS = SafeConvertRenderFps(RenderFPS.Text);
             Properties.Settings.Default.NetworkEnable = NetworkEnable.Checked;
             Properties.Settings.Default.AlbumColorMode = (byte)AlbumColorMode.SelectedIndex;
+            Properties.Settings.Default.BlurRadial = trackbar_BlurRadial.Value;
+            Properties.Settings.Default.VolumeScale = trackbar_VolumeScale.Value;
             Properties.Settings.Default.Save();
-            if(Properties.Settings.Default.RefreshToken != RefreshTokenTextbox.Text)
+            if (Properties.Settings.Default.RefreshToken != RefreshTokenTextbox.Text)
             {
                 Properties.Settings.Default.RefreshToken = RefreshTokenTextbox.Text;
                 Extension.Restart();
             }
-            
+
             Dispose();
         }
 

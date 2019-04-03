@@ -24,7 +24,7 @@ namespace SpotifyListener
         extern static bool DestroyIcon(IntPtr handle);
         private static Dictionary<string, Color> DominantColorMemoized = new Dictionary<string, Color>();
         private static Dictionary<string, Color> AverageColorMemoized = new Dictionary<string, Color>();
-        public static Color ComplementColor(this Color c)
+        public static Color InverseColor(this Color c)
         {
             return Color.FromArgb((int)(Color.FromArgb(c.R, c.G, c.B).ToArgb() ^ 0xFFFFFFFu));
         }
@@ -94,6 +94,9 @@ namespace SpotifyListener
         }
         public static Color DominantColor(this Image img, string path = "")
         {
+            var colorThief = new ColorThiefDotNet.ColorThief();
+            var dominant = colorThief.GetColor((Bitmap)img);
+            return Color.FromArgb(dominant.Color.R, dominant.Color.G, dominant.Color.B);
             var key = "";
             if (!string.IsNullOrEmpty(path))
             {
@@ -143,8 +146,9 @@ namespace SpotifyListener
                 return ((Bitmap)image).ToBitmapImage();
             try
             {
+                var scale = 96;// (int)((((1920 - System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width) * 0.0000732421875) + 0.05) * System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width);//96;
                 var baseBitmap = (Bitmap)image;
-                baseBitmap.SetResolution(120, 120);
+                baseBitmap.SetResolution(scale, scale);
 
                 if (0 < diffOffset && diffOffset < 1)
                 {
