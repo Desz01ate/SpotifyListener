@@ -6,7 +6,7 @@
         xmlns:clr="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:SpotifyListener"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="800"
+        Title="MainWindow" Height="550" Width="998"
         Icon="./Resources/spotify.ico">
     <Window.Resources>
         <Style x:Key="PathButtonStyle" TargetType="{x:Type Button}">

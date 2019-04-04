@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ColoreColor = Colore.Data.Color;
 using System.Runtime.InteropServices;
-using GaussianBlur;
 using System.Windows.Media.Imaging;
+using Microsoft.Win32;
 
 namespace SpotifyListener
 {
@@ -124,20 +119,30 @@ namespace SpotifyListener
                 DominantColorMemoized.Add(key, result);
             return result;
         }
-        public static Image SetOpacity(this Image image, float opacity)
+        public static Image SetOpacity(this Image image, double opacity)
         {
-            var bmp = new Bitmap(image.Width, image.Height);
-            using (var graphics = Graphics.FromImage(bmp))
+            //var bitmap = new Bitmap((int)image.Width,(int)image.Height);
+            //using (var graphics = Graphics.FromImage(bmp))
+            //{
+            //    var matrix = new ColorMatrix
+            //    {
+            //        Matrix33 = opacity
+            //    };
+            //    var attributes = new ImageAttributes();
+            //    attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+            //    graphics.DrawImage(image, new Rectangle(0, 0, bmp.Width, bmp.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
+            //}
+            var rect = new Rectangle(0, 0, image.Width, image.Height);
+            var alpha = 255 * opacity;
+            using (var g = Graphics.FromImage(image))
             {
-                var matrix = new ColorMatrix
+                using (var brush = new SolidBrush(System.Drawing.Color.FromArgb((int)alpha, System.Drawing.Color.Black)))
                 {
-                    Matrix33 = opacity
-                };
-                var attributes = new ImageAttributes();
-                attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-                graphics.DrawImage(image, new Rectangle(0, 0, bmp.Width, bmp.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
+                    g.FillRectangle(brush, rect);
+                }
+
             }
-            return bmp;
+            return image;
         }
 
         public static System.Windows.Media.ImageSource Blur(this Image image, Int32 blurSize, double diffOffset = -1)
@@ -172,6 +177,25 @@ namespace SpotifyListener
             catch
             {
                 return ((Bitmap)image).ToBitmapImage();
+            }
+        }
+        public static Image Resize(this Image img, int outputWidth, int outputHeight)
+        {
+
+            Bitmap outputImage = null;
+            Graphics graphics = null;
+            try
+            {
+                outputImage = new Bitmap(outputWidth, outputHeight, System.Drawing.Imaging.PixelFormat.Format16bppRgb555);
+                graphics = Graphics.FromImage(outputImage);
+                graphics.DrawImage(img, new Rectangle(0, 0, outputWidth, outputHeight),
+                new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
+
+                return outputImage;
+            }
+            catch (Exception ex)
+            {
+                return img;
             }
         }
         public static Color ContrastColor(this Color c)
@@ -307,7 +331,105 @@ namespace SpotifyListener
             return $"#{c.R:X2}{c.G:X2}{c.B:X2}";
         }
     }
+    public class Wallpaper
+    {
+        public enum Style : int
+        {
+            Tiled,
+            Centered,
+            Stretched
+        }
+
+        [DllImport("user32.dll")]
+        public static extern Int32 SystemParametersInfo(UInt32 action, UInt32 uParam, String vParam, UInt32 winIni);
+
+        public static readonly UInt32 SPI_SETDESKWALLPAPER = 0x14;
+        public static readonly UInt32 SPIF_UPDATEINIFILE = 0x01;
+        public static readonly UInt32 SPIF_SENDWININICHANGE = 0x02;
+
+        public static bool Set(string filePath, Style style)
+        {
+            bool Success = false;
+            try
+            {
+                Image i = System.Drawing.Image.FromFile(Path.GetFullPath(filePath));
+
+                Set(i, style);
+
+                Success = true;
+
+            }
+            catch //(Exception ex)
+            {
+                //ex.HandleException();
+            }
+            return Success;
+        }
+
+        public static bool Set(Image image, Style style, string path = "")
+        {
+            bool Success = false;
+            string TempPath = Path.Combine(Path.GetTempPath(), "wallpaper.bmp");
+            File.Create(TempPath).Close();
+            try
+            {
+                image.Save(TempPath, ImageFormat.Bmp);
+
+                RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
+
+                switch (style)
+                {
+                    case Style.Stretched:
+                        key.SetValue(@"WallpaperStyle", 2.ToString());
+
+                        key.SetValue(@"TileWallpaper", 0.ToString());
+
+                        break;
+
+                    case Style.Centered:
+                        key.SetValue(@"WallpaperStyle", 1.ToString());
+
+                        key.SetValue(@"TileWallpaper", 0.ToString());
+
+                        break;
+
+                    default:
+                    case Style.Tiled:
+                        key.SetValue(@"WallpaperStyle", 1.ToString());
+
+                        key.SetValue(@"TileWallpaper", 1.ToString());
+
+                        break;
+
+                }
+                if (!string.IsNullOrWhiteSpace(path))
+                {
+                    SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
+                }
+                else
+                {
+                    SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, TempPath, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
+                }
+                Success = true;
+
+            }
+            catch (Exception ex)
+            {
+                //ex.HandleException();
+            }
+            finally
+            {
+                if (File.Exists(TempPath))
+                {
+                    File.Delete(TempPath);
+                }
+            }
+            return Success;
+        }
+
+    }
 }
+
 
 namespace GaussianBlur
 {

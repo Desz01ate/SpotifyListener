@@ -19,6 +19,8 @@ using LineAPI;
 using Component;
 using System.Dynamic;
 using System.Windows.Media.Imaging;
+using System.Text.RegularExpressions;
+using System.ComponentModel;
 
 namespace SpotifyListener
 {
@@ -50,6 +52,9 @@ namespace SpotifyListener
         DoubleAnimation moveY_enter;
         DoubleAnimation moveX_leave;
         DoubleAnimation moveY_leave;
+        Image _backgroundImage = null;
+        string _backgroundImagePath = string.Empty;
+
         private List<System.Windows.Controls.Button> setDeviceButtons = new List<System.Windows.Controls.Button>();
 
         public MainWindow()
@@ -253,6 +258,26 @@ namespace SpotifyListener
                     MouseEnter += OnMouseEnterEvent;
                     MouseLeave += OnMouseLeaveEvent;
                 };
+                #region get current background image
+                byte[] SliceMe(byte[] source, int pos)
+                {
+                    byte[] dest = new byte[source.Length - pos];
+                    Array.Copy(source, pos, dest, 0, dest.Length);
+                    return dest;
+                };
+                byte[] path = (byte[])Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Control Panel\\Desktop").GetValue("TranscodedImageCache");
+                var wallpaper_file_path = System.Text.Encoding.Unicode.GetString(SliceMe(path, 24)).TrimEnd("\0".ToCharArray());
+                if (File.Exists(wallpaper_file_path))
+                {
+                    _backgroundImagePath = wallpaper_file_path;
+                    _backgroundImage = Image.FromFile(wallpaper_file_path);
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show($@"{wallpaper_file_path} does not exists.");
+                    System.Windows.Forms.Application.Exit();
+                }
+                #endregion
             }
             catch (Exception ex)
             {
@@ -283,20 +308,6 @@ namespace SpotifyListener
             lbl_CurrentTime.BeginAnimation(OpacityProperty, fadeOutAnimation);
             lbl_TimeLeft.BeginAnimation(OpacityProperty, fadeOutAnimation);
             PlayProgress.BeginAnimation(OpacityProperty, fadeOutAnimation);
-            if (sender is Action action)
-            {
-                /*every completed event, count increased by 1 when all control transition are done, do action*/
-                int count = 0;
-                fadeOutAnimation.Completed += async (_0, _1) =>
-                {
-                    count += 1;
-                    if (count == 10)
-                    {
-                        await Task.Delay(500);
-                        action();
-                    }
-                };
-            }
         }
 
         private void OnMouseEnterEvent(object sender, System.Windows.Input.MouseEventArgs e)
@@ -457,8 +468,41 @@ namespace SpotifyListener
             {
                 AlbumImage.Source = (player.AlbumArtwork as Bitmap).ToBitmapImage();
                 this.Icon = AlbumImage.Source;
-                this.Background = new ImageBrush(player.AlbumArtwork.Blur(Properties.Settings.Default.BlurRadial, this.Height / this.Width));
+                var backgroundImage = player.AlbumArtwork.Blur(Properties.Settings.Default.BlurRadial, this.Height / this.Width);
+                this.Background = new ImageBrush(backgroundImage);
                 Background.Opacity = 0.6;
+                #region set desktop background
+                var encoder = new JpegBitmapEncoder();
+                encoder.QualityLevel = 100;
+                encoder.Frames.Add(BitmapFrame.Create((BitmapSource)backgroundImage));
+                using (var stream = new MemoryStream())
+                {
+                    encoder.Save(stream);
+                    var desktopImage = Image.FromStream(stream);
+
+                    var screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
+                    var screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+                    desktopImage = desktopImage.SetOpacity(0.6f);
+                    desktopImage = desktopImage.Resize((int)screenWidth, (int)screenHeight);
+
+                    using (var g = Graphics.FromImage(desktopImage))
+                    {
+                        var albumX = (int)((screenWidth - player.AlbumArtwork.Width) / 2);
+                        var albumY = (int)((screenHeight - player.AlbumArtwork.Height) / 2) - (int)(screenHeight * 0.12);
+                        g.DrawImage(player.AlbumArtwork.Resize((int)(player.AlbumArtwork.Width), (int)(player.AlbumArtwork.Width)), albumX, albumY);
+
+                        var font = new Font(this.FontFamily.ToString(), 20.0f, System.Drawing.FontStyle.Bold);
+
+                        var trackMeasure = g.MeasureString(player.Track, font);
+                        var albumMeasure = g.MeasureString(player.Album, font);
+                        var artistMeasure = g.MeasureString(player.Artist, font);
+                        g.DrawString(player.Track, font, System.Drawing.Brushes.White, (int)((screenWidth - trackMeasure.Width) / 2), albumY + player.AlbumArtwork.Height + (int)(screenHeight * 0.1));
+                        g.DrawString(player.Album, font, System.Drawing.Brushes.White, (int)((screenWidth - albumMeasure.Width) / 2), albumY + player.AlbumArtwork.Height + (int)(screenHeight * 0.15));
+                        g.DrawString(player.Artist, font, System.Drawing.Brushes.White, (int)((screenWidth - artistMeasure.Width) / 2), albumY + player.AlbumArtwork.Height + (int)(screenHeight * 0.2));
+                    }
+                    Wallpaper.Set(desktopImage, Wallpaper.Style.Centered);
+                }
+                #endregion
             }
             catch
             {
@@ -489,8 +533,6 @@ namespace SpotifyListener
             //lbl_CurrentTime.Background = fontBackColor;
             //lbl_TimeLeft.Background = fontBackColor;
             //lbl_change_device.Background = fontBackColor;
-
-
             GC.Collect();
         }
 
@@ -521,22 +563,13 @@ namespace SpotifyListener
 
         private async void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            //new Settings().Show();
-            Action capture = () =>
-            {
-                var renderBitmap = new RenderTargetBitmap((int)this.Width, (int)this.Height, 96, 96, PixelFormats.Pbgra32);
-                renderBitmap.Render(this);
-                var pngImage = new PngBitmapEncoder();
-                pngImage.Frames.Add(BitmapFrame.Create(renderBitmap));
-                var fileName = Path.GetTempFileName().Replace("tmp", "png");
-                using (var fs = File.Create(fileName))
-                {
-                    pngImage.Save(fs);
-                }
-                Process.Start(fileName);
-            };
-            this.OnMouseLeaveEvent(capture, null);
-
+            var app_id = "139971873511766"; //StatusReporter
+            var href = player.URL;
+            var redirect_uri = string.Empty;// "https%3A%2F%2Fwww.spotify.com%2Fthanks-for-sharing%2F";
+            var hashtag = $"%23{player.Artist}_{player.Track}";
+            hashtag = Regex.Replace(hashtag, @"[^0-9a-zA-Z:_%]+", "");
+            var requestText = $"https://www.facebook.com/dialog/share?app_id={app_id}&text=test&display=page&href={href}&redirect_uri={redirect_uri}&hashtag={hashtag}";
+            Process.Start(requestText);
         }
 
         private void MainWindowGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -655,6 +688,18 @@ namespace SpotifyListener
         private void Settings_Click(object sender, MouseButtonEventArgs e)
         {
             new Settings().ShowDialog();
+        }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            var isKeyUpdated = false;
+            isKeyUpdated = Wallpaper.Set(_backgroundImage, Wallpaper.Style.Stretched, _backgroundImagePath);
+            if (!isKeyUpdated)
+            {
+                e.Cancel = true;
+                System.Windows.Forms.MessageBox.Show("Something went wrong.");
+            }
+            else
+                base.OnClosing(e);
         }
     }
 }
