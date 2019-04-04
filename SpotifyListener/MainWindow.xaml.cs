@@ -53,7 +53,11 @@ namespace SpotifyListener
         DoubleAnimation moveX_leave;
         DoubleAnimation moveY_leave;
         Image _backgroundImage = null;
+        Image _backgroundDesktopPlaying = null;
+        Image _backgroundDesktopPause = null;
+        ImageBrush _backgroundApp = null;
         string _backgroundImagePath = string.Empty;
+
 
         private List<System.Windows.Controls.Button> setDeviceButtons = new List<System.Windows.Controls.Button>();
 
@@ -79,21 +83,32 @@ namespace SpotifyListener
                 VolumeProgress.Foreground = lbl_Album.Foreground;
                 player.OnTrackChanged += delegate
                 {
-                    Dispatcher.BeginInvoke(new MethodInvoker(UpdateUI));
-                    dynamic body = new ExpandoObject();
-                    body.Title = player.Track;
-                    body.Album = player.Album;
-                    body.Artist = player.Artist;
-                    body.URL = player.URL;
-                    //body.LyricsURL = "https://www.google.com";
-                    body.ImageURL = player.ArtworkURL;
+                    _backgroundDesktopPause = null;
+                    _backgroundDesktopPlaying = null;
+                    _backgroundApp = null;
+                    Dispatcher.InvokeAsync(UpdateUI);
+                    //dynamic body = new ExpandoObject();
+                    //body.Title = player.Track;
+                    //body.Album = player.Album;
+                    //body.Artist = player.Artist;
+                    //body.URL = player.URL;
+                    //body.ImageURL = player.ArtworkURL;
 
-                    messagingAPI.Execute("/api/Track", body);
+                    //messagingAPI.Execute("/api/Track", body);
                 };
                 player.OnDeviceChanged += delegate
                 {
-                    Dispatcher.BeginInvoke(new MethodInvoker(UpdateUI));
+                    Dispatcher.InvokeAsync(UpdateUI);
                 };
+                player.OnResume += (s, e) =>
+                {
+                    Dispatcher.InvokeAsync(UpdateUI);
+                };
+                player.OnPaused += (s, e) =>
+                {
+                    Dispatcher.InvokeAsync(UpdateUI);
+                };
+
                 ActiveDevice = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
                 InitializeDiscord(); //discord RPC api only work with x64 system
                                      //
@@ -466,14 +481,47 @@ namespace SpotifyListener
         {
             try
             {
+                if (_backgroundApp == null && _backgroundDesktopPlaying == null && _backgroundDesktopPause == null)
+                {
+                    var backgroundImage = player.AlbumArtwork.Blur(Properties.Settings.Default.BlurRadial, this.Height / this.Width);
+                    _backgroundApp = new ImageBrush(backgroundImage);
+                    _backgroundApp.Opacity = 0.6;
+                    Image applyOpc(Image i0, double d) => ImageProcessing.SetOpacity(i0, d, System.Drawing.Color.Black);
+                    _backgroundDesktopPlaying = Wallpaper.GetBacgroundImageForTrack(
+                        player.AlbumArtwork,
+                        backgroundImage.ToImage(),
+                        SystemParameters.PrimaryScreenWidth,
+                        SystemParameters.PrimaryScreenHeight,
+                        this.FontFamily.ToString(),
+                        20.0f,
+                        player.Track,
+                        player.Album,
+                        player.Artist,
+                        applyOpc,
+                        0.6f);
+                    _backgroundDesktopPause = Wallpaper.GetBacgroundImageForTrack(
+                        player.AlbumArtwork,
+                        backgroundImage.ToImage(),
+                        System.Windows.SystemParameters.PrimaryScreenWidth,
+                        System.Windows.SystemParameters.PrimaryScreenHeight,
+                        this.FontFamily.ToString(),
+                        20.0f,
+                        player.Track,
+                        player.Album,
+                        player.Artist,
+                        applyOpc,
+                        0.9f);
+                }
                 AlbumImage.Source = (player.AlbumArtwork as Bitmap).ToBitmapImage();
                 this.Icon = AlbumImage.Source;
-                var backgroundImage = player.AlbumArtwork.Blur(Properties.Settings.Default.BlurRadial, this.Height / this.Width);
-                this.Background = new ImageBrush(backgroundImage);
-                Background.Opacity = 0.6;
+                this.Background = _backgroundApp;//player.IsPlaying ? _backgroundAppPlaying : _backgroundAppPause;
+                //Background.Opacity = 0.6;
                 #region set desktop background
-                var desktopImage = Wallpaper.GetBacgroundImageForTrack(player.AlbumArtwork, backgroundImage.ToImage(), System.Windows.SystemParameters.PrimaryScreenWidth, System.Windows.SystemParameters.PrimaryScreenHeight, this.FontFamily.ToString(), 20.0f, player.Track, player.Album, player.Artist);
-                Wallpaper.Set(desktopImage, Wallpaper.Style.Centered);
+                //don't need to run on UI thread, it's has nothing to do with the UI!
+                Task.Run(() =>
+                {
+                    Wallpaper.Set(player.IsPlaying ? _backgroundDesktopPlaying : _backgroundDesktopPause, Wallpaper.Style.Centered);
+                });
                 #endregion
             }
             catch
@@ -481,23 +529,23 @@ namespace SpotifyListener
 
             }
             this.Title = $"Listening to {player.Track} by {player.Artist} on {player.ActiveDevice.Name}";
-            var fontColor = System.Windows.Media.Brushes.WhiteSmoke;//(System.Windows.Media.Brush)(new BrushConverter().ConvertFromString(player.Album_StandardColor.Standard.ContrastColor().ToHex()));
+            //var fontColor = System.Windows.Media.Brushes.WhiteSmoke;//(System.Windows.Media.Brush)(new BrushConverter().ConvertFromString(player.Album_StandardColor.Standard.ContrastColor().ToHex()));
 
-            BackPath.Fill = fontColor;
-            PlayPath.Fill = fontColor;
-            NextPath.Fill = fontColor;
-            VolumeProgress.Foreground = fontColor;
+            //BackPath.Fill = fontColor;
+            //PlayPath.Fill = fontColor;
+            //NextPath.Fill = fontColor;
+            //VolumeProgress.Foreground = fontColor;
             lbl_Track.Content = player.Track;
             lbl_Album.Content = player.Album;
             lbl_Artist.Content = player.Artist;
             PlayProgress.Maximum = player.Duration_ms;
-            lbl_Track.Foreground = fontColor;
-            lbl_Album.Foreground = fontColor;
-            lbl_Artist.Foreground = fontColor;
-            lbl_CurrentTime.Foreground = fontColor;
-            lbl_TimeLeft.Foreground = fontColor;
-            lbl_change_device.Foreground = fontColor;
-            lbl_settings.Foreground = fontColor;
+            //lbl_Track.Foreground = fontColor;
+            //lbl_Album.Foreground = fontColor;
+            //lbl_Artist.Foreground = fontColor;
+            //lbl_CurrentTime.Foreground = fontColor;
+            //lbl_TimeLeft.Foreground = fontColor;
+            //lbl_change_device.Foreground = fontColor;
+            //lbl_settings.Foreground = fontColor;
             //lbl_Track.Background = fontBackColor;
             //lbl_Album.Background = fontBackColor;
             //lbl_Artist.Background = fontBackColor;
@@ -536,7 +584,7 @@ namespace SpotifyListener
         {
             var app_id = "139971873511766"; //StatusReporter
             var href = player.URL;
-            var redirect_uri = string.Empty;// "https%3A%2F%2Fwww.spotify.com%2Fthanks-for-sharing%2F";
+            var redirect_uri = string.Empty;
             var hashtag = $"%23{player.Artist}_{player.Track}";
             hashtag = Regex.Replace(hashtag, @"[^0-9a-zA-Z:_%]+", "");
             var requestText = $"https://www.facebook.com/dialog/share?app_id={app_id}&text=test&display=page&href={href}&redirect_uri={redirect_uri}&hashtag={hashtag}";
@@ -662,15 +710,8 @@ namespace SpotifyListener
         }
         protected override void OnClosing(CancelEventArgs e)
         {
-            var isKeyUpdated = false;
-            isKeyUpdated = Wallpaper.Set(_backgroundImage, Wallpaper.Style.Stretched, _backgroundImagePath);
-            if (!isKeyUpdated)
-            {
-                e.Cancel = true;
-                System.Windows.Forms.MessageBox.Show("Something went wrong.");
-            }
-            else
-                base.OnClosing(e);
+            Wallpaper.Set(_backgroundImage, Wallpaper.Style.Stretched, _backgroundImagePath);
+            base.OnClosing(e);
         }
     }
 }

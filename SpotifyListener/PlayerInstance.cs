@@ -43,8 +43,29 @@ namespace SpotifyListener
             }
         }
         public Image AlbumArtwork { get; private set; }
-
-        public bool IsPlaying { get; private set; }
+        private bool _isPlaying = false;
+        public bool IsPlaying
+        {
+            get
+            {
+                return _isPlaying;
+            }
+            private set
+            {
+                if (value != IsPlaying)
+                {
+                    if (value)
+                    {
+                        OnResume(null, null);
+                    }
+                    else
+                    {
+                        OnPaused(null, null);
+                    }
+                }
+                _isPlaying = value;
+            }
+        }
         public SpotifyAPI.Web.Models.Device ActiveDevice
         {
             get; private set;
@@ -61,6 +82,8 @@ namespace SpotifyListener
 
         public event EventHandler OnTrackChanged;
         public event EventHandler OnDeviceChanged;
+        public event EventHandler OnResume;
+        public event EventHandler OnPaused;
 
         public Music(string accessToken, string refreshToken)
         {
@@ -171,10 +194,12 @@ namespace SpotifyListener
             if (IsPlaying)
             {
                 var response = client.PausePlayback(ActiveDevice.Id);
+                //OnPaused(null, null);
             }
             else
             {
                 client.ResumePlayback(ActiveDevice.Id, "", null, "", Position_ms);
+                //OnResume(null, null);
             }
             IsPlaying = !IsPlaying;
         }
@@ -183,10 +208,12 @@ namespace SpotifyListener
             if (IsPlaying)
             {
                 await client.PausePlaybackAsync();
+                //OnPaused(null, null);
             }
             else
             {
                 await client.ResumePlaybackAsync("", "", null, "", Position_ms);
+                //OnResume(null, null);
             }
             IsPlaying = !IsPlaying;
         }

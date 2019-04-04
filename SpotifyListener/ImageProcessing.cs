@@ -119,8 +119,10 @@ namespace SpotifyListener
                 DominantColorMemoized.Add(key, result);
             return result;
         }
-        public static Image SetOpacity(this Image image, double opacity)
+        public static Image SetOpacity(this Image image, double opacity, Color color)
         {
+            if (opacity < 0 || 1 < opacity)
+                return image;
             //var bitmap = new Bitmap((int)image.Width,(int)image.Height);
             //using (var graphics = Graphics.FromImage(bmp))
             //{
@@ -136,7 +138,7 @@ namespace SpotifyListener
             var alpha = 255 * opacity;
             using (var g = Graphics.FromImage(image))
             {
-                using (var brush = new SolidBrush(System.Drawing.Color.FromArgb((int)alpha, System.Drawing.Color.Black)))
+                using (var brush = new SolidBrush(System.Drawing.Color.FromArgb((int)alpha, color)))
                 {
                     g.FillRectangle(brush, rect);
                 }
@@ -440,12 +442,16 @@ namespace SpotifyListener
             }
             return Success;
         }
-        public static Image GetBacgroundImageForTrack(Image highlightImage, Image backgroundimage, double width, double height, string fontFamily, float fontSize, string track, string album, string artist)
+        public static Image GetBacgroundImageForTrack(Image highlightImage, Image backgroundimage, double width, double height, string fontFamily, float fontSize, string track, string album, string artist, Func<Image, double, Image> backgroundApplyFunc = null, float backgroundApplyOpacity = 1)
         {
             var image = backgroundimage;
             var screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
             var screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
-            image = image.SetOpacity(0.6f);
+            if (backgroundApplyFunc != null)
+            {
+                image = backgroundApplyFunc(image, backgroundApplyOpacity);//image.SetOpacity(0.6f);
+            }
+
             image = image.Resize((int)screenWidth, (int)screenHeight);
 
             using (var g = Graphics.FromImage(image))
