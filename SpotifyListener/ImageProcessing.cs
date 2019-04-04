@@ -326,6 +326,20 @@ namespace SpotifyListener
                 }
             }
         }
+        public static Image ToImage(this System.Windows.Media.ImageSource imageSrc)
+        {
+            var encoder = new JpegBitmapEncoder
+            {
+                QualityLevel = 100
+            };
+            encoder.Frames.Add(BitmapFrame.Create((BitmapSource)imageSrc));
+            using (var stream = new MemoryStream())
+            {
+                encoder.Save(stream);
+                var image = Image.FromStream(stream);
+                return image;
+            }
+        }
         public static string ToHex(this Color c)
         {
             return $"#{c.R:X2}{c.G:X2}{c.B:X2}";
@@ -426,7 +440,31 @@ namespace SpotifyListener
             }
             return Success;
         }
+        public static Image GetBacgroundImageForTrack(Image highlightImage, Image backgroundimage, double width, double height, string fontFamily, float fontSize, string track, string album, string artist)
+        {
+            var image = backgroundimage;
+            var screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
+            var screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+            image = image.SetOpacity(0.6f);
+            image = image.Resize((int)screenWidth, (int)screenHeight);
 
+            using (var g = Graphics.FromImage(image))
+            {
+                var highlightX = (int)((screenWidth - highlightImage.Width) / 2);
+                var highlightY = (int)((screenHeight - highlightImage.Height) / 2) - (int)(screenHeight * 0.12);
+                g.DrawImage(highlightImage, highlightX, highlightY);
+
+                var font = new Font(fontFamily, fontSize, FontStyle.Bold);
+
+                var trackMeasure = g.MeasureString(track, font);
+                var albumMeasure = g.MeasureString(album, font);
+                var artistMeasure = g.MeasureString(artist, font);
+                g.DrawString(track, font, Brushes.White, (int)((screenWidth - trackMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.1));
+                g.DrawString(album, font, Brushes.White, (int)((screenWidth - albumMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.15));
+                g.DrawString(artist, font, Brushes.White, (int)((screenWidth - artistMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.2));
+            }
+            return image;
+        }
     }
 }
 

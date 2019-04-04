@@ -472,36 +472,8 @@ namespace SpotifyListener
                 this.Background = new ImageBrush(backgroundImage);
                 Background.Opacity = 0.6;
                 #region set desktop background
-                var encoder = new JpegBitmapEncoder();
-                encoder.QualityLevel = 100;
-                encoder.Frames.Add(BitmapFrame.Create((BitmapSource)backgroundImage));
-                using (var stream = new MemoryStream())
-                {
-                    encoder.Save(stream);
-                    var desktopImage = Image.FromStream(stream);
-
-                    var screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
-                    var screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
-                    desktopImage = desktopImage.SetOpacity(0.6f);
-                    desktopImage = desktopImage.Resize((int)screenWidth, (int)screenHeight);
-
-                    using (var g = Graphics.FromImage(desktopImage))
-                    {
-                        var albumX = (int)((screenWidth - player.AlbumArtwork.Width) / 2);
-                        var albumY = (int)((screenHeight - player.AlbumArtwork.Height) / 2) - (int)(screenHeight * 0.12);
-                        g.DrawImage(player.AlbumArtwork.Resize((int)(player.AlbumArtwork.Width), (int)(player.AlbumArtwork.Width)), albumX, albumY);
-
-                        var font = new Font(this.FontFamily.ToString(), 20.0f, System.Drawing.FontStyle.Bold);
-
-                        var trackMeasure = g.MeasureString(player.Track, font);
-                        var albumMeasure = g.MeasureString(player.Album, font);
-                        var artistMeasure = g.MeasureString(player.Artist, font);
-                        g.DrawString(player.Track, font, System.Drawing.Brushes.White, (int)((screenWidth - trackMeasure.Width) / 2), albumY + player.AlbumArtwork.Height + (int)(screenHeight * 0.1));
-                        g.DrawString(player.Album, font, System.Drawing.Brushes.White, (int)((screenWidth - albumMeasure.Width) / 2), albumY + player.AlbumArtwork.Height + (int)(screenHeight * 0.15));
-                        g.DrawString(player.Artist, font, System.Drawing.Brushes.White, (int)((screenWidth - artistMeasure.Width) / 2), albumY + player.AlbumArtwork.Height + (int)(screenHeight * 0.2));
-                    }
-                    Wallpaper.Set(desktopImage, Wallpaper.Style.Centered);
-                }
+                var desktopImage = Wallpaper.GetBacgroundImageForTrack(player.AlbumArtwork, backgroundImage.ToImage(), System.Windows.SystemParameters.PrimaryScreenWidth, System.Windows.SystemParameters.PrimaryScreenHeight, this.FontFamily.ToString(), 20.0f, player.Track, player.Album, player.Artist);
+                Wallpaper.Set(desktopImage, Wallpaper.Style.Centered);
                 #endregion
             }
             catch
@@ -510,8 +482,7 @@ namespace SpotifyListener
             }
             this.Title = $"Listening to {player.Track} by {player.Artist} on {player.ActiveDevice.Name}";
             var fontColor = System.Windows.Media.Brushes.WhiteSmoke;//(System.Windows.Media.Brush)(new BrushConverter().ConvertFromString(player.Album_StandardColor.Standard.ContrastColor().ToHex()));
-            var fontBackColor = (System.Windows.Media.Brush)(new BrushConverter().ConvertFromString(player.Album_StandardColor.Standard.ToHex()));
-            fontBackColor.Opacity = 0.5;
+
             BackPath.Fill = fontColor;
             PlayPath.Fill = fontColor;
             NextPath.Fill = fontColor;
