@@ -18,6 +18,7 @@ using System.Windows.Threading;
 using LineAPI;
 using Component;
 using System.Dynamic;
+using System.Windows.Media.Imaging;
 
 namespace SpotifyListener
 {
@@ -41,6 +42,14 @@ namespace SpotifyListener
         private System.Windows.Media.Brush RedBrush = (new BrushConverter().ConvertFromString("#FF0000")) as System.Windows.Media.Brush;
         DoubleAnimation fadeAnimation = new DoubleAnimation() { From = 0, To = 1, Duration = TimeSpan.FromSeconds(1) };
         DoubleAnimation slideLeft = new DoubleAnimation() { To = -150, Duration = TimeSpan.FromMilliseconds(500) };
+        DoubleAnimation slideAnimation_enter;
+        DoubleAnimation slideAnimation_leave;
+        DoubleAnimation fadeInAnimation;
+        DoubleAnimation fadeOutAnimation;
+        DoubleAnimation moveX_enter;
+        DoubleAnimation moveY_enter;
+        DoubleAnimation moveX_leave;
+        DoubleAnimation moveY_leave;
         private List<System.Windows.Controls.Button> setDeviceButtons = new List<System.Windows.Controls.Button>();
 
         public MainWindow()
@@ -191,109 +200,58 @@ namespace SpotifyListener
                         AlbumImage.Width = baseWidth;
                         AlbumImage.Height = baseHeight;
                     };
-                    var slideAnimation_enter = new DoubleAnimation()
+                    slideAnimation_enter = new DoubleAnimation()
                     {
                         From = 0,
                         To = -200,
                         Duration = TimeSpan.FromMilliseconds(500),
                         //                  AutoReverse = true
                     };
-                    var slideAnimation_leave = new DoubleAnimation()
+                    slideAnimation_leave = new DoubleAnimation()
                     {
                         From = -200,
                         To = 0,
                         Duration = TimeSpan.FromMilliseconds(500),
                         //                AutoReverse = true
                     };
-                    var fadeInAnimation = new DoubleAnimation
+                    fadeInAnimation = new DoubleAnimation
                     {
                         From = 0,
                         To = 1,
                         Duration = TimeSpan.FromMilliseconds(500),
                     };
-                    var fadeOutAnimation = new DoubleAnimation()
+                    fadeOutAnimation = new DoubleAnimation()
                     {
                         From = 1,
                         To = 0,
                         Duration = TimeSpan.FromMilliseconds(200)
                     };
-                    var moveX_enter = new DoubleAnimation()
+                    moveX_enter = new DoubleAnimation()
                     {
                         From = 0,
                         To = 150,
                         Duration = TimeSpan.FromMilliseconds(0)
                     };
-                    var moveY_enter = new DoubleAnimation()
+                    moveY_enter = new DoubleAnimation()
                     {
                         From = 0,
                         To = -220,
                         Duration = TimeSpan.FromMilliseconds(0)
                     };
-                    var moveX_leave = new DoubleAnimation()
+                    moveX_leave = new DoubleAnimation()
                     {
                         From = 150,
                         To = 0,
                         Duration = TimeSpan.FromMilliseconds(0)
                     };
-                    var moveY_leave = new DoubleAnimation()
+                    moveY_leave = new DoubleAnimation()
                     {
                         From = -220,
                         To = 0,
                         Duration = TimeSpan.FromMilliseconds(0)
                     };
-                    MouseEnter += (_s, _e) =>
-                    {
-                        #region exceptional visibility case              
-                        lbl_settings.Visibility = Visibility.Visible;
-                        lbl_change_device.Visibility = Visibility.Visible;
-                        lbl_CurrentTime.Visibility = Visibility.Visible;
-                        lbl_TimeLeft.Visibility = Visibility.Visible;
-                        PlayProgress.Visibility = Visibility.Visible;
-                        #endregion
-                        //Width = 950;
-                        TranslateTransform t1 = new TranslateTransform(), t2 = new TranslateTransform();
-                        AlbumImage.RenderTransform = t1;
-                        lbl_Track.RenderTransform = t2;
-                        //AlbumImage.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        t1.BeginAnimation(TranslateTransform.XProperty, slideAnimation_enter);
-                        t2.BeginAnimation(TranslateTransform.XProperty, moveX_enter);
-                        t2.BeginAnimation(TranslateTransform.YProperty, moveY_enter);
-                        lbl_Track.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        BackPath.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        PlayPath.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        NextPath.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        VolumePath.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        VolumeProgress.BeginAnimation(OpacityProperty, fadeInAnimation);
-
-                        lbl_settings.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        lbl_change_device.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        lbl_CurrentTime.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        lbl_TimeLeft.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        PlayProgress.BeginAnimation(OpacityProperty, fadeInAnimation);
-                    };
-                    MouseLeave += (_s, _e) =>
-                    {
-                        //Width = 800;
-                        TranslateTransform t1 = new TranslateTransform(), t2 = new TranslateTransform();
-                        AlbumImage.RenderTransform = t1;
-                        lbl_Track.RenderTransform = t2;
-                        //AlbumImage.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        t1.BeginAnimation(TranslateTransform.XProperty, slideAnimation_leave);
-                        t2.BeginAnimation(TranslateTransform.XProperty, moveX_leave);
-                        t2.BeginAnimation(TranslateTransform.YProperty, moveY_leave);
-                        lbl_Track.BeginAnimation(OpacityProperty, fadeInAnimation);
-                        BackPath.BeginAnimation(OpacityProperty, fadeOutAnimation);
-                        PlayPath.BeginAnimation(OpacityProperty, fadeOutAnimation);
-                        NextPath.BeginAnimation(OpacityProperty, fadeOutAnimation);
-                        VolumePath.BeginAnimation(OpacityProperty, fadeOutAnimation);
-                        VolumeProgress.BeginAnimation(OpacityProperty, fadeOutAnimation);
-
-                        lbl_settings.BeginAnimation(OpacityProperty, fadeOutAnimation);
-                        lbl_change_device.BeginAnimation(OpacityProperty, fadeOutAnimation);
-                        lbl_CurrentTime.BeginAnimation(OpacityProperty, fadeOutAnimation);
-                        lbl_TimeLeft.BeginAnimation(OpacityProperty, fadeOutAnimation);
-                        PlayProgress.BeginAnimation(OpacityProperty, fadeOutAnimation);
-                    };
+                    MouseEnter += OnMouseEnterEvent;
+                    MouseLeave += OnMouseLeaveEvent;
                 };
             }
             catch (Exception ex)
@@ -301,6 +259,77 @@ namespace SpotifyListener
                 System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
         }
+
+        private void OnMouseLeaveEvent(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+
+            //Width = 800;
+            TranslateTransform t1 = new TranslateTransform(), t2 = new TranslateTransform();
+            AlbumImage.RenderTransform = t1;
+            lbl_Track.RenderTransform = t2;
+            //AlbumImage.BeginAnimation(OpacityProperty, fadeInAnimation);
+            t1.BeginAnimation(TranslateTransform.XProperty, slideAnimation_leave);
+            t2.BeginAnimation(TranslateTransform.XProperty, moveX_leave);
+            t2.BeginAnimation(TranslateTransform.YProperty, moveY_leave);
+            lbl_Track.BeginAnimation(OpacityProperty, fadeInAnimation);
+            BackPath.BeginAnimation(OpacityProperty, fadeOutAnimation);
+            PlayPath.BeginAnimation(OpacityProperty, fadeOutAnimation);
+            NextPath.BeginAnimation(OpacityProperty, fadeOutAnimation);
+            VolumePath.BeginAnimation(OpacityProperty, fadeOutAnimation);
+            VolumeProgress.BeginAnimation(OpacityProperty, fadeOutAnimation);
+
+            lbl_settings.BeginAnimation(OpacityProperty, fadeOutAnimation);
+            lbl_change_device.BeginAnimation(OpacityProperty, fadeOutAnimation);
+            lbl_CurrentTime.BeginAnimation(OpacityProperty, fadeOutAnimation);
+            lbl_TimeLeft.BeginAnimation(OpacityProperty, fadeOutAnimation);
+            PlayProgress.BeginAnimation(OpacityProperty, fadeOutAnimation);
+            if (sender is Action action)
+            {
+                /*every completed event, count increased by 1 when all control transition are done, do action*/
+                int count = 0;
+                fadeOutAnimation.Completed += async (_0, _1) =>
+                {
+                    count += 1;
+                    if (count == 10)
+                    {
+                        await Task.Delay(500);
+                        action();
+                    }
+                };
+            }
+        }
+
+        private void OnMouseEnterEvent(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            #region exceptional visibility case              
+            lbl_settings.Visibility = Visibility.Visible;
+            lbl_change_device.Visibility = Visibility.Visible;
+            lbl_CurrentTime.Visibility = Visibility.Visible;
+            lbl_TimeLeft.Visibility = Visibility.Visible;
+            PlayProgress.Visibility = Visibility.Visible;
+            #endregion
+            //Width = 950;
+            TranslateTransform t1 = new TranslateTransform(), t2 = new TranslateTransform();
+            AlbumImage.RenderTransform = t1;
+            lbl_Track.RenderTransform = t2;
+            //AlbumImage.BeginAnimation(OpacityProperty, fadeInAnimation);
+            t1.BeginAnimation(TranslateTransform.XProperty, slideAnimation_enter);
+            t2.BeginAnimation(TranslateTransform.XProperty, moveX_enter);
+            t2.BeginAnimation(TranslateTransform.YProperty, moveY_enter);
+            lbl_Track.BeginAnimation(OpacityProperty, fadeInAnimation);
+            BackPath.BeginAnimation(OpacityProperty, fadeInAnimation);
+            PlayPath.BeginAnimation(OpacityProperty, fadeInAnimation);
+            NextPath.BeginAnimation(OpacityProperty, fadeInAnimation);
+            VolumePath.BeginAnimation(OpacityProperty, fadeInAnimation);
+            VolumeProgress.BeginAnimation(OpacityProperty, fadeInAnimation);
+
+            lbl_settings.BeginAnimation(OpacityProperty, fadeInAnimation);
+            lbl_change_device.BeginAnimation(OpacityProperty, fadeInAnimation);
+            lbl_CurrentTime.BeginAnimation(OpacityProperty, fadeInAnimation);
+            lbl_TimeLeft.BeginAnimation(OpacityProperty, fadeInAnimation);
+            PlayProgress.BeginAnimation(OpacityProperty, fadeInAnimation);
+        }
+
         private void ChromaTimer_Tick(object sender, EventArgs e)
         {
             try
@@ -490,9 +519,24 @@ namespace SpotifyListener
             player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue());
         }
 
-        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        private async void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             //new Settings().Show();
+            Action capture = () =>
+            {
+                var renderBitmap = new RenderTargetBitmap((int)this.Width, (int)this.Height, 96, 96, PixelFormats.Pbgra32);
+                renderBitmap.Render(this);
+                var pngImage = new PngBitmapEncoder();
+                pngImage.Frames.Add(BitmapFrame.Create(renderBitmap));
+                var fileName = Path.GetTempFileName().Replace("tmp", "png");
+                using (var fs = File.Create(fileName))
+                {
+                    pngImage.Save(fs);
+                }
+                Process.Start(fileName);
+            };
+            this.OnMouseLeaveEvent(capture, null);
+
         }
 
         private void MainWindowGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
