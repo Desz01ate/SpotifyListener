@@ -183,7 +183,7 @@ namespace SpotifyListener
         }
         public static Image Resize(this Image img, int outputWidth, int outputHeight)
         {
-
+            if (img.Width == outputWidth && img.Height == outputHeight) return img;
             Bitmap outputImage = null;
             Graphics graphics = null;
             try

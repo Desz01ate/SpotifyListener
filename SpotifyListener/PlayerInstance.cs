@@ -52,17 +52,6 @@ namespace SpotifyListener
             }
             private set
             {
-                if (value != IsPlaying)
-                {
-                    if (value)
-                    {
-                        OnResume(null, null);
-                    }
-                    else
-                    {
-                        OnPaused(null, null);
-                    }
-                }
                 _isPlaying = value;
             }
         }
@@ -158,7 +147,16 @@ namespace SpotifyListener
                 {
                     Track = currentTrack.Item.Name;
                     Album = currentTrack.Item.Album.Name;
-                    Artist = string.Join(",", currentTrack.Item.Artists.Select(x => x.Name));
+                    if (currentTrack.Item.Artists.Count() > 1)
+                    {
+                        var artistFeat = $@"{currentTrack.Item.Artists.First().Name} feat. ";
+                        artistFeat += string.Join(", ", currentTrack.Item.Artists.Skip(1).Select(x => x.Name));
+                        Artist = artistFeat;
+                    }
+                    else
+                    {
+                        Artist = currentTrack.Item.Artists.First().Name;
+                    }
 
                     if (currentTrack.Item.Album.Images.Count() > 0)
                     {

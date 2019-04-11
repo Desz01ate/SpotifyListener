@@ -65,6 +65,7 @@ namespace SpotifyListener
         {
             try
             {
+
                 ResizeMode = ResizeMode.CanMinimize;
                 //if (!Directory.Exists(Extension.ImageDirectory))
                 //    Directory.CreateDirectory(Extension.ImageDirectory);
@@ -76,7 +77,7 @@ namespace SpotifyListener
                     new Settings().ShowDialog();
                 }
                 InitializeComponent();
-
+                this.Visibility = Visibility.Hidden;
                 player = new Music(Properties.Settings.Default.AccessToken, Properties.Settings.Default.RefreshToken);
                 messagingAPI = new MessagingAPI("https://7d2d9000.ap.ngrok.io");
                 VolumePath.Fill = playColor;
@@ -100,14 +101,14 @@ namespace SpotifyListener
                 {
                     Dispatcher.InvokeAsync(UpdateUI);
                 };
-                player.OnResume += (s, e) =>
-                {
-                    Dispatcher.InvokeAsync(UpdateUI);
-                };
-                player.OnPaused += (s, e) =>
-                {
-                    Dispatcher.InvokeAsync(UpdateUI);
-                };
+                //player.OnResume += (s, e) =>
+                //{
+                //    Dispatcher.InvokeAsync(UpdateUI);
+                //};
+                //player.OnPaused += (s, e) =>
+                //{
+                //    Dispatcher.InvokeAsync(UpdateUI);
+                //};
 
                 ActiveDevice = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
                 InitializeDiscord(); //discord RPC api only work with x64 system
@@ -298,6 +299,7 @@ namespace SpotifyListener
             {
                 System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
+            this.Visibility = Visibility.Visible;
         }
 
         private void OnMouseLeaveEvent(object sender, System.Windows.Input.MouseEventArgs e)
@@ -419,17 +421,18 @@ namespace SpotifyListener
                 ActiveDevice = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
                 Task.Run(async delegate
                 {
-                    try
-                    {
-                        await player.GetAsync();
-                    }
-                    catch (HttpRequestException http_ex)
-                    {
-                        TrackDetailTimer.Stop();
-                        System.Windows.Forms.MessageBox.Show("Please connect to the internet, otherwise this application will not work.", "Internet connection required", MessageBoxButtons.OK);
-                        System.Windows.Application.Current.Shutdown();
+                    await player.GetAsync();
+                    //try
+                    //{
+                        
+                    //}
+                    //catch (HttpRequestException http_ex)
+                    //{
+                    //    TrackDetailTimer.Stop();
+                    //    //System.Windows.Forms.MessageBox.Show("Please connect to the internet, otherwise this application will not work.", "Internet connection required", MessageBoxButtons.OK);
+                    //    System.Windows.Application.Current.Shutdown();
 
-                    }
+                    //}
 
                 });
 
@@ -481,14 +484,16 @@ namespace SpotifyListener
         {
             try
             {
-                if (_backgroundApp == null && _backgroundDesktopPlaying == null && _backgroundDesktopPause == null)
-                {
+                if (_backgroundApp == null && _backgroundDesktopPlaying == null)
+                {// && _backgroundDesktopPause == null)
+
                     var backgroundImage = player.AlbumArtwork.Blur(Properties.Settings.Default.BlurRadial, this.Height / this.Width);
                     _backgroundApp = new ImageBrush(backgroundImage);
                     _backgroundApp.Opacity = 0.6;
+                    var highlightSize = (int)Math.Round(SystemParameters.PrimaryScreenHeight * 0.555);
                     Image applyOpc(Image i0, double d) => ImageProcessing.SetOpacity(i0, d, System.Drawing.Color.Black);
                     _backgroundDesktopPlaying = Wallpaper.GetBacgroundImageForTrack(
-                        player.AlbumArtwork,
+                        player.AlbumArtwork.Resize(highlightSize, highlightSize),
                         backgroundImage.ToImage(),
                         SystemParameters.PrimaryScreenWidth,
                         SystemParameters.PrimaryScreenHeight,
@@ -499,28 +504,29 @@ namespace SpotifyListener
                         player.Artist,
                         applyOpc,
                         0.6f);
-                    _backgroundDesktopPause = Wallpaper.GetBacgroundImageForTrack(
-                        player.AlbumArtwork,
-                        backgroundImage.ToImage(),
-                        System.Windows.SystemParameters.PrimaryScreenWidth,
-                        System.Windows.SystemParameters.PrimaryScreenHeight,
-                        this.FontFamily.ToString(),
-                        20.0f,
-                        player.Track,
-                        player.Album,
-                        player.Artist,
-                        applyOpc,
-                        0.9f);
+                    //_backgroundDesktopPause = Wallpaper.GetBacgroundImageForTrack(
+                    //    player.AlbumArtwork,
+                    //    backgroundImage.ToImage(),
+                    //    System.Windows.SystemParameters.PrimaryScreenWidth,
+                    //    System.Windows.SystemParameters.PrimaryScreenHeight,
+                    //    this.FontFamily.ToString(),
+                    //    20.0f,
+                    //    player.Track,
+                    //    player.Album,
+                    //    player.Artist,
+                    //    applyOpc,
+                    //    0.9f);
                 }
                 AlbumImage.Source = (player.AlbumArtwork as Bitmap).ToBitmapImage();
                 this.Icon = AlbumImage.Source;
                 this.Background = _backgroundApp;//player.IsPlaying ? _backgroundAppPlaying : _backgroundAppPause;
-                //Background.Opacity = 0.6;
+                                                 //Background.Opacity = 0.6;
                 #region set desktop background
                 //don't need to run on UI thread, it's has nothing to do with the UI!
                 Task.Run(() =>
                 {
-                    Wallpaper.Set(player.IsPlaying ? _backgroundDesktopPlaying : _backgroundDesktopPause, Wallpaper.Style.Centered);
+                    //Wallpaper.Set(player.IsPlaying ? _backgroundDesktopPlaying : _backgroundDesktopPause, Wallpaper.Style.Centered);
+                    Wallpaper.Set(_backgroundDesktopPlaying, Wallpaper.Style.Centered);
                 });
                 #endregion
             }
@@ -710,6 +716,7 @@ namespace SpotifyListener
         }
         protected override void OnClosing(CancelEventArgs e)
         {
+            //keep this running on main thread, otherwise it will terminated before the task is done.
             Wallpaper.Set(_backgroundImage, Wallpaper.Style.Stretched, _backgroundImagePath);
             base.OnClosing(e);
         }
