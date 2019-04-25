@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -15,10 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using LineAPI;
-using Component;
-using System.Dynamic;
-using System.Windows.Media.Imaging;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
 
@@ -37,7 +32,6 @@ namespace SpotifyListener
         private static MMDevice ActiveDevice;
         private static ChromaWrapper Chroma = ChromaWrapper.GetInstance;
         private System.Drawing.Color borderColor = System.Drawing.Color.White;
-        private MessagingAPI messagingAPI;
         private SolidColorBrush playColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
         private SolidColorBrush pauseColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#FF5a5a"));
         private byte previousVolume = 0;
@@ -54,7 +48,6 @@ namespace SpotifyListener
         DoubleAnimation moveY_leave;
         Image _backgroundImage = null;
         Image _backgroundDesktopPlaying = null;
-        Image _backgroundDesktopPause = null;
         ImageBrush _backgroundApp = null;
         string _backgroundImagePath = string.Empty;
 
@@ -79,12 +72,10 @@ namespace SpotifyListener
                 InitializeComponent();
                 this.Visibility = Visibility.Hidden;
                 player = new Music(Properties.Settings.Default.AccessToken, Properties.Settings.Default.RefreshToken);
-                messagingAPI = new MessagingAPI("https://7d2d9000.ap.ngrok.io");
                 VolumePath.Fill = playColor;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
                 player.OnTrackChanged += delegate
                 {
-                    _backgroundDesktopPause = null;
                     _backgroundDesktopPlaying = null;
                     _backgroundApp = null;
                     Dispatcher.InvokeAsync(UpdateUI);
@@ -138,7 +129,7 @@ namespace SpotifyListener
                     }
                     File.WriteAllText("url.json", memoizedResult);
                 };
-                KeyDown += async (s, e) =>
+                KeyDown += (s, e) =>
                 {
                     switch (e.Key)
                     {
@@ -163,8 +154,7 @@ namespace SpotifyListener
                             player.Position_ms += 15;
                             break;
                         case Key.Space:
-                            PlayPath_Click(null, null);
-                            //player.PlayerEngine.PlayPause();
+                            player.PlayPause();
                             break;
                         /*
                     case ConsoleKey.H:
@@ -173,7 +163,7 @@ namespace SpotifyListener
                         break;
                         */
                         case Key.R:
-                            Process.Start("https://github.com/Desz01ate/iTunesListenerX");
+                            Process.Start("https://github.com/Desz01ate/SpotifyListener");
                             break;
                         case Key.O:
                             Process.Start(player.URL);
@@ -193,7 +183,7 @@ namespace SpotifyListener
                                 player.PlayPause();
                                 break;
                             case MouseButton.Right:
-                                Task.Run(async () =>
+                                Task.Run(() =>
                                 {
                                     try
                                     {
@@ -406,7 +396,7 @@ namespace SpotifyListener
                 Chroma.HeadsetGrid.SetPeakVolume(Chroma.VolumeColor);
                 Chroma.Apply();
             }
-            catch (Exception chromaEx)
+            catch
             {
                 Chroma.SDKDisable();
             }
@@ -424,7 +414,7 @@ namespace SpotifyListener
                     await player.GetAsync();
                     //try
                     //{
-                        
+
                     //}
                     //catch (HttpRequestException http_ex)
                     //{
@@ -437,7 +427,7 @@ namespace SpotifyListener
                 });
 
                 if (Properties.Settings.Default.DiscordRichPresenceEnable)
-                    UpdatePresenceAsync();
+                    UpdatePresence();
                 lbl_CurrentTime.Content = player.Position_ms.ToMinutes();
                 lbl_TimeLeft.Content = $"-{Extension.ToMinutes(player.Duration_ms - player.Position_ms)}";
                 PlayProgress.Value = player.Position_ms;
@@ -450,34 +440,27 @@ namespace SpotifyListener
             }
         }
 
-        private async Task UpdatePresenceAsync()
+        private void UpdatePresence()
         {
-            try
+            var presence = new DiscordRPC.RichPresence
             {
-                var presence = new DiscordRPC.RichPresence
-                {
-                    largeImageKey = "spotify",
-                    //smallImageKey = "small"
-                };//"itunes_logo_big" };
-                if (!player.IsPlaying)
-                {
-                    presence.details = Extension.TruncateString(Extension.RenderString(Properties.Settings.Default.DiscordPauseDetail, player));
-                    presence.state = Extension.TruncateString(Extension.RenderString(Properties.Settings.Default.DiscordPauseState, player));
-                }
-                else
-                {
-                    presence.details = Extension.TruncateString(Extension.RenderString(Properties.Settings.Default.DiscordPlayDetail, player));
-                    presence.state = Extension.TruncateString(Extension.RenderString(Properties.Settings.Default.DiscordPlayState, player));
-                    presence.startTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds() - player.Position_ms;
-                    presence.endTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds() + ((player.Duration_ms - player.Position_ms) / 1000);
-                }
-                presence.largeImageText = player.URL;
-                DiscordRPC.UpdatePresence(presence);
-            }
-            catch
+                largeImageKey = "spotify",
+                //smallImageKey = "small"
+            };//"itunes_logo_big" };
+            if (!player.IsPlaying)
             {
-
+                presence.details = Extension.TruncateString(Extension.RenderString(Properties.Settings.Default.DiscordPauseDetail, player));
+                presence.state = Extension.TruncateString(Extension.RenderString(Properties.Settings.Default.DiscordPauseState, player));
             }
+            else
+            {
+                presence.details = Extension.TruncateString(Extension.RenderString(Properties.Settings.Default.DiscordPlayDetail, player));
+                presence.state = Extension.TruncateString(Extension.RenderString(Properties.Settings.Default.DiscordPlayState, player));
+                presence.startTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds() - player.Position_ms;
+                presence.endTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds() + ((player.Duration_ms - player.Position_ms) / 1000);
+            }
+            presence.largeImageText = player.URL;
+            DiscordRPC.UpdatePresence(presence);
         }
 
         private void UpdateUI()
@@ -583,10 +566,10 @@ namespace SpotifyListener
         }
         private void PlayProgress_Click(object sender, EventArgs e)
         {
-            player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue());
+            player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue()).RunSynchronously();
         }
 
-        private async void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var app_id = "139971873511766"; //StatusReporter
             var href = player.URL;
@@ -647,7 +630,7 @@ namespace SpotifyListener
                         });
                         break;
                     case Key.O:
-                        Task.Run(async () =>
+                        Task.Run(() =>
                         {
                             try
                             {

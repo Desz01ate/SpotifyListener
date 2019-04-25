@@ -71,8 +71,6 @@ namespace SpotifyListener
 
         public event EventHandler OnTrackChanged;
         public event EventHandler OnDeviceChanged;
-        public event EventHandler OnResume;
-        public event EventHandler OnPaused;
 
         public Music(string accessToken, string refreshToken)
         {
@@ -244,7 +242,7 @@ namespace SpotifyListener
 
         public void SetPosition(int asMillisecond)
         {
-            SetPositionAsync(asMillisecond);
+            SetPositionAsync(asMillisecond).RunSynchronously();
         }
         public async Task SetPositionAsync(int asMillisecond)
         {
