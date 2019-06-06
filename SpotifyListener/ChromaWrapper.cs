@@ -88,7 +88,7 @@ namespace SpotifyListener
             /// </summary>
             /// <param name="player">player instance</param>
             /// <param name="density">density for adaptive color</param>
-            public virtual void LoadColor(IChromaRender player,bool isPlaying, double density)
+            public virtual void LoadColor(IChromaRender player, bool isPlaying, double density)
             {
                 if (Properties.Settings.Default.AlbumCoverRenderEnable)
                 {
@@ -197,22 +197,22 @@ new ColoreColor(128,0  ,128),
             public static void SetChromaPeakVolume(this ref MouseCustom MouseGrid, float volume)
             {
                 var absolutePosition = Math.Round((volume * Constant.LeftStrip.Length), 0);
-                var currentDensity = (double)(absolutePosition) / (double)Constant.LeftStrip.Length;
+                //var currentDensity = (double)(absolutePosition) / (double)Constant.LeftStrip.Length;
                 for (var i = 0; i < absolutePosition; i++)
                 {
-                    var color = colors[i];//.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
+                    var color = colors[i].ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
                     if (i > 0)
-                        MouseGrid[GridLed.Logo] = ColoreColor.White;//.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length); ;
+                        MouseGrid[GridLed.Logo] = ColoreColor.White.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length); ;
                     if (i == Constant.LeftStrip.Length - 1)
-                        MouseGrid[GridLed.ScrollWheel] = ColoreColor.White;//color;//.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length); ;
+                        MouseGrid[GridLed.ScrollWheel] = ColoreColor.White.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length); ;
                     MouseGrid[Constant.RightStrip_Reverse[i]] = color;
                     MouseGrid[Constant.LeftStrip_Reverse[i]] = color;
                 }
                 var speed = (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
                 changeRate += speed;//
-                if (changeRate >= 20)
+                if (changeRate >= 44)
                 {
-                    colors = colors.SubArray(1, colors.Length - 1).Add(colors[0]);
+                    colors = colors.Slice(1, colors.Length - 1).Add(colors[0]);
                     changeRate = 0;
                 }
 
@@ -232,7 +232,7 @@ new ColoreColor(128,0  ,128),
                 for (var i = 0; i < absolutePosition; i++)
                 {
                     var index = (int)(((float)i / (float)Constant.FunctionKeys.Length) * 7);
-                    var color = colors[index];
+                    var color = colors[index].ChangeColorDensity((double)(i + 1) / (double)Constant.FunctionKeys.Length);
                     KeyboardGrid[Constant.FunctionKeys[i]] = color;// VolumeColor;
                 }
             }

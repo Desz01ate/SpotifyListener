@@ -442,14 +442,18 @@ namespace SpotifyListener
             }
             return Success;
         }
-        public static Image GetBacgroundImageForTrack(Image highlightImage, Image backgroundimage, double width, double height, string fontFamily, float fontSize, string track, string album, string artist, Func<Image, double, Image> backgroundApplyFunc = null, float backgroundApplyOpacity = 1)
+        public static Image GetBacgroundImageForTrack(Image highlightImage, Image backgroundimage, double width, double height, string fontFamily, float fontSize, string track, string album, string artist, Func<Image, Image> backgroundApplyFunction = null, Func<Image, Image> highlightApplyFunction = null)
         {
             var image = backgroundimage;
             var screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
             var screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
-            if (backgroundApplyFunc != null)
+            if (backgroundApplyFunction != null)
             {
-                image = backgroundApplyFunc(image, backgroundApplyOpacity);//image.SetOpacity(0.6f);
+                image = backgroundApplyFunction(image);//image.SetOpacity(0.6f);
+            }
+            if (highlightApplyFunction != null)
+            {
+                highlightImage = highlightApplyFunction(highlightImage);
             }
 
             image = image.Resize((int)screenWidth, (int)screenHeight);
@@ -497,7 +501,7 @@ namespace GaussianBlur
         {
             var rct = new Rectangle(0, 0, image.Width, image.Height);
             var source = new int[rct.Width * rct.Height];
-            var cloneImage = (Bitmap)image.Clone();
+            var cloneImage = image.Clone() as Bitmap;
             var bits = cloneImage.LockBits(rct, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
             Marshal.Copy(bits.Scan0, source, 0, source.Length);
             cloneImage.UnlockBits(bits);

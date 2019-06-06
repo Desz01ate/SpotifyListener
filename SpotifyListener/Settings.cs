@@ -79,7 +79,7 @@ namespace SpotifyListener
             Properties.Settings.Default.DiscordRichPresenceEnable = DiscordRichPresenceEnable.Checked;
             Properties.Settings.Default.ReverseLEDRender = ReverseLEDRender.Checked;
             Properties.Settings.Default.Density = ColorDensity.Value;
-            Properties.Settings.Default.RenderFPS = SafeConvertRenderFps(RenderFPS.Text);
+
             Properties.Settings.Default.NetworkEnable = NetworkEnable.Checked;
             Properties.Settings.Default.AlbumColorMode = (byte)AlbumColorMode.SelectedIndex;
             Properties.Settings.Default.BlurRadial = trackbar_BlurRadial.Value;
@@ -88,9 +88,15 @@ namespace SpotifyListener
             if (Properties.Settings.Default.RefreshToken != RefreshTokenTextbox.Text)
             {
                 Properties.Settings.Default.RefreshToken = RefreshTokenTextbox.Text;
-                Extension.Restart();
+                MainWindow.Context.Restart();
             }
-
+            var safeConvertFps = SafeConvertRenderFps(RenderFPS.Text);
+            if (Properties.Settings.Default.RenderFPS != safeConvertFps)
+            {
+                Properties.Settings.Default.RenderFPS = safeConvertFps;
+                Properties.Settings.Default.Save();
+                MainWindow.Context.Restart();
+            }
             Dispose();
         }
 
@@ -122,7 +128,7 @@ namespace SpotifyListener
             {
                 Properties.Settings.Default.Reset();
                 Properties.Settings.Default.Save();
-                Extension.Restart();
+                MainWindow.Context.Restart();
             }
         }
 
@@ -156,6 +162,7 @@ namespace SpotifyListener
             RenderPeakVolumeEnable = false;
             ChromaPeakEnable = false;
             RenderPeakVolumeSymmetricEnable = false;
+            RenderFPS.Enabled = true;
             var selectedIndex = ((ComboBox)sender).SelectedIndex;
             /*
                Custom - Progression + Volume
@@ -164,6 +171,7 @@ namespace SpotifyListener
                Album Cover - Progression + Volume
                Album Cover - Peak Volume Meter
                Album Cover - Symmetric Peak Volume Meter
+               Fixed - Chroma Peak Meter
             */
             switch (selectedIndex)
             {
@@ -198,6 +206,8 @@ namespace SpotifyListener
                     RenderPeakVolumeEnable = true;
                     RenderPeakVolumeSymmetricEnable = false;
                     ChromaPeakEnable = true;
+                    RenderFPS.Enabled = false;
+                    RenderFPS.Text = "30";
                     break;
             }
         }

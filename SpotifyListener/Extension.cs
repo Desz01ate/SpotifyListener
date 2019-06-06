@@ -111,17 +111,17 @@ namespace SpotifyListener
             }
             return -1;
         }
-        public static void Restart()
+        public static void Restart(this Window context)
         {
+            context.Close();
             Process.Start(System.AppDomain.CurrentDomain.BaseDirectory + "\\SpotifyListener.exe");
-            Process.GetCurrentProcess().Kill();
         }
+
         public static void BringToFront(this FrameworkElement element)
         {
             if (element == null) return;
 
-            Panel parent = element.Parent as Panel;
-            if (parent == null) return;
+            if (!(element.Parent is Panel parent)) return;
 
             var maxZ = parent.Children.OfType<UIElement>()
               .Where(x => x != element)
@@ -129,17 +129,13 @@ namespace SpotifyListener
               .Max();
             Panel.SetZIndex(element, maxZ + 1);
         }
-        public static T[] SubArray<T>(this T[] baseArray, int startIndex, int count)
-        {
-            T[] result = new T[count];
-            Array.Copy(baseArray, startIndex, result, 0, count);
-            return result;
-        }
+        public static T[] Slice<T>(this ReadOnlySpan<T> span, int startIndex, int length) => span.Slice(startIndex, length).ToArray();
+        public static T[] Slice<T>(this T[] array, int startIndex, int length) => Slice<T>((ReadOnlySpan<T>)array, startIndex, length);
         public static T[] Add<T>(this T[] baseArray, T element)
         {
-            List<T> result = new List<T>(baseArray);
-            result.Add(element);
-            return result.ToArray();
+            Array.Resize(ref baseArray, baseArray.Length + 1);
+            baseArray[baseArray.Length - 1] = element;
+            return baseArray;
         }
     }
 }

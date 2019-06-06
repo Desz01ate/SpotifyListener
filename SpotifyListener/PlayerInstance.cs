@@ -131,8 +131,6 @@ namespace SpotifyListener
                 {
                     Volume = ActiveDevice.VolumePercent;
                 }
-
-
                 Duration_ms = currentTrack.Item.DurationMs;
                 Position_ms = currentTrack.ProgressMs;
 
@@ -267,6 +265,10 @@ namespace SpotifyListener
         public async Task SetActiveDeviceAsync(string id)
         {
             await client.ResumePlaybackAsync(id, "", null, "", Position_ms);
+        }
+        public void ClearImage()
+        {
+            this.AlbumArtwork = null;
         }
     }
 }

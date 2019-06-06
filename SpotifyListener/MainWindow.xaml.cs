@@ -54,13 +54,13 @@ namespace SpotifyListener
         DoubleAnimation moveY_leave;
         Image _backgroundImage = null;
         Image _backgroundDesktopPlaying = null;
-        Image _backgroundDesktopPause = null;
         ImageBrush _backgroundApp = null;
         string _backgroundImagePath = string.Empty;
 
 
         private List<System.Windows.Controls.Button> setDeviceButtons = new List<System.Windows.Controls.Button>();
 
+        public static MainWindow Context { get; private set; }
         public MainWindow()
         {
             try
@@ -84,7 +84,6 @@ namespace SpotifyListener
                 VolumeProgress.Foreground = lbl_Album.Foreground;
                 player.OnTrackChanged += delegate
                 {
-                    _backgroundDesktopPause = null;
                     _backgroundDesktopPlaying = null;
                     _backgroundApp = null;
                     Dispatcher.InvokeAsync(UpdateUI);
@@ -113,7 +112,7 @@ namespace SpotifyListener
                 ActiveDevice = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
                 InitializeDiscord(); //discord RPC api only work with x64 system
                                      //
-                TrackDetailTimer.Interval = 500;
+                TrackDetailTimer.Interval = 1000;
                 TrackDetailTimer.Tick += TrackDetailTimer_Tick;
                 TrackDetailTimer.Start();
 
@@ -138,49 +137,7 @@ namespace SpotifyListener
                     }
                     File.WriteAllText("url.json", memoizedResult);
                 };
-                KeyDown += async (s, e) =>
-                {
-                    switch (e.Key)
-                    {
-                        case Key.A:
-                            BackPath_Click(null, null);
-                            //player.PlayerEngine.PreviousTrack();
-                            break;
-                        case Key.D:
-                            NextPath_Click(null, null);
-                            //player.PlayerEngine.NextTrack();
-                            break;
-                        case Key.W:
-                            player.Volume += 10;
-                            break;
-                        case Key.S:
-                            player.Volume -= 10;
-                            break;
-                        case Key.Q:
-                            player.Position_ms -= 15;
-                            break;
-                        case Key.E:
-                            player.Position_ms += 15;
-                            break;
-                        case Key.Space:
-                            PlayPath_Click(null, null);
-                            //player.PlayerEngine.PlayPause();
-                            break;
-                        /*
-                    case ConsoleKey.H:
-                        MainEvent.Reset();
-                        ShowHelp();
-                        break;
-                        */
-                        case Key.R:
-                            Process.Start("https://github.com/Desz01ate/iTunesListenerX");
-                            break;
-                        case Key.O:
-                            Process.Start(player.URL);
-                            break;
-
-                    }
-                };
+                KeyDown += MainWindowGrid_PreviewKeyDown;
                 Loaded += (s, e) =>
                 {
                     AlbumImage.BringToFront();
@@ -300,6 +257,7 @@ namespace SpotifyListener
                 System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
             this.Visibility = Visibility.Visible;
+            Context = this;
         }
 
         private void OnMouseLeaveEvent(object sender, System.Windows.Input.MouseEventArgs e)
@@ -406,7 +364,7 @@ namespace SpotifyListener
                 Chroma.HeadsetGrid.SetPeakVolume(Chroma.VolumeColor);
                 Chroma.Apply();
             }
-            catch (Exception chromaEx)
+            catch
             {
                 Chroma.SDKDisable();
             }
@@ -424,7 +382,7 @@ namespace SpotifyListener
                     await player.GetAsync();
                     //try
                     //{
-                        
+
                     //}
                     //catch (HttpRequestException http_ex)
                     //{
@@ -485,13 +443,12 @@ namespace SpotifyListener
             try
             {
                 if (_backgroundApp == null && _backgroundDesktopPlaying == null)
-                {// && _backgroundDesktopPause == null)
-
+                {
                     var backgroundImage = player.AlbumArtwork.Blur(Properties.Settings.Default.BlurRadial, this.Height / this.Width);
                     _backgroundApp = new ImageBrush(backgroundImage);
                     _backgroundApp.Opacity = 0.6;
                     var highlightSize = (int)Math.Round(SystemParameters.PrimaryScreenHeight * 0.555);
-                    Image applyOpc(Image i0, double d) => ImageProcessing.SetOpacity(i0, d, System.Drawing.Color.Black);
+                    Image applyOpacity(Image i0) => ImageProcessing.SetOpacity(i0, 0.6f, System.Drawing.Color.Black);
                     _backgroundDesktopPlaying = Wallpaper.GetBacgroundImageForTrack(
                         player.AlbumArtwork.Resize(highlightSize, highlightSize),
                         backgroundImage.ToImage(),
@@ -502,8 +459,7 @@ namespace SpotifyListener
                         player.Track,
                         player.Album,
                         player.Artist,
-                        applyOpc,
-                        0.6f);
+                        applyOpacity);
                     //_backgroundDesktopPause = Wallpaper.GetBacgroundImageForTrack(
                     //    player.AlbumArtwork,
                     //    backgroundImage.ToImage(),
@@ -522,7 +478,7 @@ namespace SpotifyListener
                 this.Background = _backgroundApp;//player.IsPlaying ? _backgroundAppPlaying : _backgroundAppPause;
                                                  //Background.Opacity = 0.6;
                 #region set desktop background
-                //don't need to run on UI thread, it's has nothing to do with the UI!
+                //don't need to run on UI thread, it has nothing to do with the UI!
                 Task.Run(() =>
                 {
                     //Wallpaper.Set(player.IsPlaying ? _backgroundDesktopPlaying : _backgroundDesktopPause, Wallpaper.Style.Centered);
@@ -586,7 +542,11 @@ namespace SpotifyListener
             player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue());
         }
 
-        private async void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+
+        }
+        private void FacebookShare()
         {
             var app_id = "139971873511766"; //StatusReporter
             var href = player.URL;
@@ -596,7 +556,6 @@ namespace SpotifyListener
             var requestText = $"https://www.facebook.com/dialog/share?app_id={app_id}&text=test&display=page&href={href}&redirect_uri={redirect_uri}&hashtag={hashtag}";
             Process.Start(requestText);
         }
-
         private void MainWindowGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             try
@@ -605,11 +564,9 @@ namespace SpotifyListener
                 {
                     case Key.A:
                         BackPath_Click(null, null);
-                        //player.PlayerEngine.PreviousTrack();
                         break;
                     case Key.D:
                         NextPath_Click(null, null);
-                        //player.PlayerEngine.NextTrack();
                         break;
                     case Key.W:
                         player.Volume += 10;
@@ -625,14 +582,10 @@ namespace SpotifyListener
                         break;
                     case Key.Space:
                         PlayPath_Click(null, null);
-                        //player.PlayerEngine.PlayPause();
                         break;
-                    /*
-                case ConsoleKey.H:
-                    MainEvent.Reset();
-                    ShowHelp();
-                    break;
-                    */
+                    case Key.F:
+                        FacebookShare();
+                        break;
                     case Key.R:
                         Task.Run(() =>
                         {
@@ -647,7 +600,7 @@ namespace SpotifyListener
                         });
                         break;
                     case Key.O:
-                        Task.Run(async () =>
+                        Task.Run(() =>
                         {
                             try
                             {
