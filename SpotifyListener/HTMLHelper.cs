@@ -147,7 +147,7 @@ namespace SpotifyListener
                 return Image.FromStream(result);
                 //can't release this stream manual, causing another GDI+ processing to be error. Let's the GC handle this alone
             }
-            catch (Exception ex)
+            catch
             {
                 var r = new Random();
                 var bitmap = new Bitmap(1, 1);
@@ -171,7 +171,7 @@ namespace SpotifyListener
                 return image;
                 //can't release this stream manual, causing another GDI+ processing to be error. Let's the GC handle this alone
             }
-            catch (Exception ex)
+            catch 
             {
                 var r = new Random();
                 var bitmap = new Bitmap(1, 1);

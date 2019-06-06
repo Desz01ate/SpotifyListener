@@ -195,7 +195,7 @@ namespace SpotifyListener
 
                 return outputImage;
             }
-            catch (Exception ex)
+            catch 
             {
                 return img;
             }
@@ -429,7 +429,7 @@ namespace SpotifyListener
                 Success = true;
 
             }
-            catch (Exception ex)
+            catch
             {
                 //ex.HandleException();
             }
