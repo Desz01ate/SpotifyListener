@@ -54,6 +54,8 @@
             this.NetworkEnable = new System.Windows.Forms.CheckBox();
             this.WebServiceListeningEnable = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.trackbar_VolumeScale = new System.Windows.Forms.TrackBar();
             this.label13 = new System.Windows.Forms.Label();
             this.AlbumColorMode = new System.Windows.Forms.ComboBox();
             this.label12 = new System.Windows.Forms.Label();
@@ -68,15 +70,14 @@
             this.ReverseLEDRender = new System.Windows.Forms.CheckBox();
             this.ColorSettingsButton = new System.Windows.Forms.Button();
             this.ChromaSDKEnable = new System.Windows.Forms.CheckBox();
-            this.trackbar_VolumeScale = new System.Windows.Forms.TrackBar();
-            this.label15 = new System.Windows.Forms.Label();
+            this.DisableDesktop = new System.Windows.Forms.CheckBox();
             this.SpotifyGroupBox.SuspendLayout();
             this.DiscordGroupBox.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_BlurRadial)).BeginInit();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ColorDensity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ColorDensity)).BeginInit();
             this.SuspendLayout();
             // 
             // SpotifyGroupBox
@@ -278,6 +279,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.DisableDesktop);
             this.groupBox3.Controls.Add(this.label14);
             this.groupBox3.Controls.Add(this.trackbar_BlurRadial);
             this.groupBox3.Controls.Add(this.NetworkEnable);
@@ -292,7 +294,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(9, 60);
+            this.label14.Location = new System.Drawing.Point(3, 114);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(125, 13);
             this.label14.TabIndex = 3;
@@ -300,7 +302,7 @@
             // 
             // trackbar_BlurRadial
             // 
-            this.trackbar_BlurRadial.Location = new System.Drawing.Point(140, 60);
+            this.trackbar_BlurRadial.Location = new System.Drawing.Point(134, 114);
             this.trackbar_BlurRadial.Minimum = 1;
             this.trackbar_BlurRadial.Name = "trackbar_BlurRadial";
             this.trackbar_BlurRadial.Size = new System.Drawing.Size(355, 45);
@@ -317,6 +319,7 @@
             this.NetworkEnable.TabIndex = 1;
             this.NetworkEnable.Text = "Allow Application To Use Network";
             this.NetworkEnable.UseVisualStyleBackColor = true;
+            this.NetworkEnable.Visible = false;
             this.NetworkEnable.CheckedChanged += new System.EventHandler(this.NetworkEnable_CheckedChanged);
             // 
             // WebServiceListeningEnable
@@ -354,6 +357,24 @@
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Razer Chroma SDK";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(6, 304);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(78, 13);
+            this.label15.TabIndex = 27;
+            this.label15.Text = "Volume Scale :";
+            // 
+            // trackbar_VolumeScale
+            // 
+            this.trackbar_VolumeScale.Location = new System.Drawing.Point(87, 304);
+            this.trackbar_VolumeScale.Minimum = 1;
+            this.trackbar_VolumeScale.Name = "trackbar_VolumeScale";
+            this.trackbar_VolumeScale.Size = new System.Drawing.Size(164, 45);
+            this.trackbar_VolumeScale.TabIndex = 26;
+            this.trackbar_VolumeScale.Value = 1;
             // 
             // label13
             // 
@@ -499,23 +520,15 @@
             this.ChromaSDKEnable.Text = "Enable Razer Chroma SDK";
             this.ChromaSDKEnable.UseVisualStyleBackColor = true;
             // 
-            // trackbar_VolumeScale
+            // DynamicDesktop
             // 
-            this.trackbar_VolumeScale.Location = new System.Drawing.Point(87, 304);
-            this.trackbar_VolumeScale.Minimum = 1;
-            this.trackbar_VolumeScale.Name = "trackbar_VolumeScale";
-            this.trackbar_VolumeScale.Size = new System.Drawing.Size(164, 45);
-            this.trackbar_VolumeScale.TabIndex = 26;
-            this.trackbar_VolumeScale.Value = 1;
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(6, 304);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(78, 13);
-            this.label15.TabIndex = 27;
-            this.label15.Text = "Volume Scale :";
+            this.DisableDesktop.AutoSize = true;
+            this.DisableDesktop.Location = new System.Drawing.Point(6, 59);
+            this.DisableDesktop.Name = "DynamicDesktop";
+            this.DisableDesktop.Size = new System.Drawing.Size(211, 17);
+            this.DisableDesktop.TabIndex = 4;
+            this.DisableDesktop.Text = "Disable track background on minimized";
+            this.DisableDesktop.UseVisualStyleBackColor = true;
             // 
             // Settings
             // 
@@ -542,8 +555,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_BlurRadial)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ColorDensity)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ColorDensity)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -592,5 +605,6 @@
         private System.Windows.Forms.TrackBar trackbar_BlurRadial;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TrackBar trackbar_VolumeScale;
+        private System.Windows.Forms.CheckBox DisableDesktop;
     }
 }

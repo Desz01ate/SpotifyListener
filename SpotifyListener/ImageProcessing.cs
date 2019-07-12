@@ -195,7 +195,7 @@ namespace SpotifyListener
 
                 return outputImage;
             }
-            catch 
+            catch
             {
                 return img;
             }
@@ -355,15 +355,38 @@ namespace SpotifyListener
             Centered,
             Stretched
         }
-
+        string OriginalBackgroundImagePath { get; }
+        public Image OriginalBackgroundImage { get; }
+        public Image TrackImage { get; private set; }
         [DllImport("user32.dll")]
         public static extern Int32 SystemParametersInfo(UInt32 action, UInt32 uParam, String vParam, UInt32 winIni);
 
         public static readonly UInt32 SPI_SETDESKWALLPAPER = 0x14;
         public static readonly UInt32 SPIF_UPDATEINIFILE = 0x01;
         public static readonly UInt32 SPIF_SENDWININICHANGE = 0x02;
-
-        public static bool Set(string filePath, Style style)
+        public Wallpaper() { }
+        public Wallpaper(string backgroundImagePath)
+        {
+            OriginalBackgroundImage = Image.FromFile(backgroundImagePath);
+            OriginalBackgroundImagePath = backgroundImagePath;
+        }
+        public void Enable()
+        {
+            Set(TrackImage, Wallpaper.Style.Stretched);
+        }
+        public void DisableTemporary()
+        {
+            Set(OriginalBackgroundImage, Wallpaper.Style.Stretched);
+        }
+        public void Disable()
+        {
+            Set(OriginalBackgroundImage, Wallpaper.Style.Stretched, OriginalBackgroundImagePath);
+        }
+        //public void SetTrackImage(Image image)
+        //{
+        //    TrackImage = image;
+        //}
+        private bool Set(string filePath, Style style)
         {
             bool Success = false;
             try
@@ -381,8 +404,7 @@ namespace SpotifyListener
             }
             return Success;
         }
-
-        public static bool Set(Image image, Style style, string path = "")
+        private bool Set(Image image, Style style, string path = "")
         {
             bool Success = false;
             string TempPath = Path.Combine(Path.GetTempPath(), "wallpaper.bmp");
@@ -442,7 +464,7 @@ namespace SpotifyListener
             }
             return Success;
         }
-        public static Image GetBacgroundImageForTrack(Image highlightImage, Image backgroundimage, double width, double height, string fontFamily, float fontSize, string track, string album, string artist, Func<Image, Image> backgroundApplyFunction = null, Func<Image, Image> highlightApplyFunction = null)
+        public void CalculateBackgroundImage(Image highlightImage, Image backgroundimage, double width, double height, string fontFamily, float fontSize, string track, string album, string artist, Func<Image, Image> backgroundApplyFunction = null, Func<Image, Image> highlightApplyFunction = null)
         {
             var image = backgroundimage;
             var screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
@@ -473,7 +495,7 @@ namespace SpotifyListener
                 g.DrawString(album, font, Brushes.White, (int)((screenWidth - albumMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.15));
                 g.DrawString(artist, font, Brushes.White, (int)((screenWidth - artistMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.2));
             }
-            return image;
+            TrackImage = image;
         }
     }
 }
