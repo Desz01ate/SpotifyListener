@@ -36,6 +36,7 @@ namespace SpotifyListener
             RenderModeCombobox.SelectedIndex = Adaptive ? 1 : 0;
 
             RefreshTokenTextbox.Text = Properties.Settings.Default.RefreshToken;
+            RefreshTokenTextbox.DoubleClick += (s, e) => Clipboard.SetText(Properties.Settings.Default.RefreshToken);
             AccessTokenTextBox.Text = Properties.Settings.Default.AccessToken;
 
             DiscordPlayDetail.Text = Properties.Settings.Default.DiscordPlayDetail;
@@ -55,6 +56,9 @@ namespace SpotifyListener
             NetworkEnable_CheckedChanged(NetworkEnable, EventArgs.Empty);
             trackbar_BlurRadial.Value = Properties.Settings.Default.BlurRadial;
             trackbar_VolumeScale.Value = Properties.Settings.Default.VolumeScale;
+            DisableDesktop.Checked = Properties.Settings.Default.DisableTrackBackgroundOnMinimized;
+
+
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -84,6 +88,7 @@ namespace SpotifyListener
             Properties.Settings.Default.AlbumColorMode = (byte)AlbumColorMode.SelectedIndex;
             Properties.Settings.Default.BlurRadial = trackbar_BlurRadial.Value;
             Properties.Settings.Default.VolumeScale = trackbar_VolumeScale.Value;
+            Properties.Settings.Default.DisableTrackBackgroundOnMinimized = DisableDesktop.Checked;
             Properties.Settings.Default.Save();
             if (Properties.Settings.Default.RefreshToken != RefreshTokenTextbox.Text)
             {
