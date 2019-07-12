@@ -11,13 +11,6 @@ using System.Threading.Tasks;
 
 namespace SpotifyListener
 {
-    public enum State
-    {
-        Playing,
-        Pause,
-        Stop
-    }
-
     public class Music : EventArgs, IMusic, IChromaRender
     {
         private SpotifyAPI.Web.SpotifyWebAPI client = null;
@@ -71,7 +64,8 @@ namespace SpotifyListener
 
         public event EventHandler OnTrackChanged;
         public event EventHandler OnDeviceChanged;
-
+        public event EventHandler OnPaused;
+        public event EventHandler OnResume;
         public Music(string accessToken, string refreshToken)
         {
             client = new SpotifyAPI.Web.SpotifyWebAPI()
@@ -179,6 +173,17 @@ namespace SpotifyListener
             {
                 Expired = true;
             }
+            //if (IsPlaying != currentTrack.IsPlaying)
+            //{
+            //    if (currentTrack.IsPlaying)
+            //    {
+            //        OnResume(this, null);
+            //    }
+            //    else
+            //    {
+            //        OnPaused(this, null);
+            //    }
+            //}
             IsPlaying = currentTrack.IsPlaying;
 
         }

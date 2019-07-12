@@ -163,7 +163,7 @@
                 <SolidColorBrush Color="#FFE6E6E6" Opacity="0.3"/>
             </ProgressBar.Background>
         </ProgressBar>
-        <Label x:Name="lbl_settings" Content="Settings" HorizontalAlignment="Center"  Margin="11,480,661,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="13" HorizontalContentAlignment="Center" Width="118" MouseDown="Settings_Click" Foreground="White" Visibility="Hidden"/>
-        <Label x:Name="lbl_change_device" Content="Change Device" HorizontalAlignment="Center" Margin="150,480,523.6,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="13" HorizontalContentAlignment="Center" Width="118" MouseDown="ChangeDevice_Click" Foreground="White" Visibility="Hidden"/>
+        <Label x:Name="lbl_settings" Content="Settings" HorizontalAlignment="Left"  Margin="11,480,661,0" VerticalAlignment="Bottom" FontFamily="Microsoft Sans Serif" FontSize="13" HorizontalContentAlignment="Center" Width="118" MouseDown="Settings_Click" Foreground="White" Visibility="Hidden"/>
+        <Label x:Name="lbl_change_device" Content="Change Device" HorizontalAlignment="Left" Margin="150,480,523.6,0" VerticalAlignment="Bottom" FontFamily="Microsoft Sans Serif" FontSize="13" HorizontalContentAlignment="Center" Width="118" MouseDown="ChangeDevice_Click" Foreground="White" Visibility="Hidden"/>
     </Grid>
 </Window>

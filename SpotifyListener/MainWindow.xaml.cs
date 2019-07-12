@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -15,10 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using LineAPI;
-using Component;
-using System.Dynamic;
-using System.Windows.Media.Imaging;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
 
@@ -37,7 +32,6 @@ namespace SpotifyListener
         private static MMDevice ActiveDevice;
         private static ChromaWrapper Chroma = ChromaWrapper.GetInstance;
         private System.Drawing.Color borderColor = System.Drawing.Color.White;
-        private MessagingAPI messagingAPI;
         private SolidColorBrush playColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
         private SolidColorBrush pauseColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#FF5a5a"));
         private byte previousVolume = 0;
@@ -79,7 +73,6 @@ namespace SpotifyListener
                 InitializeComponent();
                 this.Visibility = Visibility.Hidden;
                 player = new Music(Properties.Settings.Default.AccessToken, Properties.Settings.Default.RefreshToken);
-                messagingAPI = new MessagingAPI("https://7d2d9000.ap.ngrok.io");
                 VolumePath.Fill = playColor;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
                 player.OnTrackChanged += delegate
