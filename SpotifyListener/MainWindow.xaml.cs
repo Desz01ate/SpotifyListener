@@ -224,6 +224,9 @@ namespace SpotifyListener
                     MouseLeave += OnMouseLeaveEvent;
                 };
                 StateChanged += OnFormSateChanged;
+                MouseDown += Window_MouseDown;
+                btn_Minimize.Click += (s, e) => this.WindowState = WindowState.Minimized;
+                btn_Close.Click += (s, e) => this.Close();
                 #region get current background image
                 byte[] SliceMe(byte[] source, int pos)
                 {
@@ -255,6 +258,16 @@ namespace SpotifyListener
             Context = this;
         }
 
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (e.ChangedButton == MouseButton.Left)
+                    this.DragMove();
+            }
+            catch { }
+        }
+
         private void OnFormSateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Minimized)
@@ -273,7 +286,8 @@ namespace SpotifyListener
         }
         private void OnMouseLeaveEvent(object sender, System.Windows.Input.MouseEventArgs e)
         {
-
+            btn_Minimize.Visibility = Visibility.Hidden;
+            btn_Close.Visibility = Visibility.Hidden;
             //Width = 800;
             TranslateTransform t1 = new TranslateTransform(), t2 = new TranslateTransform();
             AlbumImage.RenderTransform = t1;
@@ -304,6 +318,8 @@ namespace SpotifyListener
             lbl_CurrentTime.Visibility = Visibility.Visible;
             lbl_TimeLeft.Visibility = Visibility.Visible;
             PlayProgress.Visibility = Visibility.Visible;
+            btn_Minimize.Visibility = Visibility.Visible;
+            btn_Close.Visibility = Visibility.Visible;
             #endregion
             //Width = 950;
             TranslateTransform t1 = new TranslateTransform(), t2 = new TranslateTransform();
@@ -455,11 +471,13 @@ namespace SpotifyListener
             {
                 if (_backgroundApp == null && _backgroundDesktopPlaying == null)
                 {
-                    var backgroundImage = Player.AlbumArtwork.Blur(Properties.Settings.Default.BlurRadial, this.Height / this.Width);
-                    _backgroundApp = new ImageBrush(backgroundImage);
-                    _backgroundApp.Opacity = 0.6;
-                    var highlightSize = (int)Math.Round(SystemParameters.PrimaryScreenHeight * 0.555);
                     Image applyOpacity(Image i0) => ImageProcessing.SetOpacity(i0, 0.6f, System.Drawing.Color.Black);
+                    var clonnedAWImage = (Image)Player.AlbumArtwork.Clone();
+                    var backgroundImage = applyOpacity(clonnedAWImage).Blur(Properties.Settings.Default.BlurRadial, this.Height / this.Width);
+                    _backgroundApp = new ImageBrush(backgroundImage);
+                    //_backgroundApp.Opacity = 0.5;
+                    var highlightSize = (int)Math.Round(SystemParameters.PrimaryScreenHeight * 0.555);
+
                     wallpaper.CalculateBackgroundImage(
                         Player.AlbumArtwork.Resize(highlightSize, highlightSize),
                         backgroundImage.ToImage(),
@@ -496,8 +514,9 @@ namespace SpotifyListener
                     A = Player.Album_StandardColor.Standard.A
                 };
                 this.Icon = AlbumImage.Source;
-                this.Background = _backgroundApp;//player.IsPlaying ? _backgroundAppPlaying : _backgroundAppPause;
-                                                 //Background.Opacity = 0.6;
+                this.border_Form.Background = _backgroundApp;
+                /*this.Background = _backgroundApp;*///player.IsPlaying ? _backgroundAppPlaying : _backgroundAppPause;
+                                                     //Background.Opacity = 0.6;
                 #region set desktop background
                 //don't need to run on UI thread, it has nothing to do with the UI!
                 OnFormSateChanged(null, null);

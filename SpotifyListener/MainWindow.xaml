@@ -6,6 +6,9 @@
         xmlns:clr="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:SpotifyListener"
         mc:Ignorable="d"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
         Title="MainWindow" Height="550" Width="998"
         Icon="./Resources/spotify.ico">
     <Window.Resources>
@@ -135,8 +138,12 @@
     <Window.InputBindings>
         <KeyBinding Key="S" Modifiers="Alt"  Command="SaveAs"></KeyBinding>
     </Window.InputBindings>
-    <Grid Margin="1,1,1,1" Name="MainWindowGrid">
+    <Grid Margin="1,1,1,1" Name="MainWindowGrid" Background="Transparent">
+        <Border x:Name="border_Form" Margin="5" Padding="5" BorderThickness="1" BorderBrush="#d9d9d9" CornerRadius="25"/>
+
         <Image x:Name="AlbumImage" Margin="0,40,0,0" Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <Button x:Name="btn_Minimize" Content="-" Background="Transparent" FontSize="25" Foreground="White" BorderThickness="0" Margin="894,0,54,500" Width="40" Height="40" Visibility="Hidden" />
+        <Button x:Name="btn_Close" Content="x" Background="Transparent" FontSize="20" Foreground="White" BorderThickness="0" Margin="948,0,0,500" Width="40" Height="40" Visibility="Hidden" />
         <Label x:Name="lbl_Track" Content="Waiting for information..." HorizontalAlignment="Center" Margin="0,310,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalContentAlignment="Center" BorderThickness="1">
         </Label>
         <Label x:Name="lbl_Album" Content="" HorizontalAlignment="Center" Margin="0,350,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="18" Foreground="White" HorizontalContentAlignment="Center"/>
@@ -163,7 +170,8 @@
                 <SolidColorBrush Color="#FFE6E6E6" Opacity="0.3"/>
             </ProgressBar.Background>
         </ProgressBar>
-        <Label x:Name="lbl_settings" Content="Settings" HorizontalAlignment="Left"  Margin="11,480,661,0" VerticalAlignment="Bottom" FontFamily="Microsoft Sans Serif" FontSize="13" HorizontalContentAlignment="Center" Width="118" MouseDown="Settings_Click" Foreground="White" Visibility="Hidden"/>
-        <Label x:Name="lbl_change_device" Content="Change Device" HorizontalAlignment="Left" Margin="150,480,523.6,0" VerticalAlignment="Bottom" FontFamily="Microsoft Sans Serif" FontSize="13" HorizontalContentAlignment="Center" Width="118" MouseDown="ChangeDevice_Click" Foreground="White" Visibility="Hidden"/>
+        <Label x:Name="lbl_settings" Content="Settings" HorizontalAlignment="Left"  Margin="11,0,0,8" VerticalAlignment="Bottom" FontFamily="Microsoft Sans Serif" FontSize="13" HorizontalContentAlignment="Center" Width="118" MouseDown="Settings_Click" Foreground="White" Visibility="Hidden" />
+        <Label x:Name="lbl_change_device" Content="Change Device" HorizontalAlignment="Left" Margin="150,0,0,8" VerticalAlignment="Bottom" FontFamily="Microsoft Sans Serif" FontSize="13" HorizontalContentAlignment="Center" Width="118" MouseDown="ChangeDevice_Click" Foreground="White" Visibility="Hidden"/>
+
     </Grid>
 </Window>

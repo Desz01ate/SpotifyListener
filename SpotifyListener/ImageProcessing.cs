@@ -17,6 +17,11 @@ namespace SpotifyListener
     {
         [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = CharSet.Auto)]
         extern static bool DestroyIcon(IntPtr handle);
+
+        [DllImport("gdi32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool DeleteObject(IntPtr value);
+
         private static Dictionary<string, Color> DominantColorMemoized = new Dictionary<string, Color>();
         private static Dictionary<string, Color> AverageColorMemoized = new Dictionary<string, Color>();
         public static Color InverseColor(this Color c)
@@ -341,6 +346,23 @@ namespace SpotifyListener
                 var image = Image.FromStream(stream);
                 return image;
             }
+        }
+        public static System.Windows.Media.ImageSource ToImageSource(this Image image)
+        {
+            var bitmap = new Bitmap(image);
+            IntPtr bmpPt = bitmap.GetHbitmap();
+            BitmapSource bitmapSource =
+             System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                   bmpPt,
+                   IntPtr.Zero,
+                   System.Windows.Int32Rect.Empty,
+                   BitmapSizeOptions.FromEmptyOptions());
+
+            //freeze bitmapSource and clear memory to avoid memory leaks
+            bitmapSource.Freeze();
+            DeleteObject(bmpPt);
+
+            return bitmapSource;
         }
         public static string ToHex(this Color c)
         {
