@@ -78,8 +78,16 @@ namespace SpotifyListener
         {
             _parentWindow = mainWindow;
             InitializeComponent();
-            WidgetWindow.Left = System.Windows.SystemParameters.PrimaryScreenWidth - WidgetWindow.Width - 20;
-            WidgetWindow.Top = 50;
+            var compensation = 5;
+            var startLoc = System.Windows.SystemParameters.PrimaryScreenWidth - compensation;
+            MouseEnterAnimation.Duration = TimeSpan.FromMilliseconds(400);
+            MouseLeaveAnimation.Duration = TimeSpan.FromMilliseconds(400);
+            MouseEnterAnimation.From = startLoc;
+            MouseEnterAnimation.To = startLoc - WidgetWindow.Width + compensation;
+            MouseLeaveAnimation.From = startLoc - WidgetWindow.Width + compensation;
+            MouseLeaveAnimation.To = startLoc;
+            WidgetWindow.Left = startLoc;
+            WidgetWindow.Top = 150 + compensation + WidgetWindow.Height;
             WidgetImage.MouseDown += Widget_OnMouseDown;
             this.Loaded += Window_Loaded;
             this.Closing += Window_Closing;

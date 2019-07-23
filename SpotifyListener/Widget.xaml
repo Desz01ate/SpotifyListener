@@ -12,6 +12,28 @@
     <Window.Background>
         <SolidColorBrush x:Name="WidgetBackgroundColor" Opacity="0.3" Color="Black"/>
     </Window.Background>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.MouseEnter">
+            <EventTrigger.Actions>
+                <BeginStoryboard>
+                    <Storyboard BeginTime="0" Duration="0:3">
+                        <!--<DoubleAnimation Storyboard.TargetName="MainWindows" Storyboard.TargetProperty="(Window.Top)" From="0" To="300" AutoReverse="true" BeginTime="0:0:0" Duration="0:0:1" RepeatBehavior="Forever"/>-->
+                        <DoubleAnimation x:Name="MouseEnterAnimation" Storyboard.TargetName="WidgetWindow" Storyboard.TargetProperty="(Window.Left)" From="0" To="0" AutoReverse="false" BeginTime="0:0:0" Duration="0:5"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger.Actions>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="Window.MouseLeave">
+            <EventTrigger.Actions>
+                <BeginStoryboard>
+                    <Storyboard BeginTime="0" Duration="0:3">
+                        <!--<DoubleAnimation Storyboard.TargetName="MainWindows" Storyboard.TargetProperty="(Window.Top)" From="0" To="300" AutoReverse="true" BeginTime="0:0:0" Duration="0:0:1" RepeatBehavior="Forever"/>-->
+                        <DoubleAnimation x:Name="MouseLeaveAnimation" Storyboard.TargetName="WidgetWindow" Storyboard.TargetProperty="(Window.Left)" From="0" To="0" AutoReverse="false" BeginTime="0:0:0" Duration="0:5"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger.Actions>
+        </EventTrigger>
+    </Window.Triggers>
     <Grid x:Name="GridView">
         <Image x:Name="WidgetImage" HorizontalAlignment="Left" Height="100" Margin="10,12,0,0" VerticalAlignment="Top" Width="100"/>
         <Label x:Name="WidgetTrack" Content="Waiting for information..." HorizontalAlignment="Center" Margin="164,12,54,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" FontWeight="Bold" Foreground="White" HorizontalContentAlignment="Center" BorderThickness="1"/>

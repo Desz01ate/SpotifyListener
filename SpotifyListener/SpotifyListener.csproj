@@ -205,8 +205,8 @@
     <Reference Include="Unosquare.Swan.Lite, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Unosquare.Swan.Lite.0.38.1\lib\net452\Unosquare.Swan.Lite.dll</HintPath>
     </Reference>
-    <Reference Include="Utilities, Version=0.0.5.30, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Deszolate.Utilities.0.0.5.30\lib\netstandard2.0\Utilities.dll</HintPath>
+    <Reference Include="Utilities.Lite, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Deszolate.Utilities.Lite.0.1.0\lib\netstandard2.0\Utilities.Lite.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
