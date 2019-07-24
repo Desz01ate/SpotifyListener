@@ -277,6 +277,11 @@ namespace SpotifyListener
                     Task.Run(() => wallpaper.Disable());
                     widget.Show();
                 }
+                else
+                {
+                    Task.Run(() => wallpaper.Enable());
+                    widget.Hide();
+                }
             }
             else if (WindowState == WindowState.Normal)
             {
@@ -481,27 +486,13 @@ namespace SpotifyListener
                     wallpaper.CalculateBackgroundImage(
                         Player.AlbumArtwork.Resize(highlightSize, highlightSize),
                         backgroundImage.ToImage(),
-                        SystemParameters.PrimaryScreenWidth,
-                        SystemParameters.PrimaryScreenHeight,
                         this.FontFamily.ToString(),
                         20.0f,
                         Player.Track,
                         Player.Album,
-                        Player.Artist,
-                        applyOpacity);
+                        Player.Artist);
                     _backgroundDesktopPlaying = wallpaper.TrackImage;
-                    //_backgroundDesktopPause = Wallpaper.GetBacgroundImageForTrack(
-                    //    player.AlbumArtwork,
-                    //    backgroundImage.ToImage(),
-                    //    System.Windows.SystemParameters.PrimaryScreenWidth,
-                    //    System.Windows.SystemParameters.PrimaryScreenHeight,
-                    //    this.FontFamily.ToString(),
-                    //    20.0f,
-                    //    player.Track,
-                    //    player.Album,
-                    //    player.Artist,
-                    //    applyOpc,
-                    //    0.9f);
+                    _backgroundApp.Freeze();
                 }
                 var albumImage = (Player.AlbumArtwork as Bitmap).ToBitmapImage();
                 AlbumImage.Source = albumImage;
@@ -568,15 +559,23 @@ namespace SpotifyListener
         private static void InitializeDiscord()
         {
 #if WIN64
-            DiscordRPC.EventHandlers handlers = new DiscordRPC.EventHandlers
+            try
             {
-                readyCallback = HandleReadyCallback,
-                errorCallback = HandleErrorCallback,
-                disconnectedCallback = HandleDisconnectedCallback
-            };
-            //383816327850360843 , iTunes RPC
-            //418435305574760458 , my custom RPC
-            DiscordRPC.Initialize("418435305574760458", ref handlers, true, null);
+                DiscordRPC.EventHandlers handlers = new DiscordRPC.EventHandlers
+                {
+                    readyCallback = HandleReadyCallback,
+                    errorCallback = HandleErrorCallback,
+                    disconnectedCallback = HandleDisconnectedCallback
+                };
+                //383816327850360843 , iTunes RPC
+                //418435305574760458 , my custom RPC
+                DiscordRPC.Initialize("418435305574760458", ref handlers, true, null);
+            }
+            catch
+            {
+                Properties.Settings.Default.DiscordRichPresenceEnable = false;
+                Properties.Settings.Default.Save();
+            }
 #else
             Properties.Settings.Default.DiscordRichPresenceEnable = false;
             Properties.Settings.Default.Save();
@@ -716,6 +715,7 @@ namespace SpotifyListener
         {
             //keep this running on main thread, otherwise it will terminated before the task is done.
             //Wallpaper.Set(_backgroundImage, Wallpaper.Style.Stretched, _backgroundImagePath);
+            this.Hide();
             wallpaper.Disable();
             widget?.Close();
             base.OnClosing(e);

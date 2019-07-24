@@ -486,7 +486,7 @@ namespace SpotifyListener
             }
             return Success;
         }
-        public void CalculateBackgroundImage(Image highlightImage, Image backgroundimage, double width, double height, string fontFamily, float fontSize, string track, string album, string artist, Func<Image, Image> backgroundApplyFunction = null, Func<Image, Image> highlightApplyFunction = null)
+        public void CalculateBackgroundImage(Image highlightImage, Image backgroundimage, string fontFamily, float fontSize, string track, string album, string artist, Func<Image, Image> backgroundApplyFunction = null, Func<Image, Image> highlightApplyFunction = null)
         {
             var image = backgroundimage;
             var screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;

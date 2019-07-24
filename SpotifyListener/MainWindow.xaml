@@ -139,7 +139,7 @@
         <KeyBinding Key="S" Modifiers="Alt"  Command="SaveAs"></KeyBinding>
     </Window.InputBindings>
     <Grid Margin="1,1,1,1" Name="MainWindowGrid" Background="Transparent">
-        <Border x:Name="border_Form" Margin="5" Padding="5" BorderThickness="1" BorderBrush="#d9d9d9" CornerRadius="25"/>
+        <Border x:Name="border_Form" Margin="5" Padding="5" BorderThickness="1" Background="White" BorderBrush="#d9d9d9" CornerRadius="25"/>
 
         <Image x:Name="AlbumImage" Margin="0,40,0,0" Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Top"/>
         <Button x:Name="btn_Minimize" Content="-" Background="Transparent" FontSize="25" Foreground="White" BorderThickness="0" Margin="894,0,54,500" Width="40" Height="40" Visibility="Hidden" />
