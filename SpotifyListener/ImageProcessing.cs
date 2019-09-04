@@ -311,6 +311,7 @@ namespace SpotifyListener
         }
         string OriginalBackgroundImagePath { get; }
         public Image TrackImage { get; private set; }
+        private Image PersistenceTrackImage { get; set; }
         [DllImport("user32.dll")]
         public static extern Int32 SystemParametersInfo(UInt32 action, UInt32 uParam, String vParam, UInt32 winIni);
 
@@ -397,12 +398,13 @@ namespace SpotifyListener
         public void CalculateBackgroundImage(Image highlightImage, Image backgroundimage, string fontFamily, float fontSize, string track, string album, string artist, Func<Image, Image> backgroundApplyFunction = null, Func<Image, Image> highlightApplyFunction = null)
         {
             TrackImage?.Dispose();
+            PersistenceTrackImage?.Dispose();
             var image = backgroundimage;
             var screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
             var screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
             if (backgroundApplyFunction != null)
             {
-                image = backgroundApplyFunction(image);//image.SetOpacity(0.6f);
+                image = backgroundApplyFunction(image);
             }
             if (highlightApplyFunction != null)
             {
@@ -425,8 +427,17 @@ namespace SpotifyListener
                 g.DrawString(track, trackFont, Brushes.White, (int)((screenWidth - trackMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.07));
                 g.DrawString(album, font, Brushes.White, (int)((screenWidth - albumMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.15));
                 g.DrawString(artist, font, Brushes.White, (int)((screenWidth - artistMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.2));
+                font.Dispose();
+                trackFont.Dispose();
             }
+            highlightImage.Dispose();
+            backgroundimage.Dispose();
             TrackImage = image;
+            PersistenceTrackImage = image.Clone() as Image;
+        }
+        public void SaveWallpaperToFile(string filePath)
+        {
+            PersistenceTrackImage.Save(filePath);
         }
         protected void Dispose(bool disposing)
         {

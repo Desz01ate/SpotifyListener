@@ -16,6 +16,7 @@ using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
 using SpotifyListener.Interfaces;
+using System.Runtime.InteropServices;
 
 namespace SpotifyListener
 {
@@ -73,8 +74,8 @@ namespace SpotifyListener
                 Player.OnTrackChanged += OnTrackChanged;
                 Player.OnTrackDurationChanged += Player_OnTrackDurationChanged;
                 Player.OnDeviceChanged += Player_OnDeviceChanged;
-
-                ActiveDevice = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
+                using (var devices = new MMDeviceEnumerator())
+                    ActiveDevice = devices.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
                 InitializeDiscord();
                 KeyDown += MainWindowGrid_PreviewKeyDown;
                 Loaded += MainWindow_Loaded;
@@ -222,12 +223,15 @@ namespace SpotifyListener
         {
             try
             {
-                ActiveDevice = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
-                lbl_CurrentTime.Content = playbackContext.Position_ms.ToMinutes();
-                lbl_TimeLeft.Content = $"-{Extension.ToMinutes(playbackContext.Duration_ms - playbackContext.Position_ms)}";
-                PlayProgress.Value = playbackContext.Position_ms;
-                VolumeProgress.Value = playbackContext.Volume;
-                PlayProgress.Foreground = playbackContext.IsPlaying ? playColor : pauseColor;
+                using (var devices = new MMDeviceEnumerator())
+                {
+                    ActiveDevice = devices.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
+                    lbl_CurrentTime.Content = playbackContext.Position_ms.ToMinutes();
+                    lbl_TimeLeft.Content = $"-{Extension.ToMinutes(playbackContext.Duration_ms - playbackContext.Position_ms)}";
+                    PlayProgress.Value = playbackContext.Position_ms;
+                    VolumeProgress.Value = playbackContext.Volume;
+                    PlayProgress.Foreground = playbackContext.IsPlaying ? playColor : pauseColor;
+                }
             }
             catch
             {
@@ -370,7 +374,7 @@ namespace SpotifyListener
                 Chroma.SDKDisable();
             }
         }
-        private void UpdatePresence(IMusic music)
+        public static void UpdatePresence(IMusic music)
         {
             var presence = new DiscordRPC.RichPresence
             {
@@ -420,7 +424,7 @@ namespace SpotifyListener
                     this.border_Form.Background = _backgroundApp;
                 }
             }
-            catch (Exception ex)
+            catch
             {
 
             }
@@ -451,7 +455,7 @@ namespace SpotifyListener
             //lbl_CurrentTime.Background = fontBackColor;
             //lbl_TimeLeft.Background = fontBackColor;
             //lbl_change_device.Background = fontBackColor;
-            GC.Collect();
+            //GC.Collect();
         }
 
         private static void HandleReadyCallback() { }
@@ -484,7 +488,7 @@ namespace SpotifyListener
         }
         private void PlayProgress_Click(object sender, EventArgs e)
         {
-            Player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue());
+            Player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue()).ConfigureAwait(false);
         }
 
         private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -557,6 +561,9 @@ namespace SpotifyListener
                             }
                         });
                         break;
+                    case Key.P:
+                        GenerateFormImage();
+                        break;
                 }
             }
             catch
@@ -610,7 +617,10 @@ namespace SpotifyListener
 
         private void Settings_Click(object sender, MouseButtonEventArgs e)
         {
-            new Settings().ShowDialog();
+            using (var setting = new Settings())
+            {
+                setting.ShowDialog();
+            }
         }
         protected override void OnClosing(CancelEventArgs e)
         {
@@ -625,10 +635,20 @@ namespace SpotifyListener
             File.WriteAllText("url.json", memoizedResult);
 
             this.Hide();
+            ChromaTimer.Dispose();
+            _backgroundDesktopPlaying.Dispose();
             wallpaper.Dispose();
             Player.Dispose();
             widget?.Close();
             base.OnClosing(e);
+        }
+
+        private void GenerateFormImage()
+        {
+            var file = Path.GetTempFileName().Replace("tmp", "jpg");
+            wallpaper.SaveWallpaperToFile(file);
+            Process.Start(file);
+
         }
     }
 }
