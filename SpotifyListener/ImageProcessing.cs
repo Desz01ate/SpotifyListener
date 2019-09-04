@@ -17,8 +17,7 @@ namespace SpotifyListener
     {
         [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = CharSet.Auto)]
         extern static bool DestroyIcon(IntPtr handle);
-        private static Dictionary<string, Color> DominantColorMemoized = new Dictionary<string, Color>();
-        private static Dictionary<string, Color> AverageColorMemoized = new Dictionary<string, Color>();
+
         public static Color InverseColor(this Color c)
         {
             return Color.FromArgb((int)(Color.FromArgb(c.R, c.G, c.B).ToArgb() ^ 0xFFFFFFFu));
@@ -45,16 +44,8 @@ namespace SpotifyListener
         {
             return new ColoreColor(c.R, c.G, c.B);
         }
-        public static Color AverageColor(this Image img, string path = "")
+        public static Color AverageColor(this Image img)
         {
-            var key = "";
-            if (!string.IsNullOrEmpty(path))
-            {
-                key = CryptographicExtension.CalculateMD5(path);
-                if (AverageColorMemoized.TryGetValue(key, out var savedColor))
-                    return savedColor;
-
-            }
             using (var bitmap = (Bitmap)img)
             {
                 var startX = 0;
@@ -76,8 +67,6 @@ namespace SpotifyListener
                 g /= total;
                 b /= total;
                 var result = Color.FromArgb(r, g, b);
-                if (!string.IsNullOrEmpty(key))
-                    AverageColorMemoized.Add(CryptographicExtension.CalculateMD5(path), result);
                 return result;
             }
 
@@ -95,32 +84,6 @@ namespace SpotifyListener
             var colorThief = new ColorThiefDotNet.ColorThief();
             var dominant = colorThief.GetColor((Bitmap)img);
             return Color.FromArgb(dominant.Color.R, dominant.Color.G, dominant.Color.B);
-            var key = "";
-            if (!string.IsNullOrEmpty(path))
-            {
-                key = CryptographicExtension.CalculateMD5(path);
-                if (DominantColorMemoized.TryGetValue(key, out var savedColor))
-                    return savedColor;
-
-            }
-            var bitmap = (Bitmap)img;
-            var startX = 0;
-            var startY = 0;
-            var colorIncidence = new Dictionary<int, int>();
-            for (var x = startX; x < bitmap.Size.Width; x++)
-                for (var y = startY; y < bitmap.Size.Height; y++)
-                {
-                    var pixelColor = bitmap.GetPixel(x, y).ToArgb();
-                    if (colorIncidence.Keys.Contains(pixelColor))
-                        colorIncidence[pixelColor]++;
-                    else
-                        colorIncidence.Add(pixelColor, 1);
-                }
-
-            var result = Color.FromArgb(colorIncidence.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).First().Key);
-            if (!string.IsNullOrEmpty(key))
-                DominantColorMemoized.Add(key, result);
-            return result;
         }
         public static Image SetOpacity(this Image image, double opacity, Color color)
         {
@@ -470,7 +433,7 @@ namespace SpotifyListener
             if (disposing)
             {
                 this.Disable();
-                TrackImage.Dispose();
+                TrackImage?.Dispose();
             }
         }
         public void Dispose()

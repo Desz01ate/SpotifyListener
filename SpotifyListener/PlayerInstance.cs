@@ -166,7 +166,7 @@ namespace SpotifyListener
                         }
                         else
                         {
-                            AlbumArtwork = await HTMLHelper.GetImage(Track, Album, Artist);
+                            AlbumArtwork = new Bitmap(1, 1);
                         }
                         _standardColor.Standard = albumColoreMode == 0 ? AlbumArtwork.DominantColor() : AlbumArtwork.AverageColor();
                         _standardColor.Complemented = _standardColor.Standard.InverseColor();

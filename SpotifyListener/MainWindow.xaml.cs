@@ -2,12 +2,10 @@
 using NAudio.CoreAudioApi;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -15,11 +13,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using System.Dynamic;
-using System.Windows.Media.Imaging;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
-using System.Windows.Interop;
 using SpotifyListener.Interfaces;
 
 namespace SpotifyListener
@@ -29,14 +24,13 @@ namespace SpotifyListener
     /// </summary>
     public partial class MainWindow : Window
     {
-        Timer TrackDetailTimer = new Timer();
-        Timer ChromaTimer = new Timer();
-        public Music player { get; private set; }
+        readonly Timer ChromaTimer = new Timer();
+        public Music Player { get; private set; }
         private static MMDevice ActiveDevice;
-        private static ChromaWrapper Chroma = ChromaWrapper.GetInstance;
+        private static readonly ChromaWrapper Chroma = ChromaWrapper.GetInstance;
 
-        private SolidColorBrush playColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
-        private SolidColorBrush pauseColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#FF5a5a"));
+        private readonly SolidColorBrush playColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
+        private readonly SolidColorBrush pauseColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#FF5a5a"));
         private byte previousVolume = 0;
 
         DoubleAnimation slideAnimation_enter;
@@ -48,7 +42,6 @@ namespace SpotifyListener
         DoubleAnimation moveX_leave;
         DoubleAnimation moveY_leave;
         Wallpaper wallpaper = null;
-        Image _backgroundImage = null;
         Image _backgroundDesktopPlaying = null;
         ImageBrush _backgroundApp = null;
         Widget widget = null;
@@ -63,7 +56,7 @@ namespace SpotifyListener
             {
                 InitializeComponent();
                 widget = new Widget(this);
-                player = new Music(Properties.Settings.Default.AccessToken, Properties.Settings.Default.RefreshToken);
+                Player = new Music(Properties.Settings.Default.AccessToken, Properties.Settings.Default.RefreshToken);
 
                 ResizeMode = ResizeMode.CanMinimize;
                 Visibility = Visibility.Hidden;
@@ -77,9 +70,9 @@ namespace SpotifyListener
                 VolumePath.Fill = playColor;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
 
-                player.OnTrackChanged += OnTrackChanged;
-                player.OnTrackDurationChanged += Player_OnTrackDurationChanged;
-                player.OnDeviceChanged += Player_OnDeviceChanged;
+                Player.OnTrackChanged += OnTrackChanged;
+                Player.OnTrackDurationChanged += Player_OnTrackDurationChanged;
+                Player.OnDeviceChanged += Player_OnDeviceChanged;
 
                 ActiveDevice = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
                 InitializeDiscord();
@@ -188,7 +181,6 @@ namespace SpotifyListener
             if (File.Exists(wallpaper_file_path))
             {
                 _backgroundImagePath = wallpaper_file_path;
-                _backgroundImage = Image.FromFile(wallpaper_file_path);
                 wallpaper = new Wallpaper(_backgroundImagePath);
             }
             else
@@ -218,10 +210,10 @@ namespace SpotifyListener
             switch (e.ChangedButton)
             {
                 case MouseButton.Left:
-                    player.PlayPause();
+                    Player.PlayPause();
                     break;
                 case MouseButton.Right:
-                    Task.Run(() => Process.Start(player.URL));
+                    Task.Run(() => Process.Start(Player.URL));
                     break;
             }
         }
@@ -335,8 +327,8 @@ namespace SpotifyListener
                     return;
                 }
                 var volume = ActiveDevice.AudioMeterInformation.MasterPeakValue * (Properties.Settings.Default.VolumeScale / 10.0f);
-                var density = Properties.Settings.Default.AdaptiveDensity && player.IsPlaying ? volume * 0.7f : (Properties.Settings.Default.Density / 10.0);
-                Chroma.LoadColor(player, player.IsPlaying, density);
+                var density = Properties.Settings.Default.AdaptiveDensity && Player.IsPlaying ? volume * 0.7f : (Properties.Settings.Default.Density / 10.0);
+                Chroma.LoadColor(Player, Player.IsPlaying, density);
                 Chroma.SetDevicesBackground();
                 if (Properties.Settings.Default.RenderPeakVolumeEnable)
                 {
@@ -363,12 +355,12 @@ namespace SpotifyListener
                 }
                 else
                 {
-                    Chroma.MouseGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.PositionColor_Background, player.CalculatedPosition, Properties.Settings.Default.ReverseLEDRender);
-                    Chroma.KeyboardGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.PositionColor_Background, player.CalculatedPosition);
-                    Chroma.MouseGrid.SetVolumeScale(Chroma.VolumeColor, player.Volume, Properties.Settings.Default.ReverseLEDRender);
+                    Chroma.MouseGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.PositionColor_Background, Player.CalculatedPosition, Properties.Settings.Default.ReverseLEDRender);
+                    Chroma.KeyboardGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.PositionColor_Background, Player.CalculatedPosition);
+                    Chroma.MouseGrid.SetVolumeScale(Chroma.VolumeColor, Player.Volume, Properties.Settings.Default.ReverseLEDRender);
                 }
-                Chroma.KeyboardGrid.SetVolumeScale(Properties.Settings.Default.Volume.ToColoreColor(), player.Volume);
-                Chroma.KeyboardGrid.SetPlayingTime(TimeSpan.FromMilliseconds(player.Position_ms));
+                Chroma.KeyboardGrid.SetVolumeScale(Properties.Settings.Default.Volume.ToColoreColor(), Player.Volume);
+                Chroma.KeyboardGrid.SetPlayingTime(TimeSpan.FromMilliseconds(Player.Position_ms));
                 Chroma.MousepadGrid.SetPeakVolume(Chroma.VolumeColor);
                 Chroma.HeadsetGrid.SetPeakVolume(Chroma.VolumeColor);
                 Chroma.Apply();
@@ -391,10 +383,10 @@ namespace SpotifyListener
         {
             try
             {
-                if (_backgroundApp == null && _backgroundDesktopPlaying == null && player.AlbumArtwork != null)
+                if (_backgroundApp == null && _backgroundDesktopPlaying == null && Player.AlbumArtwork != null)
                 {
                     Image applyOpacity(Image i0) => ImageProcessing.SetOpacity(i0, 0.6f, System.Drawing.Color.Black);
-                    using (var clonnedAWImage = (Image)player.AlbumArtwork.Clone())
+                    using (var clonnedAWImage = (Image)Player.AlbumArtwork.Clone())
                     {
                         var backgroundImage = applyOpacity(clonnedAWImage).Blur(Properties.Settings.Default.BlurRadial, this.Height / this.Width);
                         _backgroundApp = new ImageBrush(backgroundImage);
@@ -402,27 +394,27 @@ namespace SpotifyListener
                         //_backgroundApp.Opacity = 0.5;
                         var highlightSize = (int)Math.Round(SystemParameters.PrimaryScreenHeight * 0.555);
                         wallpaper.CalculateBackgroundImage(
-                            player.AlbumArtwork.Resize(highlightSize, highlightSize),
+                            Player.AlbumArtwork.Resize(highlightSize, highlightSize),
                             secondImage,
                             this.FontFamily.ToString(),
                             20.0f,
-                            player.Track,
-                            player.Album,
-                            player.Artist);
+                            Player.Track,
+                            Player.Album,
+                            Player.Artist);
                         secondImage.Dispose();
                         Task.Run(wallpaper.Enable);
                         _backgroundDesktopPlaying = wallpaper.TrackImage;
                         _backgroundApp.Freeze();
                     }
-                    var albumImage = (player.AlbumArtwork as Bitmap).ToBitmapImage();
+                    var albumImage = (Player.AlbumArtwork as Bitmap).ToBitmapImage();
                     AlbumImage.Source = albumImage;
                     widget.WidgetImage.Source = albumImage;
                     widget.WidgetBackgroundColor.Color = new System.Windows.Media.Color()
                     {
-                        R = player.Album_StandardColor.Standard.R,
-                        G = player.Album_StandardColor.Standard.G,
-                        B = player.Album_StandardColor.Standard.B,
-                        A = player.Album_StandardColor.Standard.A
+                        R = Player.Album_StandardColor.Standard.R,
+                        G = Player.Album_StandardColor.Standard.G,
+                        B = Player.Album_StandardColor.Standard.B,
+                        A = Player.Album_StandardColor.Standard.A
                     };
                     this.Icon = AlbumImage.Source;
                     this.border_Form.Background = _backgroundApp;
@@ -432,20 +424,20 @@ namespace SpotifyListener
             {
 
             }
-            this.Title = $"Listening to {player.Track} by {player.Artist} on {player.ActiveDevice.Name}";
+            this.Title = $"Listening to {Player.Track} by {Player.Artist} on {Player.ActiveDevice.Name}";
             //var fontColor = System.Windows.Media.Brushes.WhiteSmoke;//(System.Windows.Media.Brush)(new BrushConverter().ConvertFromString(player.Album_StandardColor.Standard.ContrastColor().ToHex()));
 
             //BackPath.Fill = fontColor;
             //PlayPath.Fill = fontColor;
             //NextPath.Fill = fontColor;
             //VolumeProgress.Foreground = fontColor;
-            widget.WidgetTrack.Content = player.Track;
-            widget.WidgetAlbum.Content = player.Album;
-            widget.WidgetArtist.Content = player.Artist;
-            lbl_Track.Content = player.Track;
-            lbl_Album.Content = player.Album;
-            lbl_Artist.Content = player.Artist;
-            PlayProgress.Maximum = player.Duration_ms;
+            widget.WidgetTrack.Content = Player.Track;
+            widget.WidgetAlbum.Content = Player.Album;
+            widget.WidgetArtist.Content = Player.Artist;
+            lbl_Track.Content = Player.Track;
+            lbl_Album.Content = Player.Album;
+            lbl_Artist.Content = Player.Artist;
+            PlayProgress.Maximum = Player.Duration_ms;
             //lbl_Track.Foreground = fontColor;
             //lbl_Album.Foreground = fontColor;
             //lbl_Artist.Foreground = fontColor;
@@ -492,7 +484,7 @@ namespace SpotifyListener
         }
         private void PlayProgress_Click(object sender, EventArgs e)
         {
-            player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue());
+            Player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue());
         }
 
         private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -502,9 +494,9 @@ namespace SpotifyListener
         private void FacebookShare()
         {
             var app_id = "139971873511766"; //StatusReporter
-            var href = player.URL;
+            var href = Player.URL;
             var redirect_uri = string.Empty;
-            var hashtag = $"%23{player.Artist}_{player.Track}";
+            var hashtag = $"%23{Player.Artist}_{Player.Track}";
             hashtag = Regex.Replace(hashtag, @"[^0-9a-zA-Z:_%]+", "");
             var requestText = $"https://www.facebook.com/dialog/share?app_id={app_id}&text=test&display=page&href={href}&redirect_uri={redirect_uri}&hashtag={hashtag}";
             Process.Start(requestText);
@@ -522,16 +514,16 @@ namespace SpotifyListener
                         NextPath_Click(null, null);
                         break;
                     case Key.W:
-                        player.SetVolume(player.Volume += 10);
+                        Player.SetVolume(Player.Volume += 10);
                         break;
                     case Key.S:
-                        player.SetVolume(player.Volume -= 10);
+                        Player.SetVolume(Player.Volume -= 10);
                         break;
                     case Key.Q:
-                        player.Position_ms -= 15;
+                        Player.Position_ms -= 15;
                         break;
                     case Key.E:
-                        player.Position_ms += 15;
+                        Player.Position_ms += 15;
                         break;
                     case Key.Space:
                         PlayPath_Click(null, null);
@@ -557,7 +549,7 @@ namespace SpotifyListener
                         {
                             try
                             {
-                                Process.Start(player.URL);
+                                Process.Start(Player.URL);
                             }
                             catch
                             {
@@ -575,44 +567,44 @@ namespace SpotifyListener
 
         private void BackPath_Click(object sender, RoutedEventArgs e)
         {
-            if (player.Position_ms > 10)
-                player.Position_ms = 0;
+            if (Player.Position_ms > 10)
+                Player.Position_ms = 0;
             else
-                player.Previous();
+                Player.Previous();
         }
 
         private void PlayPath_Click(object sender, RoutedEventArgs e)
         {
-            player.PlayPause();
+            Player.PlayPause();
         }
 
         private void NextPath_Click(object sender, RoutedEventArgs e)
         {
-            player.Next();
+            Player.Next();
         }
 
         private void VolumePath_Click(object sender, RoutedEventArgs e)
         {
-            if (player.Volume > 0)
+            if (Player.Volume > 0)
             {
-                previousVolume = (byte)player.Volume;
-                player.Volume = 0;
+                previousVolume = (byte)Player.Volume;
+                Player.Volume = 0;
             }
             else
             {
-                player.Volume = previousVolume;
+                Player.Volume = previousVolume;
             }
         }
 
         private void VolumeProgress_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var value = (int)VolumeProgress.CalculateRelativeValue();
-            player.SetVolume(value);
+            Player.SetVolume(value);
         }
 
         private void ChangeDevice_Click(object sender, MouseButtonEventArgs e)
         {
-            var ds = new DeviceSelection(player, this.Left, this.Top);
+            var ds = new DeviceSelection(Player, this.Left, this.Top);
             ds.ShowDialog();
         }
 
@@ -634,7 +626,7 @@ namespace SpotifyListener
 
             this.Hide();
             wallpaper.Dispose();
-            player.Dispose();
+            Player.Dispose();
             widget?.Close();
             base.OnClosing(e);
         }
