@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpotifyListener.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -98,6 +99,7 @@ namespace SpotifyListener
             UpdatePresenceNative(ref presencestruct);
             presence.FreeMem();
         }
+
 
         public class RichPresence
         {
@@ -216,6 +218,36 @@ namespace SpotifyListener
                 {
                     Marshal.FreeHGlobal(_buffers[i]);
                     _buffers.RemoveAt(i);
+                }
+            }
+            public void UpdateRPC(IMusic music)
+            {
+                try
+                {
+                    //var presence = new DiscordRPC.RichPresence
+                    //{
+                    //    largeImageKey = "spotify",
+                    //    //smallImageKey = "small"
+                    //};//"itunes_logo_big" };
+
+                    if (!music.IsPlaying)
+                    {
+                        this.details = Extension.TruncateString(Extension.RenderString(Properties.Settings.Default.DiscordPauseDetail, music));
+                        this.state = Extension.TruncateString(Extension.RenderString(Properties.Settings.Default.DiscordPauseState, music));
+                    }
+                    else
+                    {
+                        this.details = Extension.TruncateString(Extension.RenderString(Properties.Settings.Default.DiscordPlayDetail, music));
+                        this.state = Extension.TruncateString(Extension.RenderString(Properties.Settings.Default.DiscordPlayState, music));
+                        this.startTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds() - music.Position_ms;
+                        this.endTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds() + ((music.Duration_ms - music.Position_ms) / 1000);
+                    }
+                    this.largeImageText = music.URL;
+                    UpdatePresence(this);
+                }
+                catch
+                {
+
                 }
             }
         }

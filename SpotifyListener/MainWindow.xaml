@@ -142,8 +142,8 @@
         <Border x:Name="border_Form" Margin="5" Padding="5" BorderThickness="1" Background="White" BorderBrush="#d9d9d9" CornerRadius="25"/>
 
         <Image x:Name="AlbumImage" Margin="0,40,0,0" Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-        <Button x:Name="btn_Minimize" Content="-" Background="Transparent" FontSize="25" Foreground="White" BorderThickness="0" Margin="894,0,54,500" Width="40" Height="40" Visibility="Hidden" />
-        <Button x:Name="btn_Close" Content="x" Background="Transparent" FontSize="20" Foreground="White" BorderThickness="0" Margin="948,0,0,500" Width="40" Height="40" Visibility="Hidden" />
+        <Button x:Name="btn_Minimize" Content="-" Background="Transparent" FontSize="25" Foreground="White" BorderThickness="0" Margin="875,9,81,499" Width="40" Height="40" Visibility="Visible" />
+        <Button x:Name="btn_Close" Content="x" Background="Transparent" FontSize="20" Foreground="White" BorderThickness="0" Margin="929,8,27,500" Width="40" Height="40" Visibility="Visible" />
         <Label x:Name="lbl_Track" Content="Waiting for information..." HorizontalAlignment="Center" Margin="0,310,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalContentAlignment="Center" BorderThickness="1">
         </Label>
         <Label x:Name="lbl_Album" Content="" HorizontalAlignment="Center" Margin="0,350,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="18" Foreground="White" HorizontalContentAlignment="Center"/>

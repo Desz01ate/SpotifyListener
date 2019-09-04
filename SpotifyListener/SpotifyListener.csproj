@@ -224,6 +224,7 @@
       <DependentUpon>ColorSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="CryptographicExtesion.cs" />
+    <Compile Include="Delegations\MusicDelegate.cs" />
     <Compile Include="DeviceSelection.xaml.cs">
       <DependentUpon>DeviceSelection.xaml</DependentUpon>
     </Compile>
@@ -328,6 +329,7 @@
   <ItemGroup>
     <Resource Include="Resources\spotify.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">

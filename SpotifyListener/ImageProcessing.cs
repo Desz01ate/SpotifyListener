@@ -17,11 +17,6 @@ namespace SpotifyListener
     {
         [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = CharSet.Auto)]
         extern static bool DestroyIcon(IntPtr handle);
-
-        [DllImport("gdi32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool DeleteObject(IntPtr value);
-
         private static Dictionary<string, Color> DominantColorMemoized = new Dictionary<string, Color>();
         private static Dictionary<string, Color> AverageColorMemoized = new Dictionary<string, Color>();
         public static Color InverseColor(this Color c)
@@ -60,29 +55,32 @@ namespace SpotifyListener
                     return savedColor;
 
             }
-            var bitmap = (Bitmap)img;
-            var startX = 0;
-            var startY = 0;
-            int r = 0, g = 0, b = 0, total = 0;
-            for (int x = startX; x < bitmap.Size.Width; x++)
+            using (var bitmap = (Bitmap)img)
             {
-                for (int y = startY; y < bitmap.Size.Height; y++)
+                var startX = 0;
+                var startY = 0;
+                int r = 0, g = 0, b = 0, total = 0;
+                for (int x = startX; x < bitmap.Size.Width; x++)
                 {
-                    Color clr = bitmap.GetPixel(x, y);
-                    r += clr.R;
-                    g += clr.G;
-                    b += clr.B;
-                    total++;
+                    for (int y = startY; y < bitmap.Size.Height; y++)
+                    {
+                        Color clr = bitmap.GetPixel(x, y);
+                        r += clr.R;
+                        g += clr.G;
+                        b += clr.B;
+                        total++;
+                    }
                 }
+                //Calculate average
+                r /= total;
+                g /= total;
+                b /= total;
+                var result = Color.FromArgb(r, g, b);
+                if (!string.IsNullOrEmpty(key))
+                    AverageColorMemoized.Add(CryptographicExtension.CalculateMD5(path), result);
+                return result;
             }
-            //Calculate average
-            r /= total;
-            g /= total;
-            b /= total;
-            var result = Color.FromArgb(r, g, b);
-            if (!string.IsNullOrEmpty(key))
-                AverageColorMemoized.Add(CryptographicExtension.CalculateMD5(path), result);
-            return result;
+
         }
         public static byte[] ToByteArray(this Image image)
         {
@@ -170,15 +168,9 @@ namespace SpotifyListener
                     image = newImage;
                 }
                 var blur = new GaussianBlur.GaussianBlur(image as Bitmap);
-                var result = blur.Process(blurSize);
-                try
+                using (var result = blur.Process(blurSize))
                 {
                     return result.ToBitmapImage();
-                }
-                finally
-                {
-                    result.Dispose();
-                    blur = null;
                 }
             }
             catch
@@ -317,20 +309,12 @@ namespace SpotifyListener
                 src.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
                 memory.Position = 0;
                 BitmapImage bitmapimage = new BitmapImage();
-                try
-                {
-
-                    bitmapimage.BeginInit();
-                    bitmapimage.StreamSource = memory;
-                    bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmapimage.EndInit();
-                    bitmapimage.Freeze();
-                    return bitmapimage;
-                }
-                finally
-                {
-                    bitmapimage = null;
-                }
+                bitmapimage.BeginInit();
+                bitmapimage.StreamSource = memory;
+                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapimage.EndInit();
+                bitmapimage.Freeze();
+                return bitmapimage;
             }
         }
         public static Image ToImage(this System.Windows.Media.ImageSource imageSrc)
@@ -344,32 +328,17 @@ namespace SpotifyListener
             {
                 encoder.Save(stream);
                 var image = Image.FromStream(stream);
+
                 return image;
+
             }
-        }
-        public static System.Windows.Media.ImageSource ToImageSource(this Image image)
-        {
-            var bitmap = new Bitmap(image);
-            IntPtr bmpPt = bitmap.GetHbitmap();
-            BitmapSource bitmapSource =
-             System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                   bmpPt,
-                   IntPtr.Zero,
-                   System.Windows.Int32Rect.Empty,
-                   BitmapSizeOptions.FromEmptyOptions());
-
-            //freeze bitmapSource and clear memory to avoid memory leaks
-            bitmapSource.Freeze();
-            DeleteObject(bmpPt);
-
-            return bitmapSource;
         }
         public static string ToHex(this Color c)
         {
             return $"#{c.R:X2}{c.G:X2}{c.B:X2}";
         }
     }
-    public class Wallpaper
+    public class Wallpaper : IDisposable
     {
         public enum Style : int
         {
@@ -378,7 +347,6 @@ namespace SpotifyListener
             Stretched
         }
         string OriginalBackgroundImagePath { get; }
-        public Image OriginalBackgroundImage { get; }
         public Image TrackImage { get; private set; }
         [DllImport("user32.dll")]
         public static extern Int32 SystemParametersInfo(UInt32 action, UInt32 uParam, String vParam, UInt32 winIni);
@@ -389,51 +357,27 @@ namespace SpotifyListener
         public Wallpaper() { }
         public Wallpaper(string backgroundImagePath)
         {
-            OriginalBackgroundImage = Image.FromFile(backgroundImagePath);
             OriginalBackgroundImagePath = backgroundImagePath;
         }
         public void Enable()
         {
             Set(TrackImage, Wallpaper.Style.Stretched);
         }
-        public void DisableTemporary()
-        {
-            Set(OriginalBackgroundImage, Wallpaper.Style.Stretched);
-        }
         public void Disable()
         {
-            Set(OriginalBackgroundImage, Wallpaper.Style.Stretched, OriginalBackgroundImagePath);
-        }
-        //public void SetTrackImage(Image image)
-        //{
-        //    TrackImage = image;
-        //}
-        private bool Set(string filePath, Style style)
-        {
-            bool Success = false;
-            try
-            {
-                Image i = System.Drawing.Image.FromFile(Path.GetFullPath(filePath));
-
-                Set(i, style);
-
-                Success = true;
-
-            }
-            catch //(Exception ex)
-            {
-                //ex.HandleException();
-            }
-            return Success;
+            Set(null, Wallpaper.Style.Stretched, OriginalBackgroundImagePath);
         }
         private bool Set(Image image, Style style, string path = "")
         {
             bool Success = false;
             string TempPath = Path.Combine(Path.GetTempPath(), "wallpaper.bmp");
-            File.Create(TempPath).Close();
             try
             {
-                image.Save(TempPath, ImageFormat.Bmp);
+                if (image != null)
+                {
+                    File.Create(TempPath).Close();
+                    image.Save(TempPath, ImageFormat.Bmp);
+                }
 
                 RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
 
@@ -483,11 +427,13 @@ namespace SpotifyListener
                 {
                     File.Delete(TempPath);
                 }
+                image?.Dispose();
             }
             return Success;
         }
         public void CalculateBackgroundImage(Image highlightImage, Image backgroundimage, string fontFamily, float fontSize, string track, string album, string artist, Func<Image, Image> backgroundApplyFunction = null, Func<Image, Image> highlightApplyFunction = null)
         {
+            TrackImage?.Dispose();
             var image = backgroundimage;
             var screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
             var screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
@@ -509,15 +455,28 @@ namespace SpotifyListener
                 g.DrawImage(highlightImage, highlightX, highlightY);
 
                 var font = new Font(fontFamily, fontSize, FontStyle.Bold);
-
-                var trackMeasure = g.MeasureString(track, font);
+                var trackFont = new Font(fontFamily, fontSize * 1.3f, FontStyle.Bold);
+                var trackMeasure = g.MeasureString(track, trackFont);
                 var albumMeasure = g.MeasureString(album, font);
                 var artistMeasure = g.MeasureString(artist, font);
-                g.DrawString(track, font, Brushes.White, (int)((screenWidth - trackMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.1));
+                g.DrawString(track, trackFont, Brushes.White, (int)((screenWidth - trackMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.07));
                 g.DrawString(album, font, Brushes.White, (int)((screenWidth - albumMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.15));
                 g.DrawString(artist, font, Brushes.White, (int)((screenWidth - artistMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.2));
             }
             TrackImage = image;
+        }
+        protected void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.Disable();
+                TrackImage.Dispose();
+            }
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
@@ -525,7 +484,7 @@ namespace SpotifyListener
 
 namespace GaussianBlur
 {
-    public class GaussianBlur : IDisposable
+    public class GaussianBlur
     {
 
 
@@ -537,10 +496,6 @@ namespace GaussianBlur
         private readonly int _width;
         private readonly int _height;
         private readonly ParallelOptions _pOptions = new ParallelOptions { MaxDegreeOfParallelism = 16 };
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
         public GaussianBlur(Bitmap image)
         {
             var rct = new Rectangle(0, 0, image.Width, image.Height);

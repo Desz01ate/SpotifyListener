@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpotifyListener.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -33,7 +34,7 @@ namespace SpotifyListener
 
             return s + "...";
         }
-        public static string RenderString(string template, Music track)
+        public static string RenderString(string template, IMusic track)
         {
             return template.Replace("%artist", track.Artist).Replace("%track", track.Track).Replace("%playlist_type", "").Replace("%playlist_name", track.Album).Replace("%album", track.Album);
         }

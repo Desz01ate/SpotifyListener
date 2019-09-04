@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpotifyListener.Delegations;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SpotifyListener.Interfaces
 {
-    interface IMusic 
+    public interface IMusic
     {
         string Track { get; }
         string Album { get; }
@@ -18,7 +19,8 @@ namespace SpotifyListener.Interfaces
         int Volume { get; }
         Image AlbumArtwork { get; }
         bool IsPlaying { get; }
-        event EventHandler OnTrackChanged;
+        event TrackChangedEventArgs OnTrackChanged;
+        event TrackProgressionChangeEventArgs OnTrackDurationChanged;
         void Get(int albumColorMode);
         Task GetAsync(int albumColorMode);
         void PlayPause();

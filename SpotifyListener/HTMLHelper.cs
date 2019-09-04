@@ -164,19 +164,24 @@ namespace SpotifyListener
                 var imageURL = await LastFMApi.GetImageUrlByInfoAsync(album, artist, track);
                 if (imageURL == string.Empty)
                     imageURL = (await GetImagesUrlAsync($"{track} {album} {artist} album artwork -youtube", Image_source))[0];
-                var client = new HttpClient();
-                var byteArray = await client.GetByteArrayAsync(imageURL);
-                Image image = (Image)((new ImageConverter()).ConvertFrom(byteArray));
-                client.Dispose();
-                return image;
+                using (var client = new HttpClient())
+                {
+                    var byteArray = await client.GetByteArrayAsync(imageURL);
+                    using (Image image = (Image)((new ImageConverter()).ConvertFrom(byteArray)))
+                    {
+                        return image;
+                    }
+                }
                 //can't release this stream manual, causing another GDI+ processing to be error. Let's the GC handle this alone
             }
-            catch 
+            catch
             {
                 var r = new Random();
-                var bitmap = new Bitmap(1, 1);
-                bitmap.SetPixel(0, 0, Color.FromArgb(r.Next(0, 255), r.Next(0, 255), r.Next(0, 255)));
-                return bitmap;
+                using (var bitmap = new Bitmap(1, 1))
+                {
+                    bitmap.SetPixel(0, 0, Color.FromArgb(r.Next(0, 255), r.Next(0, 255), r.Next(0, 255)));
+                    return bitmap;
+                }
             }
         }
         private static string UrlCleaning(string url)

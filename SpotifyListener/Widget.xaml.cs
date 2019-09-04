@@ -63,9 +63,12 @@ namespace SpotifyListener
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            IntPtr windowHandle = (new WindowInteropHelper(this)).Handle;
-            HwndSource src = HwndSource.FromHwnd(windowHandle);
-            src.RemoveHook(new HwndSourceHook(this.WndProc));
+            IntPtr windowHandle = new WindowInteropHelper(this).Handle;
+            if (windowHandle != IntPtr.Zero)
+            {
+                HwndSource src = HwndSource.FromHwnd(windowHandle);
+                src.RemoveHook(new HwndSourceHook(this.WndProc));
+            }
         }
         #endregion
         private MainWindow _parentWindow { get; set; }
