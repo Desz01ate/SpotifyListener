@@ -11,7 +11,7 @@ using SpotifyListener.Delegations;
 
 namespace SpotifyListener
 {
-    public class Music : EventArgs, IMusic, IChromaRender, IDisposable
+    public class Music : IMusic, IChromaRender, IDisposable
     {
         private SpotifyAPI.Web.SpotifyWebAPI client = null;
 
@@ -89,8 +89,8 @@ namespace SpotifyListener
 
             };
             _refreshTokenTimer.Start();
-            _trackFetcherTimer.Interval = 500;
-            _trackFetcherTimer.Tick += async (s, e) => await this.GetAsync();
+            _trackFetcherTimer.Interval = 1000;
+            _trackFetcherTimer.Tick += async (s, e) => await GetAsync();
             _trackFetcherTimer.Start();
         }
 
@@ -112,7 +112,7 @@ namespace SpotifyListener
             if (currentTrack.IsPlaying)
             {
                 var devices = (await client.GetDevicesAsync()).Devices;
-                if (devices.Except(AvailableDevices).Count() > 0)
+                if (devices.Except(AvailableDevices).Any())
                 {
                     AvailableDevices = devices;
                 }
@@ -154,7 +154,7 @@ namespace SpotifyListener
                             Artist = currentTrack.Item.Artists.First().Name;
                         }
 
-                        if (currentTrack.Item.Album.Images.Count() > 0)
+                        if (currentTrack.Item.Album.Images.Any())
                         {
                             ArtworkURL = currentTrack.Item.Album.Images[0].Url;
                             using (var client = new HttpClient())
@@ -215,12 +215,12 @@ namespace SpotifyListener
         {
             if (IsPlaying)
             {
-                await client.PausePlaybackAsync();
+                await client.PausePlaybackAsync().ConfigureAwait(false);
                 //OnPaused(null, null);
             }
             else
             {
-                await client.ResumePlaybackAsync("", "", null, "", Position_ms);
+                await client.ResumePlaybackAsync("", "", null, "", Position_ms).ConfigureAwait(false);
                 //OnResume(null, null);
             }
             IsPlaying = !IsPlaying;
@@ -233,7 +233,7 @@ namespace SpotifyListener
         }
         public async Task NextAsync()
         {
-            await client.SkipPlaybackToPreviousAsync();
+            await client.SkipPlaybackToPreviousAsync().ConfigureAwait(false);
         }
         public void Previous()
         {
@@ -241,7 +241,7 @@ namespace SpotifyListener
         }
         public async Task PreviousAsync()
         {
-            await client.SkipPlaybackToPreviousAsync();
+            await client.SkipPlaybackToPreviousAsync().ConfigureAwait(false);
         }
         public void Stop()
         {
@@ -258,7 +258,7 @@ namespace SpotifyListener
         }
         public async Task SetPositionAsync(int asMillisecond)
         {
-            await client.SeekPlaybackAsync(asMillisecond, ActiveDevice.Id);
+            await client.SeekPlaybackAsync(asMillisecond, ActiveDevice.Id).ConfigureAwait(false);
         }
         public double CalculatedPosition
         {
@@ -276,7 +276,19 @@ namespace SpotifyListener
         }
         public void SetVolume(int volume)
         {
-            client.SetVolume(volume);
+
+            if (volume < 0)
+            {
+                client.SetVolume(0);
+            }
+            else if (volume > 100)
+            {
+                client.SetVolume(100);
+            }
+            else
+            {
+                client.SetVolume(volume);
+            }
         }
         public async Task SetActiveDeviceAsync(string id)
         {
@@ -295,12 +307,26 @@ namespace SpotifyListener
                 _trackFetcherTimer.Stop();
                 _trackFetcherTimer.Dispose();
                 AlbumArtwork.Dispose();
+                client.Dispose();
             }
         }
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+        private int _PreviousVolume = 0;
+        public bool IsMute { get; private set; }
+        public void Mute()
+        {
+            _PreviousVolume = this.Volume;
+            this.SetVolume(0);
+            IsMute = true;
+        }
+        public void Unmute()
+        {
+            this.SetVolume(_PreviousVolume);
+            IsMute = false;
         }
     }
 }

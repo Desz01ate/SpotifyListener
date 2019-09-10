@@ -19,6 +19,7 @@ namespace SpotifyListener.Interfaces
         int Volume { get; }
         Image AlbumArtwork { get; }
         bool IsPlaying { get; }
+        bool IsMute { get; }
         event TrackChangedEventArgs OnTrackChanged;
         event TrackProgressionChangeEventArgs OnTrackDurationChanged;
         void Get(int albumColorMode);
@@ -33,5 +34,7 @@ namespace SpotifyListener.Interfaces
         Task PreviousAsync();
         void SetPosition(int asMillisecond);
         Task SetPositionAsync(int asMillisecond);
+        void Mute();
+        void Unmute();
     }
 }

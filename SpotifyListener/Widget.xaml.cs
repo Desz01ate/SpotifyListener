@@ -22,6 +22,15 @@ namespace SpotifyListener
     /// </summary>
     public partial class Widget : Window
     {
+        private static Widget Context;
+        public static Widget GetContext(MainWindow mainWindow)
+        {
+            if (Context == null)
+            {
+                Context = new Widget(mainWindow);
+            }
+            return Context;
+        }
         #region P/Invoke
         [DllImport("user32.dll")]
         static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X,
@@ -77,9 +86,10 @@ namespace SpotifyListener
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
         }
-        public Widget(MainWindow mainWindow)
+        Widget(MainWindow mainWindow)
         {
             _parentWindow = mainWindow;
+            this.ResizeMode = ResizeMode.NoResize;
             InitializeComponent();
             var compensation = 5;
             var startLoc = System.Windows.SystemParameters.PrimaryScreenWidth - compensation;

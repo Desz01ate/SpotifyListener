@@ -32,7 +32,6 @@ namespace SpotifyListener
 
         private readonly SolidColorBrush playColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
         private readonly SolidColorBrush pauseColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#FF5a5a"));
-        private byte previousVolume = 0;
 
         DoubleAnimation slideAnimation_enter;
         DoubleAnimation slideAnimation_leave;
@@ -49,15 +48,14 @@ namespace SpotifyListener
         string _backgroundImagePath = string.Empty;
         double baseWidth = 0d;
         double baseHeight = 0d;
-
+        Rect NormalRect = new Rect { X = 0, Y = 0, Width = 250, Height = 250 };
+        Rect EnlargeRect = new Rect { X = 0, Y = 0, Width = 250 * 1.2, Height = 250 * 1.2 };
         public static MainWindow Context { get; private set; }
         public MainWindow()
         {
             try
             {
                 InitializeComponent();
-                widget = new Widget(this);
-                Player = new Music(Properties.Settings.Default.AccessToken, Properties.Settings.Default.RefreshToken);
 
                 ResizeMode = ResizeMode.CanMinimize;
                 Visibility = Visibility.Hidden;
@@ -66,7 +64,11 @@ namespace SpotifyListener
                 {
                     System.Windows.MessageBox.Show("You must set refresh token, otherwise this application can't fetch data from Spotify server.", "SpotifyListener", MessageBoxButton.OK, MessageBoxImage.Warning);
                     Settings_Click(null, null);
+                    return;
                 }
+
+                widget = Widget.GetContext(this);
+                Player = new Music(Properties.Settings.Default.AccessToken, Properties.Settings.Default.RefreshToken);
 
                 VolumePath.Fill = playColor;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
@@ -101,7 +103,17 @@ namespace SpotifyListener
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
+            if (WindowState == WindowState.Minimized)
+            {
+                widget.Show();
+                this.ShowInTaskbar = false;
+            }
+            else
+            {
+                widget.Hide();
+                this.ShowInTaskbar = true;
 
+            }
         }
 
         private void Player_OnDeviceChanged(object sender, EventArgs e)
@@ -198,12 +210,14 @@ namespace SpotifyListener
         {
             AlbumImage.Width = baseWidth;
             AlbumImage.Height = baseHeight;
+            AlbumImageRectangle.Rect = NormalRect;
         }
 
         private void AlbumImage_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             AlbumImage.Width = baseWidth * 1.2;
             AlbumImage.Height = baseHeight * 1.2;
+            AlbumImageRectangle.Rect = EnlargeRect;
         }
 
         private void AlbumImage_MouseDown(object sender, MouseButtonEventArgs e)
@@ -231,9 +245,10 @@ namespace SpotifyListener
                     PlayProgress.Value = playbackContext.Position_ms;
                     VolumeProgress.Value = playbackContext.Volume;
                     PlayProgress.Foreground = playbackContext.IsPlaying ? playColor : pauseColor;
+                    VolumePath.Fill = playbackContext.IsMute ? pauseColor : playColor;
                 }
             }
-            catch
+            catch (Exception ex)
             {
 
             }
@@ -369,7 +384,7 @@ namespace SpotifyListener
                 Chroma.HeadsetGrid.SetPeakVolume(Chroma.VolumeColor);
                 Chroma.Apply();
             }
-            catch
+            catch (Exception ex)
             {
                 Chroma.SDKDisable();
             }
@@ -574,8 +589,8 @@ namespace SpotifyListener
 
         private void BackPath_Click(object sender, RoutedEventArgs e)
         {
-            if (Player.Position_ms > 10)
-                Player.Position_ms = 0;
+            if (Player.Position_ms > 10000)
+                Player.SetPositionAsync(0).ConfigureAwait(false);
             else
                 Player.Previous();
         }
@@ -594,12 +609,11 @@ namespace SpotifyListener
         {
             if (Player.Volume > 0)
             {
-                previousVolume = (byte)Player.Volume;
-                Player.Volume = 0;
+                Player.Mute();
             }
             else
             {
-                Player.Volume = previousVolume;
+                Player.Unmute();
             }
         }
 
