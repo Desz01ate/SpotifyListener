@@ -18,7 +18,7 @@ namespace SpotifyListener.Interfaces
         public ColoreColor Standard { get; set; }
         public ColoreColor Complemented { get; set; }
     }
-    interface IChromaRender
+    public interface IChromaRender
     {
         StandardColor Album_StandardColor { get; }
         DevicesColor Album_RazerColor { get; }

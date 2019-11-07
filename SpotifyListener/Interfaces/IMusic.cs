@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SpotifyListener.Interfaces
 {
-    public interface IMusic
+    public interface IMusic : IChromaRender
     {
         string Track { get; }
         string Album { get; }
@@ -20,8 +20,10 @@ namespace SpotifyListener.Interfaces
         Image AlbumArtwork { get; }
         bool IsPlaying { get; }
         bool IsMute { get; }
+        double CalculatedPosition { get; }
         event TrackChangedEventArgs OnTrackChanged;
         event TrackProgressionChangeEventArgs OnTrackDurationChanged;
+        event EventHandler OnDeviceChanged;
         void Get(int albumColorMode);
         Task GetAsync(int albumColorMode);
         void PlayPause();
@@ -36,5 +38,6 @@ namespace SpotifyListener.Interfaces
         Task SetPositionAsync(int asMillisecond);
         void Mute();
         void Unmute();
+        void SetVolume(int volume);
     }
 }

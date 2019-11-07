@@ -7,6 +7,7 @@ using SpotifyListener.Interfaces;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Utilities.Shared;
 using ColoreColor = Colore.Data.Color;
 
 namespace SpotifyListener
@@ -235,7 +236,7 @@ new ColoreColor(224,0  ,32 ),
                 changeRate += speed;//
                 if (changeRate >= 44)
                 {
-                    colors = colors.Slice(1, colors.Length - 1).Add(colors[0]);
+                    colors = colors.Slice(1, colors.Length - 1).ToArray().Add(colors[0]);
                     changeRate = 0;
                 }
 

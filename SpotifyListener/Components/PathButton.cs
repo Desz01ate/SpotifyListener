@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -12,7 +13,8 @@ namespace SpotifyListener
 {
     public class PathButton : Button
     {
-        public static DependencyProperty DataProperty = DependencyProperty.Register("Data", typeof(Geometry), typeof(PathButton), new FrameworkPropertyMetadata(new PropertyChangedCallback(Data_Changed)));
+        static DependencyProperty DataProperty = DependencyProperty.Register("Data", typeof(Geometry), typeof(PathButton), new FrameworkPropertyMetadata(new PropertyChangedCallback(Data_Changed)));
+        private Brush InactiveColor, ActiveColor;
         public Brush Fill
         {
             get
@@ -41,13 +43,31 @@ namespace SpotifyListener
             PathButton thisClass = (PathButton)o;
             thisClass.SetData();
         }
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            if (this.Content is Path path)
+            {
+                path.StrokeThickness = 1;
+                path.Stroke = ActiveColor;
+            }
+        }
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            if (this.Content is Path path)
+            {
+                path.StrokeThickness = 0;
+                path.Stroke = InactiveColor;
+            }
+        }
         private void SetData()
         {
+            ActiveColor = new SolidColorBrush(Colors.Gold);
+            InactiveColor = new SolidColorBrush(Colors.White);
             Path path = new Path
             {
                 Data = Data,
                 Stretch = Stretch.Uniform,
-                Stroke = this.Foreground,
+                Stroke = InactiveColor,
                 StrokeThickness = 0
             };
             this.Content = path;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpotifyListener.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace SpotifyListener
         [DllImport("user32.dll")]
         private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
         private bool initializing;
-        public DeviceSelection(Music player, double? location_X = null, double? location_Y = null)
+        public DeviceSelection(IChangableDevice player, double? location_X = null, double? location_Y = null)
         {
             initializing = true;
             InitializeComponent();
