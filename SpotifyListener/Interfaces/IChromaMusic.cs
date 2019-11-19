@@ -8,5 +8,7 @@ namespace SpotifyListener.Interfaces
 {
     public interface IStreamableMusic : IMusic, IChangableDevice, IDisposable
     {
+        Task PlayAsync(string url);
+        void Play(string url);
     }
 }

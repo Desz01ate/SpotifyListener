@@ -38,7 +38,15 @@ namespace SpotifyListener
             public SpectateCallback spectateCallback;
             public RequestCallback requestCallback;
         }
-
+        public static EventHandlers InitializeEventHandler()
+        {
+            return new EventHandlers
+            {
+                readyCallback = () => { },
+                errorCallback = (errorCode, message) => { },
+                disconnectedCallback = (errorCode, message) => { }
+            };
+        }
         [Serializable, StructLayout(LayoutKind.Sequential)]
         public struct RichPresenceStruct
         {

@@ -71,7 +71,7 @@ namespace SpotifyListener
                 MouseDown += Window_MouseDown;
                 btn_Minimize.Click += (s, e) => this.WindowState = WindowState.Minimized;
                 btn_Close.Click += (s, e) => this.Close();
-
+                this.AlbumImage.MouseDown += AlbumImage_MouseDown;
                 if (!Chroma.IsError)
                 {
                     ChromaTimer.Interval = (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);//TimeSpan.FromMilliseconds((int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0));
@@ -120,7 +120,8 @@ namespace SpotifyListener
             switch (e.ChangedButton)
             {
                 case MouseButton.Left:
-                    Player.PlayPause();
+                    //Player.PlayPause();
+                    Player.PlayAsync("");
                     break;
                 case MouseButton.Right:
                     Task.Run(() => Process.Start(Player.URL));
@@ -255,21 +256,22 @@ namespace SpotifyListener
                     {
                         var backgroundImage = applyOpacity(clonnedAWImage).Blur(Properties.Settings.Default.BlurRadial, this.Height / this.Width);
                         _backgroundApp = new ImageBrush(backgroundImage);
-                        var secondImage = backgroundImage.ToImage();
-                        //_backgroundApp.Opacity = 0.5;
-                        var highlightSize = (int)Math.Round(SystemParameters.PrimaryScreenHeight * 0.555);
-                        wallpaper.CalculateBackgroundImage(
-                            Player.AlbumArtwork.Resize(highlightSize, highlightSize),
-                            secondImage,
-                            this.FontFamily.ToString(),
-                            20.0f,
-                            Player.Track,
-                            Player.Album,
-                            Player.Artist);
-                        secondImage.Dispose();
-                        Task.Run(wallpaper.Enable);
-                        _backgroundDesktopPlaying = wallpaper.TrackImage;
-                        _backgroundApp.Freeze();
+                        using (var secondImage = backgroundImage.ToImage())
+                        {
+                            //_backgroundApp.Opacity = 0.5;
+                            var highlightSize = (int)Math.Round(SystemParameters.PrimaryScreenHeight * 0.555);
+                            wallpaper.CalculateBackgroundImage(
+                                Player.AlbumArtwork.Resize(highlightSize, highlightSize),
+                                secondImage,
+                                this.FontFamily.ToString(),
+                                20.0f,
+                                Player.Track,
+                                Player.Album,
+                                Player.Artist);
+                            Task.Run(wallpaper.Enable);
+                            _backgroundDesktopPlaying = wallpaper.TrackImage;
+                            _backgroundApp.Freeze();
+                        }
                     }
                     var albumImage = (Player.AlbumArtwork as Bitmap).ToBitmapImage();
                     AlbumImage.Source = albumImage;
@@ -296,21 +298,12 @@ namespace SpotifyListener
             lbl_Artist.Content = Player.Artist;
             PlayProgress.Maximum = Player.Duration_ms;
         }
-
-        private static void HandleReadyCallback() { }
-        private static void HandleErrorCallback(int errorCode, string message) { }
-        private static void HandleDisconnectedCallback(int errorCode, string message) { }
         private static void InitializeDiscord()
         {
 #if WIN64
             try
             {
-                DiscordRPC.EventHandlers handlers = new DiscordRPC.EventHandlers
-                {
-                    readyCallback = HandleReadyCallback,
-                    errorCallback = HandleErrorCallback,
-                    disconnectedCallback = HandleDisconnectedCallback
-                };
+                var handlers = DiscordRPC.InitializeEventHandler();
                 //383816327850360843 , iTunes RPC
                 //418435305574760458 , my custom RPC
                 DiscordRPC.Initialize("418435305574760458", ref handlers, true, null);

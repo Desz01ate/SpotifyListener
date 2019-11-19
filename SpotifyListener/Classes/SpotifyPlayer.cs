@@ -8,6 +8,8 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SpotifyListener.Delegations;
+using SpotifyListener.DatabaseManager;
+using SpotifyListener.DatabaseManager.Models;
 
 namespace SpotifyListener
 {
@@ -18,6 +20,8 @@ namespace SpotifyListener
         public string Track { get; private set; }
         public string Album { get; private set; }
         public string Artist { get; private set; }
+        public string Genre { get; private set; }
+        public string Type { get; private set; }
         public string URL { get; private set; }
         public string ArtworkURL { get; private set; }
         public int Position_ms { get; private set; }
@@ -133,6 +137,12 @@ namespace SpotifyListener
                     }
                     if (AlbumArtwork == null)
                     {
+                        var artist = await client.GetArtistAsync(currentTrack.Item.Artists.FirstOrDefault()?.Id);
+                        if (artist != null)
+                        {
+                            Genre = artist.Genres.FirstOrDefault();
+                            Type = artist.Type;
+                        }
                         Track = currentTrack.Item.Name;
                         Album = currentTrack.Item.Album.Name;
                         if (currentTrack.Item.Artists.Count() > 1)
@@ -164,6 +174,7 @@ namespace SpotifyListener
                         _standardColor.Complemented = _standardColor.Standard.InverseColor();
                         _razerColor.Standard = _standardColor.Standard.ToColoreColor();//.SoftColor().ToColoreColor();
                         _razerColor.Complemented = _standardColor.Complemented.ToColoreColor();
+                        await SQLiteService.Context.ListenHistories.InsertAsync(new ListenHistory(this)).ConfigureAwait(false);
                         OnTrackChanged(this);
                     };
                 }
@@ -309,6 +320,14 @@ namespace SpotifyListener
         {
             this.SetVolume(_PreviousVolume);
             IsMute = false;
+        }
+        public void Play(string url)
+        {
+
+        }
+        public async Task PlayAsync(string url)
+        {
+            await client.ResumePlaybackAsync(this.ActiveDevice.Id, "", new List<string>() { "https://open.spotify.com/track/5C0ivQMxes2lWuOANhvVAm" }, 0, 0);
         }
     }
 }

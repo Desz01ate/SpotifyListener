@@ -10,7 +10,7 @@ using System.Windows.Media.Animation;
 
 namespace SpotifyListener.Classes
 {
-    public class AnimationController
+    public partial class AnimationController
     {
         private readonly DoubleAnimation Slide_Enter = new DoubleAnimation()
         {
@@ -76,6 +76,9 @@ namespace SpotifyListener.Classes
         private RectangleGeometry AlbumImageRectangle { get; }
         private Button MinimizeButton { get; }
         private Button CloseButton { get; }
+    }
+    public partial class AnimationController
+    {
 
         public AnimationController(MainWindow mainWnd)
         {
