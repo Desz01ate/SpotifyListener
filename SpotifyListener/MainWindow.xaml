@@ -55,18 +55,23 @@
 		c-6.447,4.214-11.718,1.358-11.718-6.335v-96.327c0-7.7,5.264-10.535,11.697-6.3l67.606,44.478
 		c6.433,4.228,11.697,1.393,11.697-6.3v-31.878c0-7.7,5.264-10.535,11.697-6.3l71.33,46.935
 		C313.46,206.759,313.453,213.675,307.006,217.896z</Geometry>
-        <Geometry x:Key="RandomPath">
-            M194.5,324.35l15-24.2c3.6-5.8,1.8-13.3-4-16.9c-5.7-3.6-13.3-1.8-16.9,4l-15,24.2c-27.2,43.9-66,69.1-106.6,69.1H12.2
-			c-6.8,0-12.2,5.5-12.2,12.3s5.5,12.3,12.2,12.3h54.9C116.4,404.95,162.8,375.55,194.5,324.35z
-M486.4,88.75L427,29.25c-4.8-4.8-12.5-4.8-17.3,0s-4.8,12.5,0,17.3l38.6,38.6c-0.1,0-0.1,0-0.2,0h-56.7
-			c-49.2,0-95.7,29.4-127.4,80.6l-9.2,14.9c-3.6,5.8-1.8,13.3,4,16.9c2,1.2,4.2,1.8,6.4,1.8c4.1,0,8.1-2.1,10.4-5.8l9.2-14.9
-			c27.2-43.9,66-69,106.6-69H448c0.1,0,0.1,0,0.2,0l-38.6,38.6c-4.8,4.8-4.8,12.5,0,17.3c2.4,2.4,5.5,3.6,8.7,3.6s6.3-1.2,8.7-3.6
-			l59.5-59.5C491.2,101.25,491.2,93.45,486.4,88.75z M460.3,97.55c0-0.1,0-0.1,0-0.2s0-0.1,0-0.2l0.2,0.2L460.3,97.55z
-M409.6,460.85c2.4,2.4,5.5,3.6,8.7,3.6s6.3-1.2,8.7-3.6l59.5-59.5c4.8-4.8,4.8-12.5,0-17.3l-59.5-59.4
-			c-4.8-4.8-12.5-4.8-17.3,0s-4.8,12.5,0,17.3l38.6,38.6c-0.1,0-0.1,0-0.2,0h-54.9c-40.5,0-79.4-25.2-106.6-69.1l-90.2-145.7
-			c-31.7-51.3-78.2-80.6-127.4-80.6H12.2c-6.8,0-12.2,5.5-12.2,12.3s5.5,12.3,12.2,12.3h56.7c40.5,0,79.4,25.2,106.6,69l90.2,145.7
-			c31.7,51.3,78.2,80.7,127.4,80.7H448c0.1,0,0.1,0,0.2,0l-38.6,38.6C404.9,448.35,404.9,456.05,409.6,460.85z M460.3,392.55
-			l0.2,0.2l-0.2,0.2c0-0.1,0-0.1,0-0.2S460.3,392.65,460.3,392.55z
+        <Geometry x:Key="RepeatPath`">
+            M1.7,25.2c0.553,0,1-0.447,1-1c0-6.065,4.935-11,11-11h24v8.964L51.4,12.2L37.7,2.236V11.2h-24c-7.168,0-13,5.832-13,13
+		C0.7,24.753,1.147,25.2,1.7,25.2z
+		M49.7,26.2c-0.553,0-1,0.447-1,1c0,6.065-4.935,11-11,11h-24v-8.964L0,39.2l13.7,9.964V40.2h24c7.168,0,13-5.832,13-13
+		C50.7,26.647,50.253,26.2,49.7,26.2z
+        </Geometry>
+        <Geometry x:Key="ShufflePath">
+            M299.535,204.288c-2.929-2.928-7.678-2.928-10.606,0c-2.929,2.93-2.929,7.678,0,10.607l10.003,10.003
+	h-7.479c-43.159,0-83.733-16.807-114.25-47.324l-10.027-10.027l20.584-20.584c29.781-29.782,69.143-46.497,111.135-47.286
+	l-9.965,9.965c-2.929,2.93-2.929,7.678,0,10.607c1.464,1.464,3.384,2.196,5.303,2.196s3.839-0.732,5.303-2.196l22.807-22.807
+	c2.929-2.93,2.929-7.678,0-10.607l-22.807-22.807c-2.929-2.928-7.678-2.928-10.606,0c-2.929,2.93-2.929,7.678,0,10.607l10.04,10.04
+	c-46.028,0.772-89.185,19.048-121.817,51.68l-20.584,20.584l-20.584-20.584c-33.35-33.35-77.691-51.717-124.857-51.717h-0.708
+	c-4.142,0-7.5,3.357-7.5,7.5s3.358,7.5,7.5,7.5h0.708c43.159,0,83.734,16.807,114.25,47.324l20.584,20.584l-10.027,10.027
+	c-30.517,30.518-71.092,47.324-114.25,47.324H7.5c-4.142,0-7.5,3.357-7.5,7.5s3.358,7.5,7.5,7.5h14.183
+	c47.166,0,91.507-18.367,124.857-51.717l10.028-10.028l10.028,10.028c33.35,33.35,77.691,51.717,124.857,51.717h7.479
+	l-10.003,10.003c-2.929,2.93-2.929,7.678,0,10.607c1.464,1.464,3.384,2.196,5.303,2.196s3.839-0.732,5.303-2.196l22.807-22.807
+	c2.929-2.93,2.929-7.678,0-10.607L299.535,204.288z
         </Geometry>
         <Geometry x:Key="volumePath">M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
 		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z
@@ -102,11 +107,15 @@ M409.6,460.85c2.4,2.4,5.5,3.6,8.7,3.6s6.3-1.2,8.7-3.6l59.5-59.5c4.8-4.8,4.8-12.5
         </Label>
         <Label x:Name="lbl_Album" Content="" HorizontalAlignment="Center" Margin="0,350,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="18" Foreground="White" HorizontalContentAlignment="Center"/>
         <Label x:Name="lbl_Artist" Content="" HorizontalAlignment="Center" Margin="0,385,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="18" Foreground="White" HorizontalContentAlignment="Center"/>
+
         <ProgressBar x:Name="PlayProgress" Opacity="0.7" HorizontalAlignment="Center" Height="32" Margin="0,423,0,20" VerticalAlignment="Top" Width="630" MouseDown="PlayProgress_Click" Visibility="Hidden">
             <ProgressBar.Background>
                 <SolidColorBrush Color="#FFE6E6E6" Opacity="0.3"/>
             </ProgressBar.Background>
         </ProgressBar>
+        <local:PathButton x:Name="btn_Shuffle" Data="{StaticResource ShufflePath}" Background="Transparent" FontSize="25" Foreground="White" BorderThickness="0" Margin="15,423,723,20" Width="40" Height="40" Visibility="Visible" />
+        <local:PathButton x:Name="btn_Repeat" Data="{StaticResource RepeatPath`}" Background="Transparent" FontSize="25" Foreground="White" BorderThickness="0" Margin="723,423,15,20" Width="40" Height="40" Visibility="Visible" />
+
         <Label x:Name="lbl_CurrentTime" Content="Label" HorizontalAlignment="Center" Margin="15,423,723,20" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" HorizontalContentAlignment="Center" Foreground="White" Visibility="Hidden"/>
         <Label x:Name="lbl_TimeLeft" Content="Label" HorizontalAlignment="Center" Margin="723,423,15,20" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" HorizontalContentAlignment="Center" Foreground="White" Visibility="Hidden"/>
         <Menu Name="menu1" Margin="0,0,0,0" Width="0" Height="0">

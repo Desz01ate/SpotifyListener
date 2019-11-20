@@ -14,6 +14,7 @@ using Dapper;
 using SpotifyAPI.Web.Models;
 using Image = System.Drawing.Image;
 using SpotifyAPI.Web.Enums;
+using SpotifyListener.Enums;
 
 namespace SpotifyListener
 {
@@ -331,11 +332,11 @@ namespace SpotifyListener
         }
         public async Task PlayAsync(string url)
         {
-            var res = await client.ResumePlaybackAsync(this.ActiveDevice.Id, url, null, 0, 0);
+            await client.ResumePlaybackAsync(this.ActiveDevice.Id, url, null, 0, 0);
         }
         public async Task PlayTrackAsync(string url)
         {
-            var res = await client.ResumePlaybackAsync(this.ActiveDevice.Id, "", new List<string>() { url }, 0, 0);
+            await client.ResumePlaybackAsync(this.ActiveDevice.Id, "", new List<string>() { url }, 0, 0);
 
         }
         public async Task<IEnumerable<(string track, SearchType searchType, string uri)>> SearchAsync(string search, SearchType searchType, int limit = 5)
@@ -352,6 +353,16 @@ namespace SpotifyListener
                 default:
                     return result?.Tracks?.Items.Select(x => ($@"{x.Name} - {x.Album.Name} by {x.Artists.FirstOrDefault()?.Name}", searchType, x.Uri));
             }
+        }
+
+        public void SetShuffle(bool enable)
+        {
+            client.SetShuffle(enable, ActiveDevice.Id);
+        }
+
+        public void SetRepeat(Enums.RepeatState state)
+        {
+            client.SetRepeatMode((SpotifyAPI.Web.Enums.RepeatState)(int)state, ActiveDevice.Id);
         }
     }
 }

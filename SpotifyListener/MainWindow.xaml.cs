@@ -109,7 +109,7 @@ namespace SpotifyListener
                         query = q;
                     }
                     if (string.IsNullOrWhiteSpace(q)) return;
-                    var result = await Player.SearchAsync(query, searchType);
+                    var result = await Player.SearchAsync(query, searchType, 10);
                     if (result == null) return;
                     cb_SearchBox.SetInternalValue(result);
 
@@ -454,7 +454,7 @@ namespace SpotifyListener
 
         private void BackPath_Click(object sender, RoutedEventArgs e)
         {
-            if (Player.Position_ms > 10000)
+            if (Player.Position_ms > 3000)
                 Player.SetPositionAsync(0).ConfigureAwait(false);
             else
                 Player.Previous();

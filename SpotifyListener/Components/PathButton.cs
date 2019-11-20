@@ -14,7 +14,12 @@ namespace SpotifyListener
     public class PathButton : Button
     {
         static DependencyProperty DataProperty = DependencyProperty.Register("Data", typeof(Geometry), typeof(PathButton), new FrameworkPropertyMetadata(new PropertyChangedCallback(Data_Changed)));
-        private Brush InactiveColor, ActiveColor;
+        private readonly Brush InactiveColor, ActiveColor;
+        public PathButton()
+        {
+            ActiveColor = new SolidColorBrush(Colors.Gold);
+            InactiveColor = new SolidColorBrush(Colors.White);
+        }
         public Brush Fill
         {
             get
@@ -61,8 +66,6 @@ namespace SpotifyListener
         }
         private void SetData()
         {
-            ActiveColor = new SolidColorBrush(Colors.Gold);
-            InactiveColor = new SolidColorBrush(Colors.White);
             Path path = new Path
             {
                 Data = Data,

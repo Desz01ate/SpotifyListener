@@ -194,6 +194,7 @@
     <Compile Include="DeviceSelection.xaml.cs">
       <DependentUpon>DeviceSelection.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Enums\RepeatState.cs" />
     <Compile Include="Interfaces\IChangableDevice.cs" />
     <Compile Include="Interfaces\IChromaArtwork.cs" />
     <Compile Include="Interfaces\IChromaMusic.cs" />

@@ -1,4 +1,5 @@
 ﻿using SpotifyListener.Delegations;
+using SpotifyListener.Enums;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -41,5 +42,7 @@ namespace SpotifyListener.Interfaces
         void Mute();
         void Unmute();
         void SetVolume(int volume);
+        void SetShuffle(bool enable);
+        void SetRepeat(RepeatState state);
     }
 }
