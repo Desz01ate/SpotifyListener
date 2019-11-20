@@ -18,6 +18,11 @@ using System.ComponentModel;
 using SpotifyListener.Interfaces;
 using System.Runtime.InteropServices;
 using SpotifyListener.Classes;
+using SpotifyListener.DatabaseManager;
+using Utilities.Shared;
+using System.Collections.Generic;
+//using SpotifyAPI.Web.Models;
+using SpotifyAPI.Web.Enums;
 
 namespace SpotifyListener
 {
@@ -27,7 +32,7 @@ namespace SpotifyListener
     public partial class MainWindow : Window
     {
         readonly Timer ChromaTimer = new Timer();
-        public IStreamableMusic Player { get; }
+        public SpotifyPlayer Player { get; }
         private AnimationController animation;
         private static MMDevice ActiveDevice;
         private static readonly ChromaWrapper Chroma = ChromaWrapper.GetInstance;
@@ -66,12 +71,74 @@ namespace SpotifyListener
                 using (var devices = new MMDeviceEnumerator())
                     ActiveDevice = devices.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
                 InitializeDiscord();
-                KeyDown += MainWindowGrid_PreviewKeyDown;
+                //KeyDown += MainWindowGrid_PreviewKeyDown;
                 Loaded += MainWindow_Loaded;
                 MouseDown += Window_MouseDown;
                 btn_Minimize.Click += (s, e) => this.WindowState = WindowState.Minimized;
                 btn_Close.Click += (s, e) => this.Close();
                 this.AlbumImage.MouseDown += AlbumImage_MouseDown;
+                this.cb_SearchBox.TextChanged += async (s, e) =>
+                {
+                    var q = cb_SearchBox.Text;
+                    string query = default;
+                    SearchType searchType = SearchType.All;
+                    if (q.Contains(":"))
+                    {
+                        var data = q.Split(':');
+                        var qtype = data[0].ToLower();
+                        if (qtype == "t" || qtype == "track")
+                        {
+                            searchType = SearchType.Track;
+                        }
+                        else if (qtype == "ab" || qtype == "album")
+                        {
+                            searchType = SearchType.Album;
+                        }
+                        else if (qtype == "a" || qtype == "artist")
+                        {
+                            searchType = SearchType.Artist;
+                        }
+                        else if (qtype == "p" || qtype == "playlist")
+                        {
+                            searchType = SearchType.Playlist;
+                        }
+                        query = data[1];
+                    }
+                    else
+                    {
+                        query = q;
+                    }
+                    if (string.IsNullOrWhiteSpace(q)) return;
+                    var result = await Player.SearchAsync(query, searchType);
+                    if (result == null) return;
+                    cb_SearchBox.SetInternalValue(result);
+
+
+
+                };
+                this.cb_SearchBox.SelectionChanged += async (s, e) =>
+                {
+                    if (cb_SearchBox.SelectedItem == null) return;
+                    var text = cb_SearchBox.SelectedItem.ToString();
+                    var result = cb_SearchBox.GetTrackUrl(text);
+                    if (!string.IsNullOrWhiteSpace(result.uri))
+                    {
+                        switch (result.searchType)
+                        {
+                            case SearchType.Artist:
+                                Process.Start(result.uri);
+                                break;
+                            case SearchType.Track:
+                            case SearchType.All:
+                                await Player.PlayTrackAsync(result.uri);
+                                break;
+                            default:
+                                await Player.PlayAsync(result.uri);
+                                break;
+                        }
+
+                    }
+                };
                 if (!Chroma.IsError)
                 {
                     ChromaTimer.Interval = (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);//TimeSpan.FromMilliseconds((int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0));
@@ -120,8 +187,8 @@ namespace SpotifyListener
             switch (e.ChangedButton)
             {
                 case MouseButton.Left:
-                    //Player.PlayPause();
-                    Player.PlayAsync("");
+                    Player.PlayPause();
+                    //Player.PlayAsync("");
                     break;
                 case MouseButton.Right:
                     Task.Run(() => Process.Start(Player.URL));
@@ -177,6 +244,7 @@ namespace SpotifyListener
         }
         private void OnMouseLeaveEvent(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            cb_SearchBox.Text = "";
             animation.TransitionDisable();
         }
         private void OnMouseEnterEvent(object sender, System.Windows.Input.MouseEventArgs e)

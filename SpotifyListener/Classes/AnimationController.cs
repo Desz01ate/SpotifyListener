@@ -76,6 +76,7 @@ namespace SpotifyListener.Classes
         private RectangleGeometry AlbumImageRectangle { get; }
         private Button MinimizeButton { get; }
         private Button CloseButton { get; }
+        private SpotifySearchBox SearchBox { get; }
     }
     public partial class AnimationController
     {
@@ -99,6 +100,7 @@ namespace SpotifyListener.Classes
             CloseButton = mainWnd.btn_Close;
             AlbumImage = mainWnd.AlbumImage;
             AlbumImageRectangle = mainWnd.AlbumImageRectangle;
+            SearchBox = mainWnd.cb_SearchBox;
             #endregion
             AlbumImage.BringToFront();
             var baseHeight = AlbumImage.Height;
@@ -154,6 +156,7 @@ namespace SpotifyListener.Classes
             CurrentTimeLabel.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             TimeLeftLabel.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             PlayProgress.BeginAnimation(UIElement.OpacityProperty, FadeIn);
+            SearchBox.BeginAnimation(UIElement.OpacityProperty, FadeIn);
         }
         public void TransitionDisable()
         {
@@ -174,6 +177,7 @@ namespace SpotifyListener.Classes
             BackButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             PlayButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             NextButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
+
             MuteButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             VolumeProgress.BeginAnimation(UIElement.OpacityProperty, FadeOut);
 
@@ -182,6 +186,8 @@ namespace SpotifyListener.Classes
             CurrentTimeLabel.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             TimeLeftLabel.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             PlayProgress.BeginAnimation(UIElement.OpacityProperty, FadeOut);
+            SearchBox.BeginAnimation(UIElement.OpacityProperty, FadeOut);
+
         }
     }
 }

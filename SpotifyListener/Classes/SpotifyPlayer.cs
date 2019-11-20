@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 using SpotifyListener.Delegations;
 using SpotifyListener.DatabaseManager;
 using SpotifyListener.DatabaseManager.Models;
+using Dapper;
+using SpotifyAPI.Web.Models;
+using Image = System.Drawing.Image;
+using SpotifyAPI.Web.Enums;
 
 namespace SpotifyListener
 {
@@ -327,7 +331,27 @@ namespace SpotifyListener
         }
         public async Task PlayAsync(string url)
         {
-            await client.ResumePlaybackAsync(this.ActiveDevice.Id, "", new List<string>() { "https://open.spotify.com/track/5C0ivQMxes2lWuOANhvVAm" }, 0, 0);
+            var res = await client.ResumePlaybackAsync(this.ActiveDevice.Id, url, null, 0, 0);
+        }
+        public async Task PlayTrackAsync(string url)
+        {
+            var res = await client.ResumePlaybackAsync(this.ActiveDevice.Id, "", new List<string>() { url }, 0, 0);
+
+        }
+        public async Task<IEnumerable<(string track, SearchType searchType, string uri)>> SearchAsync(string search, SearchType searchType, int limit = 5)
+        {
+            var result = await client.SearchItemsAsync(search, searchType, limit).ConfigureAwait(false);
+            switch (searchType)
+            {
+                case SearchType.Album:
+                    return result?.Albums?.Items.Select(x => ($@"{x.Name} by {x.Artists.FirstOrDefault()?.Name}", searchType, x.Uri));
+                case SearchType.Playlist:
+                    return result?.Playlists?.Items.Select(x => ($@"{x.Name} by {x.Owner.DisplayName}", searchType, x.Uri));
+                case SearchType.Artist:
+                    return result?.Artists?.Items.Select(x => ($@"{x.Name}", searchType, x.ExternalUrls.FirstOrDefault().Value));
+                default:
+                    return result?.Tracks?.Items.Select(x => ($@"{x.Name} - {x.Album.Name} by {x.Artists.FirstOrDefault()?.Name}", searchType, x.Uri));
+            }
         }
     }
 }
