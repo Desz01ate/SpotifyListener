@@ -42,7 +42,7 @@ namespace SpotifyListener.Interfaces
         void Mute();
         void Unmute();
         void SetVolume(int volume);
-        void SetShuffle(bool enable);
+        void ToggleShuffle();
         void SetRepeat(RepeatState state);
     }
 }

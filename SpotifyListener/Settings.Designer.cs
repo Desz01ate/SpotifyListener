@@ -28,13 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.SpotifyGroupBox = new System.Windows.Forms.GroupBox();
-            this.AccessTokenTextBox = new System.Windows.Forms.TextBox();
-            this.AccessTokenRevealButton = new System.Windows.Forms.Button();
-            this.RevealKeyButton = new System.Windows.Forms.Button();
-            this.RefreshTokenTextbox = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.SaveButton = new System.Windows.Forms.Button();
             this.DiscordGroupBox = new System.Windows.Forms.GroupBox();
             this.DiscordRichPresenceEnable = new System.Windows.Forms.CheckBox();
@@ -51,8 +44,6 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label14 = new System.Windows.Forms.Label();
             this.trackbar_BlurRadial = new System.Windows.Forms.TrackBar();
-            this.NetworkEnable = new System.Windows.Forms.CheckBox();
-            this.WebServiceListeningEnable = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label15 = new System.Windows.Forms.Label();
             this.trackbar_VolumeScale = new System.Windows.Forms.TrackBar();
@@ -70,8 +61,6 @@
             this.ReverseLEDRender = new System.Windows.Forms.CheckBox();
             this.ColorSettingsButton = new System.Windows.Forms.Button();
             this.ChromaSDKEnable = new System.Windows.Forms.CheckBox();
-            this.DisableDesktop = new System.Windows.Forms.CheckBox();
-            this.SpotifyGroupBox.SuspendLayout();
             this.DiscordGroupBox.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_BlurRadial)).BeginInit();
@@ -79,76 +68,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ColorDensity)).BeginInit();
             this.SuspendLayout();
-            // 
-            // SpotifyGroupBox
-            // 
-            this.SpotifyGroupBox.Controls.Add(this.AccessTokenTextBox);
-            this.SpotifyGroupBox.Controls.Add(this.AccessTokenRevealButton);
-            this.SpotifyGroupBox.Controls.Add(this.RevealKeyButton);
-            this.SpotifyGroupBox.Controls.Add(this.RefreshTokenTextbox);
-            this.SpotifyGroupBox.Controls.Add(this.label2);
-            this.SpotifyGroupBox.Controls.Add(this.label1);
-            this.SpotifyGroupBox.Location = new System.Drawing.Point(13, 13);
-            this.SpotifyGroupBox.Name = "SpotifyGroupBox";
-            this.SpotifyGroupBox.Size = new System.Drawing.Size(616, 128);
-            this.SpotifyGroupBox.TabIndex = 0;
-            this.SpotifyGroupBox.TabStop = false;
-            this.SpotifyGroupBox.Text = "Spotify";
-            // 
-            // AccessTokenTextBox
-            // 
-            this.AccessTokenTextBox.Location = new System.Drawing.Point(5, 95);
-            this.AccessTokenTextBox.Name = "AccessTokenTextBox";
-            this.AccessTokenTextBox.PasswordChar = '*';
-            this.AccessTokenTextBox.ReadOnly = true;
-            this.AccessTokenTextBox.Size = new System.Drawing.Size(516, 20);
-            this.AccessTokenTextBox.TabIndex = 6;
-            // 
-            // AccessTokenRevealButton
-            // 
-            this.AccessTokenRevealButton.Location = new System.Drawing.Point(527, 90);
-            this.AccessTokenRevealButton.Name = "AccessTokenRevealButton";
-            this.AccessTokenRevealButton.Size = new System.Drawing.Size(75, 23);
-            this.AccessTokenRevealButton.TabIndex = 5;
-            this.AccessTokenRevealButton.Text = "Reveal Key";
-            this.AccessTokenRevealButton.UseVisualStyleBackColor = true;
-            this.AccessTokenRevealButton.Click += new System.EventHandler(this.AccessTokenRevealButton_Click);
-            // 
-            // RevealKeyButton
-            // 
-            this.RevealKeyButton.Location = new System.Drawing.Point(526, 29);
-            this.RevealKeyButton.Name = "RevealKeyButton";
-            this.RevealKeyButton.Size = new System.Drawing.Size(75, 23);
-            this.RevealKeyButton.TabIndex = 4;
-            this.RevealKeyButton.Text = "Reveal Key";
-            this.RevealKeyButton.UseVisualStyleBackColor = true;
-            this.RevealKeyButton.Click += new System.EventHandler(this.RevealKeyButton_Click);
-            // 
-            // RefreshTokenTextbox
-            // 
-            this.RefreshTokenTextbox.Location = new System.Drawing.Point(6, 32);
-            this.RefreshTokenTextbox.Name = "RefreshTokenTextbox";
-            this.RefreshTokenTextbox.PasswordChar = '*';
-            this.RefreshTokenTextbox.Size = new System.Drawing.Size(516, 20);
-            this.RefreshTokenTextbox.TabIndex = 1;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 78);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Access Token :";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(84, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Refresh Token :";
             // 
             // SaveButton
             // 
@@ -172,7 +91,7 @@
             this.DiscordGroupBox.Controls.Add(this.label4);
             this.DiscordGroupBox.Controls.Add(this.DiscordPauseDetail);
             this.DiscordGroupBox.Controls.Add(this.label3);
-            this.DiscordGroupBox.Location = new System.Drawing.Point(13, 148);
+            this.DiscordGroupBox.Location = new System.Drawing.Point(14, 13);
             this.DiscordGroupBox.Name = "DiscordGroupBox";
             this.DiscordGroupBox.Size = new System.Drawing.Size(616, 306);
             this.DiscordGroupBox.TabIndex = 2;
@@ -279,14 +198,11 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.DisableDesktop);
             this.groupBox3.Controls.Add(this.label14);
             this.groupBox3.Controls.Add(this.trackbar_BlurRadial);
-            this.groupBox3.Controls.Add(this.NetworkEnable);
-            this.groupBox3.Controls.Add(this.WebServiceListeningEnable);
-            this.groupBox3.Location = new System.Drawing.Point(10, 460);
+            this.groupBox3.Location = new System.Drawing.Point(14, 325);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(620, 163);
+            this.groupBox3.Size = new System.Drawing.Size(616, 286);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Preferences";
@@ -294,7 +210,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(3, 114);
+            this.label14.Location = new System.Drawing.Point(7, 24);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(125, 13);
             this.label14.TabIndex = 3;
@@ -302,36 +218,12 @@
             // 
             // trackbar_BlurRadial
             // 
-            this.trackbar_BlurRadial.Location = new System.Drawing.Point(134, 114);
+            this.trackbar_BlurRadial.Location = new System.Drawing.Point(138, 24);
             this.trackbar_BlurRadial.Minimum = 1;
             this.trackbar_BlurRadial.Name = "trackbar_BlurRadial";
             this.trackbar_BlurRadial.Size = new System.Drawing.Size(355, 45);
             this.trackbar_BlurRadial.TabIndex = 2;
             this.trackbar_BlurRadial.Value = 1;
-            // 
-            // NetworkEnable
-            // 
-            this.NetworkEnable.AutoSize = true;
-            this.NetworkEnable.Enabled = false;
-            this.NetworkEnable.Location = new System.Drawing.Point(259, 25);
-            this.NetworkEnable.Name = "NetworkEnable";
-            this.NetworkEnable.Size = new System.Drawing.Size(187, 17);
-            this.NetworkEnable.TabIndex = 1;
-            this.NetworkEnable.Text = "Allow Application To Use Network";
-            this.NetworkEnable.UseVisualStyleBackColor = true;
-            this.NetworkEnable.Visible = false;
-            this.NetworkEnable.CheckedChanged += new System.EventHandler(this.NetworkEnable_CheckedChanged);
-            // 
-            // WebServiceListeningEnable
-            // 
-            this.WebServiceListeningEnable.AutoSize = true;
-            this.WebServiceListeningEnable.Enabled = false;
-            this.WebServiceListeningEnable.Location = new System.Drawing.Point(6, 25);
-            this.WebServiceListeningEnable.Name = "WebServiceListeningEnable";
-            this.WebServiceListeningEnable.Size = new System.Drawing.Size(232, 17);
-            this.WebServiceListeningEnable.TabIndex = 0;
-            this.WebServiceListeningEnable.Text = "Enable application control over web service";
-            this.WebServiceListeningEnable.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -520,16 +412,6 @@
             this.ChromaSDKEnable.Text = "Enable Razer Chroma SDK";
             this.ChromaSDKEnable.UseVisualStyleBackColor = true;
             // 
-            // DynamicDesktop
-            // 
-            this.DisableDesktop.AutoSize = true;
-            this.DisableDesktop.Location = new System.Drawing.Point(6, 59);
-            this.DisableDesktop.Name = "DynamicDesktop";
-            this.DisableDesktop.Size = new System.Drawing.Size(211, 17);
-            this.DisableDesktop.TabIndex = 4;
-            this.DisableDesktop.Text = "Disable track background on minimized";
-            this.DisableDesktop.UseVisualStyleBackColor = true;
-            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -540,14 +422,11 @@
             this.Controls.Add(this.ResetButton);
             this.Controls.Add(this.DiscordGroupBox);
             this.Controls.Add(this.SaveButton);
-            this.Controls.Add(this.SpotifyGroupBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Settings";
             this.Text = "Settings";
-            this.SpotifyGroupBox.ResumeLayout(false);
-            this.SpotifyGroupBox.PerformLayout();
             this.DiscordGroupBox.ResumeLayout(false);
             this.DiscordGroupBox.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -562,16 +441,10 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.GroupBox SpotifyGroupBox;
-        private System.Windows.Forms.TextBox RefreshTokenTextbox;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button SaveButton;
-        private System.Windows.Forms.Button RevealKeyButton;
         private System.Windows.Forms.GroupBox DiscordGroupBox;
         private System.Windows.Forms.RichTextBox DiscordPauseDetail;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.RichTextBox DiscordPlayState;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.RichTextBox DiscordPauseState;
@@ -581,11 +454,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button ResetButton;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.CheckBox WebServiceListeningEnable;
         private System.Windows.Forms.CheckBox DiscordRichPresenceEnable;
-        private System.Windows.Forms.CheckBox NetworkEnable;
-        private System.Windows.Forms.Button AccessTokenRevealButton;
-        private System.Windows.Forms.TextBox AccessTokenTextBox;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ComboBox AlbumColorMode;
@@ -605,6 +474,5 @@
         private System.Windows.Forms.TrackBar trackbar_BlurRadial;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TrackBar trackbar_VolumeScale;
-        private System.Windows.Forms.CheckBox DisableDesktop;
     }
 }

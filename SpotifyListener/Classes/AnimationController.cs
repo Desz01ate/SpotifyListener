@@ -74,9 +74,12 @@ namespace SpotifyListener.Classes
         private ProgressBar PlayProgress { get; }
         private Image AlbumImage { get; }
         private RectangleGeometry AlbumImageRectangle { get; }
+        private Button SaveImageButton { get; }
         private Button MinimizeButton { get; }
         private Button CloseButton { get; }
         private SpotifySearchBox SearchBox { get; }
+        private PathButton ShuffleButton { get; }
+        private PathButton RepeatButton { get; }
     }
     public partial class AnimationController
     {
@@ -96,11 +99,14 @@ namespace SpotifyListener.Classes
             ChangeDeviceLabel = mainWnd.lbl_change_device;
             CurrentTimeLabel = mainWnd.lbl_CurrentTime;
             TimeLeftLabel = mainWnd.lbl_TimeLeft;
+            SaveImageButton = mainWnd.btn_SaveImage;
             MinimizeButton = mainWnd.btn_Minimize;
             CloseButton = mainWnd.btn_Close;
             AlbumImage = mainWnd.AlbumImage;
             AlbumImageRectangle = mainWnd.AlbumImageRectangle;
             SearchBox = mainWnd.cb_SearchBox;
+            ShuffleButton = mainWnd.btn_Shuffle;
+            RepeatButton = mainWnd.btn_Repeat;
             #endregion
             AlbumImage.BringToFront();
             var baseHeight = AlbumImage.Height;
@@ -130,6 +136,7 @@ namespace SpotifyListener.Classes
             CurrentTimeLabel.Visibility = Visibility.Visible;
             TimeLeftLabel.Visibility = Visibility.Visible;
             PlayProgress.Visibility = Visibility.Visible;
+            SaveImageButton.Visibility = Visibility.Visible;
             MinimizeButton.Visibility = Visibility.Visible;
             CloseButton.Visibility = Visibility.Visible;
             #endregion
@@ -157,9 +164,13 @@ namespace SpotifyListener.Classes
             TimeLeftLabel.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             PlayProgress.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             SearchBox.BeginAnimation(UIElement.OpacityProperty, FadeIn);
+            ShuffleButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
+            RepeatButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
+
         }
         public void TransitionDisable()
         {
+            SaveImageButton.Visibility = Visibility.Hidden;
             MinimizeButton.Visibility = Visibility.Hidden;
             CloseButton.Visibility = Visibility.Hidden;
 
@@ -187,6 +198,9 @@ namespace SpotifyListener.Classes
             TimeLeftLabel.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             PlayProgress.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             SearchBox.BeginAnimation(UIElement.OpacityProperty, FadeOut);
+            ShuffleButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
+            RepeatButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
+
 
         }
     }

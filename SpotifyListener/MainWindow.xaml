@@ -100,9 +100,9 @@
 
         </local:SpotifySearchBox>
 
-
-        <Button x:Name="btn_Minimize" Content="-" Background="Transparent" FontSize="25" Foreground="White" BorderThickness="0" Margin="875,9,81,499" Width="40" Height="40" Visibility="Visible" />
-        <Button x:Name="btn_Close" Content="x" Background="Transparent" FontSize="20" Foreground="White" BorderThickness="0" Margin="929,8,27,500" Width="40" Height="40" Visibility="Visible" />
+        <Button x:Name="btn_SaveImage" Content="💾" Background="Transparent" FontSize="15" Foreground="White" BorderThickness="0" Margin="916,484,40,24" Width="40" Height="40" Visibility="Visible" Click="Btn_SaveImage_Click" />
+        <Button x:Name="btn_Minimize" Content="-" Background="Transparent" FontSize="25" Foreground="White" BorderThickness="0" Margin="0,9,-775,499" Width="40" Height="40" Visibility="Visible" />
+        <Button x:Name="btn_Close" Content="x" Background="Transparent" FontSize="20" Foreground="White" BorderThickness="0" Margin="0,9,-875,500" Width="40" Height="40" Visibility="Visible" />
         <Label x:Name="lbl_Track" Content="Waiting for information..." HorizontalAlignment="Center" Margin="0,310,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalContentAlignment="Center" BorderThickness="1">
         </Label>
         <Label x:Name="lbl_Album" Content="" HorizontalAlignment="Center" Margin="0,350,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="18" Foreground="White" HorizontalContentAlignment="Center"/>
@@ -113,8 +113,8 @@
                 <SolidColorBrush Color="#FFE6E6E6" Opacity="0.3"/>
             </ProgressBar.Background>
         </ProgressBar>
-        <local:PathButton x:Name="btn_Shuffle" Data="{StaticResource ShufflePath}" Background="Transparent" FontSize="25" Foreground="White" BorderThickness="0" Margin="15,423,723,20" Width="40" Height="40" Visibility="Visible" />
-        <local:PathButton x:Name="btn_Repeat" Data="{StaticResource RepeatPath`}" Background="Transparent" FontSize="25" Foreground="White" BorderThickness="0" Margin="723,423,15,20" Width="40" Height="40" Visibility="Visible" />
+        <local:PathButton Visibility="Hidden" x:Name="btn_Repeat" Data="{StaticResource RepeatPath`}" Background="Transparent" BorderBrush="Transparent" Opacity="0" Margin="0,423,-850,20" VerticalAlignment="Top" Width="20" Height="20" RenderTransformOrigin="1,2" Click="Btn_Repeat_Click" Focusable="False" Style="{StaticResource PathButtonStyle}" Fill="White"/>
+        <local:PathButton Visibility="Hidden" x:Name="btn_Shuffle" Data="{StaticResource ShufflePath}" Background="Transparent" BorderBrush="Transparent" Opacity="0" Margin="0,423,850,20" VerticalAlignment="Top" Width="20" Height="20" RenderTransformOrigin="1,2" Click="Btn_Shuffle_Click" Focusable="False" Style="{StaticResource PathButtonStyle}" Fill="White"/>
 
         <Label x:Name="lbl_CurrentTime" Content="Label" HorizontalAlignment="Center" Margin="15,423,723,20" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" HorizontalContentAlignment="Center" Foreground="White" Visibility="Hidden"/>
         <Label x:Name="lbl_TimeLeft" Content="Label" HorizontalAlignment="Center" Margin="723,423,15,20" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" HorizontalContentAlignment="Center" Foreground="White" Visibility="Hidden"/>

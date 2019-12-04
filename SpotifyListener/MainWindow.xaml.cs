@@ -1,6 +1,5 @@
 ﻿using SpotifyListener.ChromaExtension;
 using NAudio.CoreAudioApi;
-using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -11,18 +10,15 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
 using SpotifyListener.Interfaces;
-using System.Runtime.InteropServices;
 using SpotifyListener.Classes;
-using SpotifyListener.DatabaseManager;
-using Utilities.Shared;
-using System.Collections.Generic;
 //using SpotifyAPI.Web.Models;
 using SpotifyAPI.Web.Enums;
+using SpotifyAPI.Web;
+using SpotifyListener.Configurations;
 
 namespace SpotifyListener
 {
@@ -53,14 +49,16 @@ namespace SpotifyListener
                 ResizeMode = ResizeMode.CanMinimize;
                 Visibility = Visibility.Hidden;
 
-                if (string.IsNullOrWhiteSpace(Properties.Settings.Default.RefreshToken))
+                SpotifyWebAPI client = default;
+                SpotifyConfiguration.Context.OnClientReady += (s, e) =>
                 {
-                    System.Windows.MessageBox.Show("You must set refresh token, otherwise this application can't fetch data from Spotify server.", "SpotifyListener", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    Settings_Click(null, null);
-                    return;
+                    client = e;
+                };
+                while (client == null)
+                {
+                    System.Threading.Thread.Sleep(100);
                 }
-
-                Player = new SpotifyPlayer(Properties.Settings.Default.AccessToken, Properties.Settings.Default.RefreshToken);
+                Player = new SpotifyPlayer(client);
 
                 VolumePath.Fill = playColor;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
@@ -165,7 +163,6 @@ namespace SpotifyListener
 
             MouseEnter += OnMouseEnterEvent;
             MouseLeave += OnMouseLeaveEvent;
-
             #region get current background image
 
             if (Wallpaper.TryGetWallpaper(out var filePath))
@@ -246,10 +243,12 @@ namespace SpotifyListener
         {
             cb_SearchBox.Text = "";
             animation.TransitionDisable();
+            Console.WriteLine("Mouse Leave");
         }
         private void OnMouseEnterEvent(object sender, System.Windows.Input.MouseEventArgs e)
         {
             animation.TransitionEnable();
+            Console.WriteLine("Mouse Enter");
         }
         private void ChromaTimer_Tick(object sender, EventArgs e)
         {
@@ -519,6 +518,20 @@ namespace SpotifyListener
             wallpaper.SaveWallpaperToFile(file);
             Process.Start(file);
 
+        }
+
+        private void Btn_Repeat_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void Btn_Shuffle_Click(object sender, RoutedEventArgs e)
+        {
+            Player.ToggleShuffle();
+        }
+
+        private void Btn_SaveImage_Click(object sender, RoutedEventArgs e)
+        {
+            GenerateFormImage();
         }
     }
 }

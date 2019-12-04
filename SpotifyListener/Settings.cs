@@ -21,7 +21,6 @@ namespace SpotifyListener
         {
             InitializeComponent();
             //Due to Facebook updated policy (https://developers.facebook.com/blog/post/2018/04/24/new-facebook-platform-product-changes-policy-updates/), now publish_actions is deprecated so this feature might be remove soon as well
-            SpotifyGroupBox.Enabled = true;
 #if WIN32
             DiscordRichPresenceEnable.Visible = false;
             DiscordGroupBox.Text = "Discord RPC is not working on x86 system";
@@ -35,10 +34,6 @@ namespace SpotifyListener
             RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyleIndex;
             RenderModeCombobox.SelectedIndex = Adaptive ? 1 : 0;
 
-            RefreshTokenTextbox.Text = Properties.Settings.Default.RefreshToken;
-            RefreshTokenTextbox.DoubleClick += (s, e) => Clipboard.SetText(Properties.Settings.Default.RefreshToken);
-            AccessTokenTextBox.Text = Properties.Settings.Default.AccessToken;
-
             DiscordPlayDetail.Text = Properties.Settings.Default.DiscordPlayDetail;
             DiscordPlayState.Text = Properties.Settings.Default.DiscordPlayState;
             DiscordPauseDetail.Text = Properties.Settings.Default.DiscordPauseDetail;
@@ -48,22 +43,18 @@ namespace SpotifyListener
             ReverseLEDRender.Checked = Properties.Settings.Default.ReverseLEDRender;
             ColorDensity.Value = Properties.Settings.Default.Density;
             RenderFPS.Text = Properties.Settings.Default.RenderFPS.ToString();
-            NetworkEnable.Checked = Properties.Settings.Default.NetworkEnable;
             AlbumColorMode.SelectedIndex = Properties.Settings.Default.AlbumColorMode;
 
             ChromaSDKEnable_CheckedChanged(null, EventArgs.Empty);
             DiscordRichPresenceEnable_CheckedChanged(null, EventArgs.Empty);
-            NetworkEnable_CheckedChanged(NetworkEnable, EventArgs.Empty);
             trackbar_BlurRadial.Value = Properties.Settings.Default.BlurRadial;
             trackbar_VolumeScale.Value = Properties.Settings.Default.VolumeScale;
-            DisableDesktop.Checked = Properties.Settings.Default.DisableTrackBackgroundOnMinimized;
 
 
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.RefreshToken = RefreshTokenTextbox.Text;
 
             Properties.Settings.Default.AdaptiveDensity = Adaptive;
             Properties.Settings.Default.RenderPeakVolumeEnable = RenderPeakVolumeEnable;
@@ -84,17 +75,11 @@ namespace SpotifyListener
             Properties.Settings.Default.ReverseLEDRender = ReverseLEDRender.Checked;
             Properties.Settings.Default.Density = ColorDensity.Value;
 
-            Properties.Settings.Default.NetworkEnable = NetworkEnable.Checked;
             Properties.Settings.Default.AlbumColorMode = (byte)AlbumColorMode.SelectedIndex;
             Properties.Settings.Default.BlurRadial = trackbar_BlurRadial.Value;
             Properties.Settings.Default.VolumeScale = trackbar_VolumeScale.Value;
-            Properties.Settings.Default.DisableTrackBackgroundOnMinimized = DisableDesktop.Checked;
             Properties.Settings.Default.Save();
-            if (Properties.Settings.Default.RefreshToken != RefreshTokenTextbox.Text)
-            {
-                Properties.Settings.Default.RefreshToken = RefreshTokenTextbox.Text;
-                MainWindow.Context.Restart();
-            }
+
             var safeConvertFps = SafeConvertRenderFps(RenderFPS.Text);
             if (Properties.Settings.Default.RenderFPS != safeConvertFps)
             {
@@ -113,13 +98,6 @@ namespace SpotifyListener
             else if (result > 144)
                 result = 144;
             return result;
-        }
-
-        private async void RevealKeyButton_Click(object sender, EventArgs e)
-        {
-            RefreshTokenTextbox.PasswordChar = '\0';
-            await Task.Delay(5000);
-            RefreshTokenTextbox.PasswordChar = '*';
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -227,12 +205,6 @@ namespace SpotifyListener
 
         }
 
-        private async void AccessTokenRevealButton_Click(object sender, EventArgs e)
-        {
-            AccessTokenTextBox.PasswordChar = '\0';
-            await Task.Delay(5000);
-            AccessTokenTextBox.PasswordChar = '*';
-        }
 
         private void ColorSettingsButton_Click(object sender, EventArgs e)
         {

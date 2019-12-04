@@ -15,12 +15,14 @@ using SpotifyAPI.Web.Models;
 using Image = System.Drawing.Image;
 using SpotifyAPI.Web.Enums;
 using SpotifyListener.Enums;
+using SpotifyListener.Configurations;
+using SpotifyAPI.Web;
 
 namespace SpotifyListener
 {
     public class SpotifyPlayer : IStreamableMusic, IChromaRender
     {
-        private SpotifyAPI.Web.SpotifyWebAPI client = null;
+        private readonly SpotifyWebAPI client;
 
         public string Track { get; private set; }
         public string Album { get; private set; }
@@ -34,6 +36,8 @@ namespace SpotifyListener
         public int Volume { get; private set; } = 0;
         public Image AlbumArtwork { get; private set; }
         public bool IsPlaying { get; private set; } = false;
+        public bool IsShuffle { get; private set; } = false;
+        public bool IsRepeat { get; private set; } = false;
         public double CalculatedPosition
         {
             get
@@ -48,14 +52,12 @@ namespace SpotifyListener
                 }
             }
         }
-        public SpotifyAPI.Web.Models.Device ActiveDevice
+        public Device ActiveDevice
         {
             get; private set;
-        } = new SpotifyAPI.Web.Models.Device();//=> AvailableDevices.Where(x => x.IsActive).FirstOrDefault();
-        public IList<SpotifyAPI.Web.Models.Device> AvailableDevices { get; private set; } = new List<SpotifyAPI.Web.Models.Device>();
-        private System.Windows.Forms.Timer _refreshTokenTimer = new System.Windows.Forms.Timer();
+        } = new Device();//=> AvailableDevices.Where(x => x.IsActive).FirstOrDefault();
+        public IList<Device> AvailableDevices { get; private set; } = new List<Device>();
         private System.Windows.Forms.Timer _trackFetcherTimer = new System.Windows.Forms.Timer();
-        private bool Expired = false;
         private StandardColor _standardColor = new StandardColor();
         [JsonIgnore]
         public StandardColor Album_StandardColor => _standardColor;
@@ -67,29 +69,9 @@ namespace SpotifyListener
         public event EventHandler OnDeviceChanged;
         public event TrackProgressionChangeEventArgs OnTrackDurationChanged;
 
-        public SpotifyPlayer(string accessToken, string refreshToken)
+        public SpotifyPlayer(SpotifyWebAPI client)
         {
-            client = new SpotifyAPI.Web.SpotifyWebAPI()
-            {
-                AccessToken = accessToken,
-                TokenType = "Bearer"
-            };
-            _refreshTokenTimer.Interval = 1000;
-            _refreshTokenTimer.Tick += async (s, e) =>
-            {
-                if (Expired)
-                {
-                    var auth = new SpotifyAPI.Web.Auth.AuthorizationCodeAuth("7b2f38e47869431caeda389929a1908e", "90dc137926e34bd78a1737266b3df20b", "http://localhost", "http://localhost", SpotifyAPI.Web.Enums.Scope.AppRemoteControl, "");
-                    var token = await auth.RefreshToken(refreshToken).ConfigureAwait(false);
-
-                    client.AccessToken = token.AccessToken;
-                    Properties.Settings.Default.AccessToken = token.AccessToken;
-                    Properties.Settings.Default.Save();
-                    Expired = false;
-                }
-
-            };
-            _refreshTokenTimer.Start();
+            this.client = client;
             _trackFetcherTimer.Interval = 1000;
             _trackFetcherTimer.Tick += async (s, e) => await GetAsync().ConfigureAwait(false);
             _trackFetcherTimer.Start();
@@ -109,6 +91,7 @@ namespace SpotifyListener
         }
         public virtual async Task GetAsync(int albumColoreMode = 0)
         {
+            if (client == null) return;
             var currentTrack = await client.GetPlayingTrackAsync();
             if (currentTrack.IsPlaying)
             {
@@ -123,6 +106,9 @@ namespace SpotifyListener
                     ActiveDevice = currentActiveDevice;
                     OnDeviceChanged(ActiveDevice, null);
                 }
+                this.IsShuffle = currentTrack.ShuffleState;
+                this.IsRepeat = currentTrack.RepeatState == SpotifyAPI.Web.Enums.RepeatState.Context;
+
                 //if (currentActiveDevice.VolumePercent != Volume)
                 //{
                 //    Volume = ActiveDevice.VolumePercent;
@@ -193,10 +179,6 @@ namespace SpotifyListener
                     Volume = 0;
                     OnTrackChanged(this);
                 }
-            }
-            else if (currentTrack.HasError())
-            {
-                Expired = true;
             }
 
 
@@ -300,8 +282,6 @@ namespace SpotifyListener
         {
             if (disposing)
             {
-                _refreshTokenTimer.Stop();
-                _refreshTokenTimer?.Dispose();
                 _trackFetcherTimer.Stop();
                 _trackFetcherTimer?.Dispose();
                 AlbumArtwork?.Dispose();
@@ -355,9 +335,10 @@ namespace SpotifyListener
             }
         }
 
-        public void SetShuffle(bool enable)
+        public void ToggleShuffle()
         {
-            client.SetShuffle(enable, ActiveDevice.Id);
+            var res = client.SetShuffle(!this.IsShuffle, ActiveDevice.Id);
+            Console.WriteLine(res);
         }
 
         public void SetRepeat(Enums.RepeatState state)
