@@ -1,18 +1,17 @@
-﻿using SpotifyListener.Delegations;
-using SpotifyListener.Enums;
+﻿using NListener.Core.Enum;
+using NListener.Core.Foundation.Struct;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 
-namespace SpotifyListener.Interfaces
+namespace NListener.Core.Interface
 {
-    public interface IMusic : INotifyPropertyChanged
+    public interface IMusicTracker
     {
+        public delegate void TrackChangedEventArgs(IMusicTracker playbackContext);
+        public delegate void TrackProgressionChangeEventArgs(IMusicTracker playbackContext);
         string Track { get; }
         string Album { get; }
         string Artist { get; }
@@ -23,16 +22,18 @@ namespace SpotifyListener.Interfaces
         int Duration_ms { get; }
         int Volume { get; }
         Image AlbumArtwork { get; }
-        ImageSource AlbumSource { get; }
-        System.Windows.Media.Brush AlbumBackgroundSource { get; }
         bool IsPlaying { get; }
+        bool IsShuffle { get; }
+        bool IsRepeat { get; }
         bool IsMute { get; }
         double CalculatedPosition { get; }
-        event TrackChangedEventHandler OnTrackChanged;
-        event TrackProgressionChangedEventHandler OnTrackDurationChanged;
+        DrawingColor Color { get; }
+
+        event TrackChangedEventArgs OnTrackChanged;
+        event TrackProgressionChangeEventArgs OnTrackDurationChanged;
         event EventHandler OnDeviceChanged;
-        void Get(int albumColorMode);
-        Task GetAsync(int albumColorMode);
+        void Get(ColorRenderingMode renderingMode);
+        Task GetAsync(ColorRenderingMode renderingMode);
         void PlayPause();
         Task PlayPauseAsync();
         void Stop();

@@ -61,6 +61,7 @@
             this.ReverseLEDRender = new System.Windows.Forms.CheckBox();
             this.ColorSettingsButton = new System.Windows.Forms.Button();
             this.ChromaSDKEnable = new System.Windows.Forms.CheckBox();
+            this.txt_volScale = new System.Windows.Forms.Label();
             this.DiscordGroupBox.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_BlurRadial)).BeginInit();
@@ -227,6 +228,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.txt_volScale);
             this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Controls.Add(this.trackbar_VolumeScale);
             this.groupBox2.Controls.Add(this.label13);
@@ -262,11 +264,13 @@
             // trackbar_VolumeScale
             // 
             this.trackbar_VolumeScale.Location = new System.Drawing.Point(87, 304);
+            this.trackbar_VolumeScale.Maximum = 20;
             this.trackbar_VolumeScale.Minimum = 1;
             this.trackbar_VolumeScale.Name = "trackbar_VolumeScale";
             this.trackbar_VolumeScale.Size = new System.Drawing.Size(164, 45);
             this.trackbar_VolumeScale.TabIndex = 26;
             this.trackbar_VolumeScale.Value = 1;
+            this.trackbar_VolumeScale.Scroll += new System.EventHandler(this.trackbar_VolumeScale_Scroll);
             // 
             // label13
             // 
@@ -412,6 +416,15 @@
             this.ChromaSDKEnable.Text = "Enable Razer Chroma SDK";
             this.ChromaSDKEnable.UseVisualStyleBackColor = true;
             // 
+            // txt_volScale
+            // 
+            this.txt_volScale.AutoSize = true;
+            this.txt_volScale.Location = new System.Drawing.Point(254, 304);
+            this.txt_volScale.Name = "txt_volScale";
+            this.txt_volScale.Size = new System.Drawing.Size(37, 13);
+            this.txt_volScale.TabIndex = 28;
+            this.txt_volScale.Text = "NaN%";
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -474,5 +487,6 @@
         private System.Windows.Forms.TrackBar trackbar_BlurRadial;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TrackBar trackbar_VolumeScale;
+        private System.Windows.Forms.Label txt_volScale;
     }
 }

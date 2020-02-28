@@ -49,7 +49,7 @@ namespace SpotifyListener
             DiscordRichPresenceEnable_CheckedChanged(null, EventArgs.Empty);
             trackbar_BlurRadial.Value = Properties.Settings.Default.BlurRadial;
             trackbar_VolumeScale.Value = Properties.Settings.Default.VolumeScale;
-
+            trackbar_VolumeScale_Scroll(trackbar_VolumeScale, null);
 
         }
 
@@ -190,7 +190,7 @@ namespace SpotifyListener
                     RenderPeakVolumeSymmetricEnable = false;
                     ChromaPeakEnable = true;
                     RenderFPS.Enabled = false;
-                    RenderFPS.Text = "30";
+                    RenderFPS.Text = "60";
                     break;
             }
         }
@@ -209,6 +209,11 @@ namespace SpotifyListener
         private void ColorSettingsButton_Click(object sender, EventArgs e)
         {
             new ColorSettings().ShowDialog();
+        }
+
+        private void trackbar_VolumeScale_Scroll(object sender, EventArgs e)
+        {
+            txt_volScale.Text = trackbar_VolumeScale.Value * 10 + "%";
         }
     }
 }

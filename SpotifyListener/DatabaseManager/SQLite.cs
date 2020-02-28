@@ -5,7 +5,7 @@ using Utilities.SQL;
 
 namespace SpotifyListener.DatabaseManager
 {
-    public sealed class SQLite : DapperConnector<SQLiteConnection, SQLiteParameter>
+    public sealed class SQLite : DatabaseConnector<SQLiteConnection, SQLiteParameter>
     {
         private static string FilePath = "listener.db";
         private static string dbpath = $"Data Source={FilePath};Version=3";

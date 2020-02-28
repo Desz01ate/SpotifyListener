@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,11 +33,26 @@ namespace SpotifyListener
         [DllImport("user32.dll")]
         private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
         private bool initializing;
+        private readonly double? location_X, location_Y;
+        private readonly IChangableDevice player;
         public DeviceSelection(IChangableDevice player, double? location_X = null, double? location_Y = null)
         {
-            initializing = true;
             InitializeComponent();
+            this.location_X = location_X;
+            this.location_Y = location_Y;
+            this.player = player;
             this.SourceInitialized += DeviceSelectionForm_SourceInitialized;
+            (this.player as SpotifyPlayer).OnDeviceChanged += delegate
+            {
+                Refresh();
+            };
+            Refresh();
+        }
+        const int spaceFactor = 50;
+        private void Refresh()
+        {
+            initializing = true;
+            grd_devices.Children.Clear();
 
             if (location_X.HasValue && location_Y.HasValue)
             {
@@ -54,32 +70,61 @@ namespace SpotifyListener
                 var text = device.Name;
                 if (device.IsActive)
                 {
-                    text += " (CURRENT ACTIVE)";
                     selectIndex = idx;
+                    var activeText = new TextBlock();
+                    activeText.Text = "Active";
+                    activeText.Foreground = Brushes.Green;
+                    activeText.Margin = new Thickness(0, (idx + 1) * spaceFactor, 30, 0);
+                    activeText.VerticalAlignment = VerticalAlignment.Top;
+                    activeText.HorizontalAlignment = HorizontalAlignment.Right;
+                    grd_devices.Children.Add(activeText);
                 }
-                cb_options.Items.Add(text);
+                if (!device.IsActive)
+                {
+                    var button = new Button();
+                    button.Content = "Switch";
+                    button.Click += async (s, e) =>
+                    {
+                        if (initializing) return;
+                        try
+                        {
+                            await player.SetActiveDeviceAsync(device.Id);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.Message);
+                        }
+                    };
+                    button.Margin = new Thickness(0, (idx + 1) * spaceFactor, 20, 0);
+                    button.Width = 50;
+                    button.Height = 20;
+                    button.VerticalAlignment = VerticalAlignment.Top;
+                    button.HorizontalAlignment = HorizontalAlignment.Right;
+                    grd_devices.Children.Add(button);
+                }
+                var icon = new Image();
+                var logo = new BitmapImage();
+                logo.BeginInit();
+                logo.UriSource = new Uri($"pack://application:,,,/{Assembly.GetExecutingAssembly().GetName().Name};component/Resources/{device.Type.ToLower()}.png");
+                logo.EndInit();
+                logo.Freeze();
+                icon.Margin = new Thickness(20, ((idx + 1) * spaceFactor) - (spaceFactor / 2.5), 0, 0);
+                icon.HorizontalAlignment = HorizontalAlignment.Left;
+                icon.VerticalAlignment = VerticalAlignment.Top;
+                icon.Width = 50;
+                icon.Height = 50;
+                icon.Source = logo;
+                grd_devices.Children.Add(icon);
+                var textBlock = new TextBlock();
+                textBlock.Text = text;
+                textBlock.Margin = new Thickness(90, (idx + 1) * spaceFactor, 0, 0);
+                textBlock.Width = 200;
+                textBlock.HorizontalAlignment = HorizontalAlignment.Left;
+                grd_devices.Children.Add(textBlock);
             }
-            cb_options.SelectedIndex = selectIndex;
-            cb_options.SelectionChanged += async delegate
-            {
-                if (initializing) return;
-                try
-                {
-                    await player.SetActiveDeviceAsync(player.AvailableDevices[cb_options.SelectedIndex].Id);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                }
-                finally
-                {
-                    this.Close();
-                }
-            };
+            this.Height = (spaceFactor * 1.3 * player.AvailableDevices.Count()) + 50;
             initializing = false;
         }
-
-
 
         private void DeviceSelectionForm_SourceInitialized(object sender, EventArgs e)
         {

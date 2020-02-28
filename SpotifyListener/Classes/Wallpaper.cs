@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using SpotifyListener.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,23 +22,28 @@ namespace SpotifyListener
             Stretched
         }
         string OriginalBackgroundImagePath { get; }
-        public Image TrackImage { get; private set; }
-        private Image PersistenceTrackImage { get; set; }
-        [DllImport("user32.dll")]
-        public static extern Int32 SystemParametersInfo(UInt32 action, UInt32 uParam, String vParam, UInt32 winIni);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        public static extern int SystemParametersInfo(UInt32 action, UInt32 uParam, String vParam, UInt32 winIni);
 
-        public static readonly UInt32 SPI_SETDESKWALLPAPER = 0x14;
-        public static readonly UInt32 SPIF_UPDATEINIFILE = 0x01;
-        public static readonly UInt32 SPIF_SENDWININICHANGE = 0x02;
+        public static readonly uint SPI_SETDESKWALLPAPER = 0x14;
+        public static readonly uint SPIF_UPDATEINIFILE = 0x01;
+        public static readonly uint SPIF_SENDWININICHANGE = 0x02;
         private static string BAK_IMAGE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "IMGBAK.bak");
-        public Wallpaper()
+        public readonly float FontSize;
+        public readonly string FontFamily;
+        public IMusic Player;
+        public Wallpaper(float fontSize, string fontFamily)
         {
             OriginalBackgroundImagePath = BAK_IMAGE;
+            FontSize = fontSize;
+            FontFamily = fontFamily;
             Disable();
         }
-        public Wallpaper(string backgroundImagePath)
+        public Wallpaper(string backgroundImagePath, float fontSize, string fontFamily)
         {
             OriginalBackgroundImagePath = backgroundImagePath;
+            FontSize = fontSize;
+            FontFamily = fontFamily;
             try
             {
                 File.Copy(backgroundImagePath, BAK_IMAGE, true);
@@ -70,10 +76,10 @@ namespace SpotifyListener
         }
         public void Enable()
         {
-            //Set(TrackImage, Wallpaper.Style.Stretched);
-
-            Set(TrackImage, Wallpaper.Style.Stretched);
-
+            using (var image = CalculateBackgroundImage())
+            {
+                Set(image, Wallpaper.Style.Stretched);
+            }
         }
         public void Disable()
         {
@@ -143,56 +149,70 @@ namespace SpotifyListener
             }
             return Success;
         }
-        public void CalculateBackgroundImage(Image highlightImage, Image backgroundimage, string fontFamily, float fontSize, string track, string album, string artist, Func<Image, Image> backgroundApplyFunction = null, Func<Image, Image> highlightApplyFunction = null)
+        internal void SetPlayerBase(IMusic music)
         {
-            TrackImage?.Dispose();
-            PersistenceTrackImage?.Dispose();
+            Player = music;
+        }
+        private Image CalculateBackgroundImage(Image highlightImage, Image backgroundimage, string track, string album, string artist)
+        {
             var image = backgroundimage;
             var screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
             var screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
-            if (backgroundApplyFunction != null)
-            {
-                image = backgroundApplyFunction(image);
-            }
-            if (highlightApplyFunction != null)
-            {
-                highlightImage = highlightApplyFunction(highlightImage);
-            }
 
             image = image.Resize((int)screenWidth, (int)screenHeight);
-
+            using (highlightImage)
+            using (backgroundimage)
             using (var g = Graphics.FromImage(image))
             {
                 var highlightX = (int)((screenWidth - highlightImage.Width) / 2);
                 var highlightY = (int)((screenHeight - highlightImage.Height) / 2) - (int)(screenHeight * 0.12);
                 g.DrawImage(highlightImage, highlightX, highlightY);
 
-                var font = new Font(fontFamily, fontSize, FontStyle.Bold);
-                var trackFont = new Font(fontFamily, fontSize * 1.3f, FontStyle.Bold);
-                var trackMeasure = g.MeasureString(track, trackFont);
-                var albumMeasure = g.MeasureString(album, font);
-                var artistMeasure = g.MeasureString(artist, font);
-                g.DrawString(track, trackFont, Brushes.White, (int)((screenWidth - trackMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.07));
-                g.DrawString(album, font, Brushes.White, (int)((screenWidth - albumMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.15));
-                g.DrawString(artist, font, Brushes.White, (int)((screenWidth - artistMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.2));
-                font.Dispose();
-                trackFont.Dispose();
+                using (var font = new Font(FontFamily, FontSize, FontStyle.Regular))
+                {
+                    using (var trackFont = new Font(FontFamily, FontSize * 1.3f, FontStyle.Bold))
+                    {
+                        var trackMeasure = g.MeasureString(track, trackFont);
+                        var albumMeasure = g.MeasureString(album, font);
+                        var artistMeasure = g.MeasureString(artist, font);
+                        g.DrawString(track, trackFont, Brushes.White, (int)((screenWidth - trackMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.07));
+                        g.DrawString(album, font, Brushes.White, (int)((screenWidth - albumMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.15));
+                        g.DrawString(artist, font, Brushes.White, (int)((screenWidth - artistMeasure.Width) / 2), highlightY + highlightImage.Height + (int)(screenHeight * 0.2));
+                    }
+                }
             }
-            highlightImage.Dispose();
-            backgroundimage.Dispose();
-            TrackImage = image;
-            PersistenceTrackImage = image.Clone() as Image;
+            return image;
+        }
+        private Image CalculateBackgroundImage()
+        {
+            var artwork = (Player.AlbumArtwork.Clone() as Image);
+            var background = Effects.Bitmap.CalculateBackgroundSource(artwork.Clone() as Image);
+            using (background)
+            {
+                using (artwork)
+                {
+                    var highlightSize = (int)Math.Round(System.Windows.SystemParameters.PrimaryScreenHeight * 0.555);
+                    var image = CalculateBackgroundImage(
+                        artwork.Resize(highlightSize, highlightSize),
+                        background,
+                        Player.Track, Player.Album, Player.Artist);
+
+                    return image;
+                }
+            }
         }
         public void SaveWallpaperToFile(string filePath)
         {
-            PersistenceTrackImage.Save(filePath);
+            using (var image = CalculateBackgroundImage())
+            {
+                image.Save(filePath);
+            }
         }
         protected void Dispose(bool disposing)
         {
             if (disposing)
             {
                 this.Disable();
-                TrackImage?.Dispose();
             }
         }
         public void Dispose()

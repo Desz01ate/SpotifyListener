@@ -12,6 +12,18 @@ namespace SpotifyListener.Classes
 {
     public partial class AnimationController
     {
+        private readonly DoubleAnimation BorderIn = new DoubleAnimation()
+        {
+            From = 0.9,
+            To = 1,
+            Duration = TimeSpan.FromMilliseconds(300)
+        };
+        private readonly DoubleAnimation BorderOut = new DoubleAnimation()
+        {
+            From = 1,
+            To = 0.9,
+            Duration = TimeSpan.FromMilliseconds(300)
+        };
         private readonly DoubleAnimation Slide_Enter = new DoubleAnimation()
         {
             From = 0,
@@ -61,25 +73,24 @@ namespace SpotifyListener.Classes
             To = 0,
             Duration = TimeSpan.FromMilliseconds(0)
         };
-        private Label TrackLabel { get; }
-        private Label SettingsLabel { get; }
-        private Label ChangeDeviceLabel { get; }
-        private Label CurrentTimeLabel { get; }
-        private Label TimeLeftLabel { get; }
-        private PathButton BackButton { get; }
-        private PathButton PlayButton { get; }
-        private PathButton NextButton { get; }
-        private PathButton MuteButton { get; }
-        private ProgressBar VolumeProgress { get; }
-        private ProgressBar PlayProgress { get; }
-        private Image AlbumImage { get; }
-        private RectangleGeometry AlbumImageRectangle { get; }
-        private Button SaveImageButton { get; }
-        private Button MinimizeButton { get; }
-        private Button CloseButton { get; }
-        private SpotifySearchBox SearchBox { get; }
-        private PathButton ShuffleButton { get; }
-        private PathButton RepeatButton { get; }
+        private readonly Border Border;
+        private readonly Label TrackLabel;
+        private readonly Label SettingsLabel;
+        private readonly Label ChangeDeviceLabel;
+        private readonly Label CurrentTimeLabel;
+        private readonly Label TimeLeftLabel;
+        private readonly PathButton BackButton;
+        private readonly PathButton PlayButton;
+        private readonly PathButton NextButton;
+        private readonly PathButton MuteButton;
+        private readonly ProgressBar VolumeProgress;
+        private readonly ProgressBar PlayProgress;
+        private readonly Image AlbumImage;
+        private readonly RectangleGeometry AlbumImageRectangle;
+        private readonly Button MinimizeButton;
+        private readonly Button CloseButton;
+        private readonly PathButton ShuffleButton;
+        private readonly PathButton RepeatButton;
     }
     public partial class AnimationController
     {
@@ -88,6 +99,7 @@ namespace SpotifyListener.Classes
         {
             if (mainWnd is null) throw new NullReferenceException("MainWindow instance must not be null");
             #region bind control references
+            Border = mainWnd.border_Form;
             TrackLabel = mainWnd.lbl_Track;
             BackButton = mainWnd.BackPath;
             PlayButton = mainWnd.PlayPath;
@@ -99,12 +111,10 @@ namespace SpotifyListener.Classes
             ChangeDeviceLabel = mainWnd.lbl_change_device;
             CurrentTimeLabel = mainWnd.lbl_CurrentTime;
             TimeLeftLabel = mainWnd.lbl_TimeLeft;
-            SaveImageButton = mainWnd.btn_SaveImage;
             MinimizeButton = mainWnd.btn_Minimize;
             CloseButton = mainWnd.btn_Close;
             AlbumImage = mainWnd.AlbumImage;
             AlbumImageRectangle = mainWnd.AlbumImageRectangle;
-            SearchBox = mainWnd.cb_SearchBox;
             ShuffleButton = mainWnd.btn_Shuffle;
             RepeatButton = mainWnd.btn_Repeat;
             #endregion
@@ -136,7 +146,6 @@ namespace SpotifyListener.Classes
             CurrentTimeLabel.Visibility = Visibility.Visible;
             TimeLeftLabel.Visibility = Visibility.Visible;
             PlayProgress.Visibility = Visibility.Visible;
-            SaveImageButton.Visibility = Visibility.Visible;
             MinimizeButton.Visibility = Visibility.Visible;
             CloseButton.Visibility = Visibility.Visible;
             #endregion
@@ -163,14 +172,12 @@ namespace SpotifyListener.Classes
             CurrentTimeLabel.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             TimeLeftLabel.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             PlayProgress.BeginAnimation(UIElement.OpacityProperty, FadeIn);
-            SearchBox.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             ShuffleButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             RepeatButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
-
+            Border.BeginAnimation(UIElement.OpacityProperty, BorderIn);
         }
         public void TransitionDisable()
         {
-            SaveImageButton.Visibility = Visibility.Hidden;
             MinimizeButton.Visibility = Visibility.Hidden;
             CloseButton.Visibility = Visibility.Hidden;
 
@@ -197,10 +204,9 @@ namespace SpotifyListener.Classes
             CurrentTimeLabel.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             TimeLeftLabel.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             PlayProgress.BeginAnimation(UIElement.OpacityProperty, FadeOut);
-            SearchBox.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             ShuffleButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             RepeatButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
-
+            Border.BeginAnimation(UIElement.OpacityProperty, BorderOut);
 
         }
     }

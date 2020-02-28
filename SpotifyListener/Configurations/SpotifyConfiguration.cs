@@ -28,12 +28,12 @@ namespace SpotifyListener.Configurations
         {
             bool initialized = false;
             var client_id = "7b2f38e47869431caeda389929a1908e";
-            var secret_id = "90dc137926e34bd78a1737266b3df20b";
+            var secret_id = "c3a86330ef844c16be6cb46d5e285a45";
             AuthenFactory = new AuthorizationCodeAuth(
                                 client_id,
                                 secret_id,
-                                "http://localhost:8888",
-                                "http://localhost:8888",
+                                "http://localhost:8800",
+                                "http://localhost:8800",
                                 Scope.UserReadCurrentlyPlaying |
                                 Scope.UserModifyPlaybackState |
                                 Scope.AppRemoteControl |

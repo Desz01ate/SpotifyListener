@@ -1,7 +1,9 @@
-﻿using SpotifyListener.Interfaces;
+﻿using SpotifyListener.Enums;
+using SpotifyListener.Interfaces;
 
 namespace SpotifyListener.Delegations
 {
-    public delegate void TrackChangedEventArgs(IMusic playbackContext);
-    public delegate void TrackProgressionChangeEventArgs(IMusic playbackContext);
+    public delegate void TrackChangedEventHandler(IMusic playbackContext);
+    public delegate void TrackProgressionChangedEventHandler(IMusic playbackContext);
+    public delegate void TrackPlayStateChangedEventHandler(PlayState state);
 }

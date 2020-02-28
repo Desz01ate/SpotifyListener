@@ -89,75 +89,55 @@ namespace SpotifyListener
         {
             if (opacity < 0 || 1 < opacity)
                 return image;
-            //var bitmap = new Bitmap((int)image.Width,(int)image.Height);
-            //using (var graphics = Graphics.FromImage(bmp))
-            //{
-            //    var matrix = new ColorMatrix
-            //    {
-            //        Matrix33 = opacity
-            //    };
-            //    var attributes = new ImageAttributes();
-            //    attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-            //    graphics.DrawImage(image, new Rectangle(0, 0, bmp.Width, bmp.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
-            //}
-            var rect = new Rectangle(0, 0, image.Width, image.Height);
             var alpha = 255 * opacity;
             using (var g = Graphics.FromImage(image))
             {
-                using (var brush = new SolidBrush(System.Drawing.Color.FromArgb((int)alpha, color)))
+                using (var brush = new SolidBrush(Color.FromArgb((int)alpha, color)))
                 {
-                    g.FillRectangle(brush, rect);
+                    g.FillRectangle(brush, new Rectangle(0, 0, image.Width, image.Height));
                 }
 
             }
             return image;
         }
+        public static Image Cut(this Image image, double width, double height)
+        {
+            var diffOffset = height / width;
+            if (!(0 < diffOffset && diffOffset < 1)) throw new Exception("width and height offset is out of range (height divide by width must inside of range 0~1).");
 
-        public static System.Windows.Media.ImageSource Blur(this Image image, Int32 blurSize, double diffOffset = -1)
+            var scale = 96;// (int)((((1920 - System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width) * 0.0000732421875) + 0.05) * System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width);//96;
+            var baseBitmap = (Bitmap)image;
+            baseBitmap.SetResolution(scale, scale);
+            var newImage = new Bitmap(baseBitmap.Width, (int)(baseBitmap.Width * diffOffset));
+            var drawer = Graphics.FromImage(newImage);
+            var offsetX = 0;//(int)(image.Height * (1 - diffOffset) / 2);
+            var offsetY = (int)(baseBitmap.Width * (1 - diffOffset) / 2);
+            drawer.DrawImage(baseBitmap, 0, 0, new Rectangle(offsetX, offsetY, baseBitmap.Width, baseBitmap.Width), GraphicsUnit.Pixel);
+            return newImage;
+        }
+        public static Image Blur(this Image image, int radial)
         {
             if (image.Width == 1 && image.Height == 1)
-                return ((Bitmap)image).ToBitmapImage();
-            try
-            {
-                var scale = 96;// (int)((((1920 - System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width) * 0.0000732421875) + 0.05) * System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width);//96;
-                var baseBitmap = (Bitmap)image;
-                baseBitmap.SetResolution(scale, scale);
-
-                if (0 < diffOffset && diffOffset < 1)
-                {
-                    var newImage = new Bitmap(baseBitmap.Width, (int)(baseBitmap.Width * diffOffset));
-                    var drawer = Graphics.FromImage(newImage);
-                    drawer.DrawImage(baseBitmap, 0, 0, new Rectangle(0, (int)((baseBitmap.Width * (1 - diffOffset)) / 2), baseBitmap.Width, baseBitmap.Width), GraphicsUnit.Pixel);
-                    image = newImage;
-                }
-                var blur = new GaussianBlur.GaussianBlur(image as Bitmap);
-                using (var result = blur.Process(blurSize))
-                {
-                    return result.ToBitmapImage();
-                }
-            }
-            catch
-            {
-                return ((Bitmap)image).ToBitmapImage();
-            }
+                return image;
+            var result = GaussianBlur.GaussianBlur.Blur(image as Bitmap, radial);
+            return result;
         }
         public static Image Resize(this Image img, int outputWidth, int outputHeight)
         {
-            if (img.Width == outputWidth && img.Height == outputHeight) return img;
-            Bitmap outputImage = null;
-            Graphics graphics = null;
+
+            if (img == null || (img.Width == outputWidth && img.Height == outputHeight)) return img;
+            Bitmap outputImage;
+            Graphics graphics;
             try
             {
                 outputImage = new Bitmap(outputWidth, outputHeight, System.Drawing.Imaging.PixelFormat.Format16bppRgb555);
                 graphics = Graphics.FromImage(outputImage);
-                graphics.DrawImage(img, new Rectangle(0, 0, outputWidth, outputHeight),
-                new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
-
+                graphics.DrawImage(img, new Rectangle(0, 0, outputWidth, outputHeight),new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
                 return outputImage;
             }
             catch
             {
-                return img;
+                throw;
             }
         }
         public static Color ContrastColor(this Color c)
@@ -280,6 +260,20 @@ namespace SpotifyListener
                 return bitmapimage;
             }
         }
+        public static BitmapImage ToBitmapImage(this Image src)
+        {
+            return ToBitmapImage(src as Bitmap);
+        }
+        [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DeleteObject([In] IntPtr hObject);
+        public static System.Windows.Media.Brush ToSafeMemoryBrush(this Bitmap src)
+        {
+            IntPtr hBitMap = src.GetHbitmap();
+            System.Windows.Media.ImageBrush b = new System.Windows.Media.ImageBrush(System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitMap, IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()));
+            DeleteObject(hBitMap);
+            return b;
+        }
         public static Image ToImage(this System.Windows.Media.ImageSource imageSrc)
         {
             var encoder = new JpegBitmapEncoder
@@ -343,7 +337,11 @@ namespace GaussianBlur
                 _blue[i] = (source[i] & 0x0000ff);
             });
         }
-
+        public static Bitmap Blur(Bitmap image, int radial)
+        {
+            var gb = new GaussianBlur(image);
+            return gb.Process(radial);
+        }
         public Bitmap Process(int radial)
         {
             var newAlpha = new int[_width * _height];

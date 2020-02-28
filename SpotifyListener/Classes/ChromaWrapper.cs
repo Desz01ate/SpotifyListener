@@ -7,6 +7,7 @@ using SpotifyListener.Interfaces;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Utilities.Classes;
 using Utilities.Shared;
 using ColoreColor = Colore.Data.Color;
 
@@ -69,6 +70,22 @@ namespace SpotifyListener
                 HeadsetGrid.Clear();
                 MousepadGrid.Clear();
             }
+            public delegate void CustomApplyEffects(ref MouseCustom mouse, ref KeyboardCustom keyboard, ref MousepadCustom mousepad, ref HeadsetCustom headset);
+            /// <summary>
+            /// Apply effects to devices
+            /// </summary>
+            public async void Apply(CustomApplyEffects customApply)
+            {
+                customApply?.Invoke(ref MouseGrid, ref KeyboardGrid, ref MousepadGrid, ref HeadsetGrid);
+                await Chroma.Keyboard.SetCustomAsync(KeyboardGrid);
+                await Chroma.Mouse.SetGridAsync(MouseGrid);
+                await Chroma.Headset.SetCustomAsync(HeadsetGrid);
+                await Chroma.Mousepad.SetCustomAsync(MousepadGrid);
+                KeyboardGrid.Clear();
+                MouseGrid.Clear();
+                HeadsetGrid.Clear();
+                MousepadGrid.Clear();
+            }
             public void SetDevicesBackground()
             {
                 MouseGrid.Set(BackgroundColor);
@@ -106,7 +123,6 @@ namespace SpotifyListener
                     PositionColor_Background = Properties.Settings.Default.Position_Background.ToColoreColor();
                     VolumeColor = Properties.Settings.Default.Volume.ToColoreColor();
                     BackgroundColor = !isPlaying ? BackgroundColor_Pause : BackgroundColor_Playing;
-
                 }
                 if (Properties.Settings.Default.PeakChroma) BackgroundColor = ColoreColor.Black;
                 density = density < 0.1 ? 0.1 : density;
@@ -158,7 +174,7 @@ namespace SpotifyListener
                 public static readonly GridLed[] LeftStrip_Reverse = new[] { GridLed.LeftSide7, GridLed.LeftSide6, GridLed.LeftSide5, GridLed.LeftSide4, GridLed.LeftSide3, GridLed.LeftSide2, GridLed.LeftSide1 };
                 public static readonly GridLed[] RightStrip_Reverse = new[] { GridLed.RightSide7, GridLed.RightSide6, GridLed.RightSide5, GridLed.RightSide4, GridLed.RightSide3, GridLed.RightSide2, GridLed.RightSide1 };
             }
-            static ColoreColor[] colors = new ColoreColor[] {
+            static readonly ColoreColor[] rotationColors = new ColoreColor[] {
 //RED->GREEN
 new ColoreColor(255,0  ,0),
 new ColoreColor(255,32 ,0),
@@ -194,15 +210,31 @@ new ColoreColor(0,96 ,255),
 new ColoreColor(0,64 ,255),
 new ColoreColor(0,32 ,255),
 //BLUE->RED
-new ColoreColor(0,0  ,255),
-new ColoreColor(32 ,0  ,224),
-new ColoreColor(64 ,0  ,192),
-new ColoreColor(96 ,0  ,160),
-new ColoreColor(128,0  ,128),
-new ColoreColor(160,0  ,96 ),
-new ColoreColor(192,0  ,64 ),
-new ColoreColor(224,0  ,32 ),
+new ColoreColor(0  ,0  ,255),
+new ColoreColor(32 ,0  ,255),
+new ColoreColor(64 ,0  ,255),
+new ColoreColor(96 ,0  ,255),
+new ColoreColor(128,0  ,255),
+new ColoreColor(160,0  ,255),
+new ColoreColor(192,0  ,255),
+new ColoreColor(224,0  ,255),
+new ColoreColor(255,0  ,255),
+new ColoreColor(255,0  ,224),
+new ColoreColor(255,0  ,192),
+new ColoreColor(255,0  ,160),
+new ColoreColor(255,0  ,128),
+new ColoreColor(255,0  ,96 ),
+new ColoreColor(255,0  ,64 ),
+new ColoreColor(255,0  ,32 )
+//new ColoreColor(32 ,0  ,224),
+//new ColoreColor(64 ,0  ,192),
+//new ColoreColor(96 ,0  ,160),
+//new ColoreColor(128,0  ,128),
+//new ColoreColor(160,0  ,96 ),
+//new ColoreColor(192,0  ,64 ),
+//new ColoreColor(224,0  ,32 ),
         };
+            static CircularQueue<ColoreColor> colors = new CircularQueue<ColoreColor>(rotationColors);
             public static void SetPeakVolume(this ref MouseCustom MouseGrid, ColoreColor VolumeColor, float volume)
             {
                 var absolutePosition = Math.Round((volume * Constant.LeftStrip.Length), 0);
@@ -220,24 +252,34 @@ new ColoreColor(224,0  ,32 ),
             private static int changeRate = 0;
             public static void SetChromaPeakVolume(this ref MouseCustom MouseGrid, float volume)
             {
-                var absolutePosition = Math.Round((volume * Constant.LeftStrip.Length), 0);
-                //var currentDensity = (double)(absolutePosition) / (double)Constant.LeftStrip.Length;
-                for (var i = 0; i < absolutePosition; i++)
+
+                try
                 {
-                    var color = colors[i].ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
-                    if (i > 0)
-                        MouseGrid[GridLed.Logo] = ColoreColor.White.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);//colors[1].
-                    if (i == Constant.LeftStrip.Length - 1)
-                        MouseGrid[GridLed.ScrollWheel] = colors[i].ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length); ;
-                    MouseGrid[Constant.RightStrip_Reverse[i]] = color;
-                    MouseGrid[Constant.LeftStrip_Reverse[i]] = color;
+                    var absolutePosition = Math.Round((volume * Constant.LeftStrip.Length), 0);
+                    //var currentDensity = (double)(absolutePosition) / (double)Constant.LeftStrip.Length;
+                    for (var i = 0; i < absolutePosition; i++)
+                    {
+                        var color = colors.Peek().ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
+                        if (i > 0)
+                            MouseGrid[GridLed.Logo] = ColoreColor.White.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);//colors[1].
+                        if (i == Constant.LeftStrip.Length - 1)
+                            MouseGrid[GridLed.ScrollWheel] = color;//colors[i].ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
+                        MouseGrid[Constant.RightStrip_Reverse[i]] = color;
+                        MouseGrid[Constant.LeftStrip_Reverse[i]] = color;
+                    }
+                    var speed = (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
+                    changeRate += speed;//
+                    if (changeRate >= 44)
+                    {
+                        colors.ShiftLeft();//.ShiftRight();
+                                           //colors = colors.Slice(1, colors.Length - 1).ToArray().Add(colors[0]);
+                        changeRate = 0;
+                    }
                 }
-                var speed = (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
-                changeRate += speed;//
-                if (changeRate >= 44)
+                catch (Exception ex)
                 {
-                    colors = colors.Slice(1, colors.Length - 1).ToArray().Add(colors[0]);
-                    changeRate = 0;
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
                 }
 
             }
@@ -291,8 +333,8 @@ new ColoreColor(224,0  ,32 ),
                     var absolutePosition = Math.Round((volume * currentRow.Length), 0);
                     for (var i = 0; i < absolutePosition; i++)
                     {
-                        var index = (int)(((float)i / (float)currentRow.Length) * 7);
-                        var color = colors[index];//.ChangeColorDensity((double)(i + 1) / (double)Constant.FunctionKeys.Length);
+                        var index = (int)(i / (float)currentRow.Length * 7);
+                        var color = colors.ElementAt(index);//.ChangeColorDensity((double)(i + 1) / (double)Constant.FunctionKeys.Length);
                         KeyboardGrid[currentRow[i]] = color;// VolumeColor;
                         KeyboardGrid[Key.Logo] = ColoreColor.White.ChangeColorDensity((double)(i + 1) / (double)currentRow.Length);
                     }
