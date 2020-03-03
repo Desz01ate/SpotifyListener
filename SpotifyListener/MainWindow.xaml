@@ -81,6 +81,23 @@
 		c-6.762-3.689-13.349-7.28-14.644-7.987c-1.295-0.714-3.556-1.288-5.026-1.288c-1.477,0-8.981,0-16.681,0H133c-7.7,0-14-6.3-14-14
 		v-21c0-7.7,6.3-14,14-14h41.412c7.7,0,15.204,0,16.681,0c1.47,0,3.731-0.574,5.026-1.288c1.295-0.707,7.882-4.291,14.644-7.987
 		l53.438-29.148c6.762-3.689,12.292-0.406,12.292,7.294v111.258H276.486z</Geometry>
+        <Geometry x:Key="settingsPath">
+            M490.667,405.333h-56.811C424.619,374.592,396.373,352,362.667,352s-61.931,22.592-71.189,53.333H21.333
+			C9.557,405.333,0,414.891,0,426.667S9.557,448,21.333,448h270.144c9.237,30.741,37.483,53.333,71.189,53.333
+			s61.931-22.592,71.189-53.333h56.811c11.797,0,21.333-9.557,21.333-21.333S502.464,405.333,490.667,405.333z M362.667,458.667
+			c-17.643,0-32-14.357-32-32s14.357-32,32-32s32,14.357,32,32S380.309,458.667,362.667,458.667z
+M490.667,64h-56.811c-9.259-30.741-37.483-53.333-71.189-53.333S300.736,33.259,291.477,64H21.333
+			C9.557,64,0,73.557,0,85.333s9.557,21.333,21.333,21.333h270.144C300.736,137.408,328.96,160,362.667,160
+			s61.931-22.592,71.189-53.333h56.811c11.797,0,21.333-9.557,21.333-21.333S502.464,64,490.667,64z M362.667,117.333
+			c-17.643,0-32-14.357-32-32c0-17.643,14.357-32,32-32s32,14.357,32,32C394.667,102.976,380.309,117.333,362.667,117.333z
+M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.592-71.189,53.333H21.333
+			C9.557,234.667,0,244.224,0,256c0,11.776,9.557,21.333,21.333,21.333h56.811c9.259,30.741,37.483,53.333,71.189,53.333
+			s61.931-22.592,71.189-53.333h270.144c11.797,0,21.333-9.557,21.333-21.333C512,244.224,502.464,234.667,490.667,234.667z
+			 M149.333,288c-17.643,0-32-14.357-32-32s14.357-32,32-32c17.643,0,32,14.357,32,32S166.976,288,149.333,288z
+        </Geometry>
+        <Geometry x:Key="phonePath">
+            M358.75,0H114.061C97.555,0,84.128,13.428,84.128,29.934v412.944c0,16.505,13.428,29.934,29.934,29.934H358.75   c16.506,0,29.934-13.428,29.934-29.934V29.934C388.683,13.428,375.256,0,358.75,0z M99.128,75.236h274.556v312.687H99.128V75.236z    M114.061,15H358.75c8.234,0,14.934,6.699,14.934,14.934v35.302H99.128V29.934C99.128,21.699,105.827,15,114.061,15z    M358.75,457.811H114.061c-8.234,0-14.934-6.699-14.934-14.934v-44.955h274.556v44.955   C373.683,451.112,366.984,457.811,358.75,457.811z
+        </Geometry>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="SaveAs" Executed="CommandBinding_Executed"></CommandBinding>
@@ -90,8 +107,9 @@
     </Window.InputBindings>
     <Grid Margin="1,1,1,1" Name="MainWindowGrid" Background="Transparent">
         <Border x:Name="border_Form" Opacity="0.97" Background="{Binding AlbumBackgroundSource}" Margin="5" Padding="5" BorderThickness="0.7" BorderBrush="#d9d9d9" CornerRadius="0"/>
-        <!--<Grid Height="40"  Background="White" Opacity="0.5" Margin="-10"  VerticalAlignment="Top">-->
-        <Button x:Name="btn_Minimize" Content="-" FontSize="25" BorderThickness="0" Margin="0,5,44,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="40" Height="40" Visibility="Visible">
+        <local:PathButton x:Name="btn_settings" Visibility="Hidden" Data="{StaticResource settingsPath}" Margin="0,17,95,0" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="AdjustSettings_Click" />
+        <local:PathButton x:Name="btn_device" Visibility="Hidden" Data="{StaticResource phonePath}" Margin="0,16,145,0" Width="21" Height="21" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_device_Click" />
+        <Button x:Name="btn_Minimize" Content="-" FontSize="25" BorderThickness="0" Margin="0,5,44,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="40" Height="40" Visibility="Hidden">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
                     <Setter Property="Background" Value="Transparent"/>
@@ -113,7 +131,7 @@
                 </Style>
             </Button.Style>
         </Button>
-        <Button x:Name="btn_Close" Content="x" FontSize="20" BorderThickness="0" Margin="0,5,6,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="40" Height="40" Visibility="Visible" >
+        <Button x:Name="btn_Close" Content="x" FontSize="20" BorderThickness="0" Margin="0,5,6,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="40" Height="40" Visibility="Hidden" >
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
                     <Setter Property="Background" Value="Transparent"/>
@@ -135,7 +153,7 @@
                 </Style>
             </Button.Style>
         </Button>
-        <!--</Grid>-->
+
         <Image x:Name="AlbumImage" Source="{Binding AlbumSource}" Margin="0,40,0,0" Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Top">
             <Image.Clip>
                 <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,250" x:Name="AlbumImageRectangle"/>
@@ -172,8 +190,5 @@
                 <SolidColorBrush Color="#FFE6E6E6" Opacity="0.1"/>
             </ProgressBar.Background>
         </ProgressBar>
-        <Label x:Name="lbl_settings" Content="Settings" HorizontalAlignment="Left"  Margin="11,0,0,8" VerticalAlignment="Bottom" FontFamily="Microsoft Sans Serif" FontSize="13" HorizontalContentAlignment="Center" Width="118" MouseDown="Settings_Click" Foreground="White" Visibility="Hidden" />
-        <Label x:Name="lbl_change_device" Content="Change Device" HorizontalAlignment="Left" Margin="150,0,0,8" VerticalAlignment="Bottom" FontFamily="Microsoft Sans Serif" FontSize="13" HorizontalContentAlignment="Center" Width="118" MouseDown="ChangeDevice_Click" Foreground="White" Visibility="Hidden"/>
-
     </Grid>
 </Window>

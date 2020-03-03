@@ -14,14 +14,14 @@ namespace SpotifyListener.Classes
     {
         private readonly DoubleAnimation BorderIn = new DoubleAnimation()
         {
-            From = 0.9,
+            From = 0.97,
             To = 1,
             Duration = TimeSpan.FromMilliseconds(300)
         };
         private readonly DoubleAnimation BorderOut = new DoubleAnimation()
         {
             From = 1,
-            To = 0.9,
+            To = 0.97,
             Duration = TimeSpan.FromMilliseconds(300)
         };
         private readonly DoubleAnimation Slide_Enter = new DoubleAnimation()
@@ -75,22 +75,22 @@ namespace SpotifyListener.Classes
         };
         private readonly Border Border;
         private readonly Label TrackLabel;
-        private readonly Label SettingsLabel;
-        private readonly Label ChangeDeviceLabel;
+        private readonly Button SettingsLabel;
+        private readonly Button ChangeDeviceButton;
         private readonly Label CurrentTimeLabel;
         private readonly Label TimeLeftLabel;
-        private readonly PathButton BackButton;
-        private readonly PathButton PlayButton;
-        private readonly PathButton NextButton;
-        private readonly PathButton MuteButton;
+        private readonly Button BackButton;
+        private readonly Button PlayButton;
+        private readonly Button NextButton;
+        private readonly Button MuteButton;
         private readonly ProgressBar VolumeProgress;
         private readonly ProgressBar PlayProgress;
         private readonly Image AlbumImage;
         private readonly RectangleGeometry AlbumImageRectangle;
         private readonly Button MinimizeButton;
         private readonly Button CloseButton;
-        private readonly PathButton ShuffleButton;
-        private readonly PathButton RepeatButton;
+        private readonly Button ShuffleButton;
+        private readonly Button RepeatButton;
     }
     public partial class AnimationController
     {
@@ -107,8 +107,8 @@ namespace SpotifyListener.Classes
             MuteButton = mainWnd.VolumePath;
             VolumeProgress = mainWnd.VolumeProgress;
             PlayProgress = mainWnd.PlayProgress;
-            SettingsLabel = mainWnd.lbl_settings;
-            ChangeDeviceLabel = mainWnd.lbl_change_device;
+            SettingsLabel = mainWnd.btn_settings;
+            ChangeDeviceButton = mainWnd.btn_device;
             CurrentTimeLabel = mainWnd.lbl_CurrentTime;
             TimeLeftLabel = mainWnd.lbl_TimeLeft;
             MinimizeButton = mainWnd.btn_Minimize;
@@ -142,7 +142,7 @@ namespace SpotifyListener.Classes
         {
             #region exceptional visibility case              
             SettingsLabel.Visibility = Visibility.Visible;
-            ChangeDeviceLabel.Visibility = Visibility.Visible;
+            ChangeDeviceButton.Visibility = Visibility.Visible;
             CurrentTimeLabel.Visibility = Visibility.Visible;
             TimeLeftLabel.Visibility = Visibility.Visible;
             PlayProgress.Visibility = Visibility.Visible;
@@ -168,7 +168,7 @@ namespace SpotifyListener.Classes
             VolumeProgress.BeginAnimation(UIElement.OpacityProperty, FadeIn);
 
             SettingsLabel.BeginAnimation(UIElement.OpacityProperty, FadeIn);
-            ChangeDeviceLabel.BeginAnimation(UIElement.OpacityProperty, FadeIn);
+            ChangeDeviceButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             CurrentTimeLabel.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             TimeLeftLabel.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             PlayProgress.BeginAnimation(UIElement.OpacityProperty, FadeIn);
@@ -200,7 +200,7 @@ namespace SpotifyListener.Classes
             VolumeProgress.BeginAnimation(UIElement.OpacityProperty, FadeOut);
 
             SettingsLabel.BeginAnimation(UIElement.OpacityProperty, FadeOut);
-            ChangeDeviceLabel.BeginAnimation(UIElement.OpacityProperty, FadeOut);
+            ChangeDeviceButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             CurrentTimeLabel.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             TimeLeftLabel.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             PlayProgress.BeginAnimation(UIElement.OpacityProperty, FadeOut);

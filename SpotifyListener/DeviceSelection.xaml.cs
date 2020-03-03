@@ -42,6 +42,7 @@ namespace SpotifyListener
             this.location_Y = location_Y;
             this.player = player;
             this.SourceInitialized += DeviceSelectionForm_SourceInitialized;
+            this.lbl_close.MouseDown += (s, e) => this.Close();
             (this.player as SpotifyPlayer).OnDeviceChanged += delegate
             {
                 Refresh();
@@ -57,8 +58,8 @@ namespace SpotifyListener
             if (location_X.HasValue && location_Y.HasValue)
             {
                 this.WindowStartupLocation = WindowStartupLocation.Manual;
-                Left = location_X.Value;
-                Top = location_Y.Value;
+                Left = location_X.Value - this.Width - 7;
+                Top = location_Y.Value + 7;
             }
 
 

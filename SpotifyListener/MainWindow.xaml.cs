@@ -70,6 +70,10 @@ namespace SpotifyListener
 
                 Player.OnTrackChanged += OnTrackChanged;
                 Player.OnDeviceChanged += Player_OnDeviceChanged;
+                Player.OnTrackDurationChanged += (p) =>
+                {
+                    this.VolumePath.Fill = p.IsMute ? pauseColor : playColor;
+                };
                 Player.OnPlayStateChanged += (state) =>
                 {
                     Dispatcher.InvokeAsync(() =>
@@ -366,12 +370,6 @@ namespace SpotifyListener
             Player.SetVolume(value);
         }
 
-        private void ChangeDevice_Click(object sender, MouseButtonEventArgs e)
-        {
-            var ds = new DeviceSelection(Player, this.Left, this.Top);
-            ds.ShowDialog();
-        }
-
         private void Settings_Click(object sender, MouseButtonEventArgs e)
         {
             using (var setting = new Settings())
@@ -405,6 +403,20 @@ namespace SpotifyListener
         private void Btn_Shuffle_Click(object sender, RoutedEventArgs e)
         {
             Player.ToggleShuffle();
+        }
+
+        private void AdjustSettings_Click(object sender, RoutedEventArgs e)
+        {
+            using (var setting = new Settings())
+            {
+                setting.ShowDialog();
+            }
+        }
+
+        private void btn_device_Click(object sender, RoutedEventArgs e)
+        {
+            var ds = new DeviceSelection(Player, this.Left + this.Width, this.Top);
+            ds.ShowDialog();
         }
 
         private void Btn_SaveImage_Click(object sender, RoutedEventArgs e)
