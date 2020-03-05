@@ -29,22 +29,12 @@
         private void InitializeComponent()
         {
             this.SaveButton = new System.Windows.Forms.Button();
-            this.DiscordGroupBox = new System.Windows.Forms.GroupBox();
-            this.DiscordRichPresenceEnable = new System.Windows.Forms.CheckBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.DiscordPlayState = new System.Windows.Forms.RichTextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.DiscordPauseState = new System.Windows.Forms.RichTextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.DiscordPlayDetail = new System.Windows.Forms.RichTextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.DiscordPauseDetail = new System.Windows.Forms.RichTextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.ResetButton = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label14 = new System.Windows.Forms.Label();
             this.trackbar_BlurRadial = new System.Windows.Forms.TrackBar();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.txt_volScale = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.trackbar_VolumeScale = new System.Windows.Forms.TrackBar();
             this.label13 = new System.Windows.Forms.Label();
@@ -61,8 +51,6 @@
             this.ReverseLEDRender = new System.Windows.Forms.CheckBox();
             this.ColorSettingsButton = new System.Windows.Forms.Button();
             this.ChromaSDKEnable = new System.Windows.Forms.CheckBox();
-            this.txt_volScale = new System.Windows.Forms.Label();
-            this.DiscordGroupBox.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_BlurRadial)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -72,7 +60,7 @@
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(742, 574);
+            this.SaveButton.Location = new System.Drawing.Point(716, 380);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(76, 37);
             this.SaveButton.TabIndex = 1;
@@ -80,116 +68,9 @@
             this.SaveButton.UseVisualStyleBackColor = true;
             this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
-            // DiscordGroupBox
-            // 
-            this.DiscordGroupBox.Controls.Add(this.DiscordRichPresenceEnable);
-            this.DiscordGroupBox.Controls.Add(this.label7);
-            this.DiscordGroupBox.Controls.Add(this.DiscordPlayState);
-            this.DiscordGroupBox.Controls.Add(this.label5);
-            this.DiscordGroupBox.Controls.Add(this.DiscordPauseState);
-            this.DiscordGroupBox.Controls.Add(this.label6);
-            this.DiscordGroupBox.Controls.Add(this.DiscordPlayDetail);
-            this.DiscordGroupBox.Controls.Add(this.label4);
-            this.DiscordGroupBox.Controls.Add(this.DiscordPauseDetail);
-            this.DiscordGroupBox.Controls.Add(this.label3);
-            this.DiscordGroupBox.Location = new System.Drawing.Point(14, 13);
-            this.DiscordGroupBox.Name = "DiscordGroupBox";
-            this.DiscordGroupBox.Size = new System.Drawing.Size(616, 306);
-            this.DiscordGroupBox.TabIndex = 2;
-            this.DiscordGroupBox.TabStop = false;
-            this.DiscordGroupBox.Text = "Discord";
-            // 
-            // DiscordRichPresenceEnable
-            // 
-            this.DiscordRichPresenceEnable.AutoSize = true;
-            this.DiscordRichPresenceEnable.Location = new System.Drawing.Point(10, 30);
-            this.DiscordRichPresenceEnable.Name = "DiscordRichPresenceEnable";
-            this.DiscordRichPresenceEnable.Size = new System.Drawing.Size(171, 17);
-            this.DiscordRichPresenceEnable.TabIndex = 3;
-            this.DiscordRichPresenceEnable.Text = "Enable Discord Rich Presence";
-            this.DiscordRichPresenceEnable.UseVisualStyleBackColor = true;
-            this.DiscordRichPresenceEnable.CheckedChanged += new System.EventHandler(this.DiscordRichPresenceEnable_CheckedChanged);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.label7.Location = new System.Drawing.Point(6, 299);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(0, 18);
-            this.label7.TabIndex = 10;
-            // 
-            // DiscordPlayState
-            // 
-            this.DiscordPlayState.Location = new System.Drawing.Point(10, 198);
-            this.DiscordPlayState.Name = "DiscordPlayState";
-            this.DiscordPlayState.Size = new System.Drawing.Size(222, 89);
-            this.DiscordPlayState.TabIndex = 9;
-            this.DiscordPlayState.Text = "";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 181);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(100, 13);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "Discord Play State :";
-            // 
-            // DiscordPauseState
-            // 
-            this.DiscordPauseState.Location = new System.Drawing.Point(256, 199);
-            this.DiscordPauseState.Name = "DiscordPauseState";
-            this.DiscordPauseState.Size = new System.Drawing.Size(236, 89);
-            this.DiscordPauseState.TabIndex = 7;
-            this.DiscordPauseState.Text = "";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(253, 182);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(110, 13);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Discord Pause State :";
-            // 
-            // DiscordPlayDetail
-            // 
-            this.DiscordPlayDetail.Location = new System.Drawing.Point(10, 80);
-            this.DiscordPlayDetail.Name = "DiscordPlayDetail";
-            this.DiscordPlayDetail.Size = new System.Drawing.Size(222, 89);
-            this.DiscordPlayDetail.TabIndex = 5;
-            this.DiscordPlayDetail.Text = "";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(7, 63);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(102, 13);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Discord Play Detail :";
-            // 
-            // DiscordPauseDetail
-            // 
-            this.DiscordPauseDetail.Location = new System.Drawing.Point(256, 80);
-            this.DiscordPauseDetail.Name = "DiscordPauseDetail";
-            this.DiscordPauseDetail.Size = new System.Drawing.Size(236, 89);
-            this.DiscordPauseDetail.TabIndex = 3;
-            this.DiscordPauseDetail.Text = "";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(253, 64);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(112, 13);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Discord Pause Detail :";
-            // 
             // ResetButton
             // 
-            this.ResetButton.Location = new System.Drawing.Point(851, 574);
+            this.ResetButton.Location = new System.Drawing.Point(825, 380);
             this.ResetButton.Name = "ResetButton";
             this.ResetButton.Size = new System.Drawing.Size(76, 37);
             this.ResetButton.TabIndex = 4;
@@ -201,9 +82,9 @@
             // 
             this.groupBox3.Controls.Add(this.label14);
             this.groupBox3.Controls.Add(this.trackbar_BlurRadial);
-            this.groupBox3.Location = new System.Drawing.Point(14, 325);
+            this.groupBox3.Location = new System.Drawing.Point(12, 13);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(616, 286);
+            this.groupBox3.Size = new System.Drawing.Size(616, 361);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Preferences";
@@ -251,6 +132,15 @@
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Razer Chroma SDK";
+            // 
+            // txt_volScale
+            // 
+            this.txt_volScale.AutoSize = true;
+            this.txt_volScale.Location = new System.Drawing.Point(254, 304);
+            this.txt_volScale.Name = "txt_volScale";
+            this.txt_volScale.Size = new System.Drawing.Size(37, 13);
+            this.txt_volScale.TabIndex = 28;
+            this.txt_volScale.Text = "NaN%";
             // 
             // label15
             // 
@@ -416,32 +306,20 @@
             this.ChromaSDKEnable.Text = "Enable Razer Chroma SDK";
             this.ChromaSDKEnable.UseVisualStyleBackColor = true;
             // 
-            // txt_volScale
-            // 
-            this.txt_volScale.AutoSize = true;
-            this.txt_volScale.Location = new System.Drawing.Point(254, 304);
-            this.txt_volScale.Name = "txt_volScale";
-            this.txt_volScale.Size = new System.Drawing.Size(37, 13);
-            this.txt_volScale.TabIndex = 28;
-            this.txt_volScale.Text = "NaN%";
-            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1007, 640);
+            this.ClientSize = new System.Drawing.Size(1007, 426);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.ResetButton);
-            this.Controls.Add(this.DiscordGroupBox);
             this.Controls.Add(this.SaveButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Settings";
             this.Text = "Settings";
-            this.DiscordGroupBox.ResumeLayout(false);
-            this.DiscordGroupBox.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_BlurRadial)).EndInit();
@@ -455,19 +333,8 @@
 
         #endregion
         private System.Windows.Forms.Button SaveButton;
-        private System.Windows.Forms.GroupBox DiscordGroupBox;
-        private System.Windows.Forms.RichTextBox DiscordPauseDetail;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.RichTextBox DiscordPlayState;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.RichTextBox DiscordPauseState;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.RichTextBox DiscordPlayDetail;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button ResetButton;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.CheckBox DiscordRichPresenceEnable;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ComboBox AlbumColorMode;

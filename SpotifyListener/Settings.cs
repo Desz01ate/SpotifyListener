@@ -35,20 +35,13 @@ namespace SpotifyListener
             ChromaPeakEnable = Properties.Settings.Default.PeakChroma;
             RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyleIndex;
             RenderModeCombobox.SelectedIndex = Adaptive ? 1 : 0;
-
-            DiscordPlayDetail.Text = Properties.Settings.Default.DiscordPlayDetail;
-            DiscordPlayState.Text = Properties.Settings.Default.DiscordPlayState;
-            DiscordPauseDetail.Text = Properties.Settings.Default.DiscordPauseDetail;
-            DiscordPauseState.Text = Properties.Settings.Default.DiscordPauseState;
             ChromaSDKEnable.Checked = Properties.Settings.Default.ChromaSDKEnable;
-            DiscordRichPresenceEnable.Checked = Properties.Settings.Default.DiscordRichPresenceEnable;
             ReverseLEDRender.Checked = Properties.Settings.Default.ReverseLEDRender;
             ColorDensity.Value = Properties.Settings.Default.Density;
             RenderFPS.Text = Properties.Settings.Default.RenderFPS.ToString();
             AlbumColorMode.SelectedIndex = Properties.Settings.Default.AlbumColorMode;
 
             ChromaSDKEnable_CheckedChanged(null, EventArgs.Empty);
-            DiscordRichPresenceEnable_CheckedChanged(null, EventArgs.Empty);
             trackbar_BlurRadial.Value = Properties.Settings.Default.BlurRadial;
             trackbar_VolumeScale.Value = Properties.Settings.Default.VolumeScale;
             trackbar_VolumeScale_Scroll(trackbar_VolumeScale, null);
@@ -65,15 +58,7 @@ namespace SpotifyListener
             Properties.Settings.Default.PeakChroma = ChromaPeakEnable;
             Properties.Settings.Default.RenderStyleIndex = (byte)RenderStyleCombobox.SelectedIndex;
 
-
-
-            Properties.Settings.Default.DiscordPlayDetail = DiscordPlayDetail.Text;
-            Properties.Settings.Default.DiscordPlayState = DiscordPlayState.Text;
-            Properties.Settings.Default.DiscordPauseDetail = DiscordPauseDetail.Text;
-            Properties.Settings.Default.DiscordPauseState = DiscordPauseState.Text;
-
             Properties.Settings.Default.ChromaSDKEnable = ChromaSDKEnable.Checked;
-            Properties.Settings.Default.DiscordRichPresenceEnable = DiscordRichPresenceEnable.Checked;
             Properties.Settings.Default.ReverseLEDRender = ReverseLEDRender.Checked;
             Properties.Settings.Default.Density = ColorDensity.Value;
 
@@ -117,28 +102,11 @@ namespace SpotifyListener
             }
         }
 
-        private void DiscordRichPresenceEnable_CheckedChanged(object sender, EventArgs e)
-        {
-            DiscordPlayState.Enabled = DiscordRichPresenceEnable.Checked;
-            DiscordPlayDetail.Enabled = DiscordRichPresenceEnable.Checked;
-            DiscordPauseState.Enabled = DiscordRichPresenceEnable.Checked;
-            DiscordPauseDetail.Enabled = DiscordRichPresenceEnable.Checked;
-        }
-
         private void ChromaSDKEnable_CheckedChanged(object sender, EventArgs e)
         {
             ColorSettingsButton.Enabled = ChromaSDKEnable.Checked;
             ReverseLEDRender.Enabled = ChromaSDKEnable.Checked;
             ColorDensity.Enabled = ChromaSDKEnable.Checked;
-        }
-        private void NetworkEnable_CheckedChanged(object sender, EventArgs e)
-        {
-            var state = ((CheckBox)sender).Checked;
-            if (!state)
-            {
-                DiscordRichPresenceEnable.Checked = false;
-            }
-            DiscordRichPresenceEnable.Enabled = state;
         }
 
         private void RenderStyleCombobox_SelectedIndexChanged(object sender, EventArgs e)

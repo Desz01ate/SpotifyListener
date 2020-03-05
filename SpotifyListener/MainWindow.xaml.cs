@@ -40,6 +40,7 @@ namespace SpotifyListener
         private readonly SolidColorBrush pauseColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#FF5a5a"));
 
         Wallpaper wallpaper = null;
+        SearchPanel searchPanel;
 
         public static MainWindow Context { get; private set; }
         public readonly double InitWidth, InitHeight;
@@ -83,7 +84,6 @@ namespace SpotifyListener
                 };
                 using (var devices = new MMDeviceEnumerator())
                     ActiveDevice = devices.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
-                InitializeDiscord();
                 KeyDown += MainWindowGrid_PreviewKeyDown;
                 Loaded += MainWindow_Loaded;
                 MouseDown += Window_MouseDown;
@@ -160,9 +160,6 @@ namespace SpotifyListener
                 this.Icon = Player.AlbumSource;
                 wallpaper.Enable();
             });
-            if (Properties.Settings.Default.DiscordRichPresenceEnable)
-                UpdatePresence(playbackContext);
-
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -239,35 +236,7 @@ namespace SpotifyListener
                 Chroma.SDKDisable();
             }
         }
-        public static void UpdatePresence(IMusic music)
-        {
-            var presence = new DiscordRPC.RichPresence
-            {
-                largeImageKey = "spotify",
-                //smallImageKey = "small"
-            };//"itunes_logo_big" };
-            presence.UpdateRPC(music);
-        }
-        private static void InitializeDiscord()
-        {
-#if WIN64
-            try
-            {
-                var handlers = DiscordRPC.InitializeEventHandler();
-                //383816327850360843 , iTunes RPC
-                //418435305574760458 , my custom RPC
-                DiscordRPC.Initialize("418435305574760458", ref handlers, true, null);
-            }
-            catch
-            {
-                Properties.Settings.Default.DiscordRichPresenceEnable = false;
-                Properties.Settings.Default.Save();
-            }
-#else
-            Properties.Settings.Default.DiscordRichPresenceEnable = false;
-            Properties.Settings.Default.Save();
-#endif
-        }
+
         private void PlayProgress_Click(object sender, EventArgs e)
         {
             Player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue()).ConfigureAwait(false);
@@ -381,6 +350,7 @@ namespace SpotifyListener
         {
             //keep this running on main thread, otherwise it will terminated before the task is done.
             this.Hide();
+            searchPanel?.Close();
             ChromaTimer?.Dispose();
             wallpaper?.Dispose();
             Player?.Dispose();
@@ -415,8 +385,25 @@ namespace SpotifyListener
 
         private void btn_device_Click(object sender, RoutedEventArgs e)
         {
-            var ds = new DeviceSelection(Player, this.Left + this.Width, this.Top);
+            var ds = new DeviceSelection(Player, this.Left + this.InitWidth, this.Top + this.InitHeight);
             ds.ShowDialog();
+        }
+
+        private void btn_Close_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void btn_search_Click(object sender, RoutedEventArgs e)
+        {
+            if (searchPanel != null)
+            {
+                searchPanel.BringToFront();
+            }
+            else
+            {
+                searchPanel = new SearchPanel(Player, () => searchPanel = null);
+                searchPanel.Show();
+            }
         }
 
         private void Btn_SaveImage_Click(object sender, RoutedEventArgs e)

@@ -43,7 +43,6 @@ namespace SpotifyListener
                 SetValue(DataProperty, value);
             }
         }
-
         private static void Data_Changed(DependencyObject o, DependencyPropertyChangedEventArgs args)
         {
             PathButton thisClass = (PathButton)o;

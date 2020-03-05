@@ -91,6 +91,7 @@ namespace SpotifyListener.Classes
         private readonly Button CloseButton;
         private readonly Button ShuffleButton;
         private readonly Button RepeatButton;
+        private readonly Button SearchButton;
     }
     public partial class AnimationController
     {
@@ -117,6 +118,7 @@ namespace SpotifyListener.Classes
             AlbumImageRectangle = mainWnd.AlbumImageRectangle;
             ShuffleButton = mainWnd.btn_Shuffle;
             RepeatButton = mainWnd.btn_Repeat;
+            SearchButton = mainWnd.btn_search;
             #endregion
             AlbumImage.BringToFront();
             var baseHeight = AlbumImage.Height;
@@ -140,16 +142,6 @@ namespace SpotifyListener.Classes
 
         public void TransitionEnable()
         {
-            #region exceptional visibility case              
-            SettingsLabel.Visibility = Visibility.Visible;
-            ChangeDeviceButton.Visibility = Visibility.Visible;
-            CurrentTimeLabel.Visibility = Visibility.Visible;
-            TimeLeftLabel.Visibility = Visibility.Visible;
-            PlayProgress.Visibility = Visibility.Visible;
-            MinimizeButton.Visibility = Visibility.Visible;
-            CloseButton.Visibility = Visibility.Visible;
-            #endregion
-
             var albTrf = new TranslateTransform();
             var trkTrf = new TranslateTransform();
 
@@ -174,13 +166,13 @@ namespace SpotifyListener.Classes
             PlayProgress.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             ShuffleButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             RepeatButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
+            SearchButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
+            MinimizeButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
+            CloseButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             Border.BeginAnimation(UIElement.OpacityProperty, BorderIn);
         }
         public void TransitionDisable()
         {
-            MinimizeButton.Visibility = Visibility.Hidden;
-            CloseButton.Visibility = Visibility.Hidden;
-
             var albTrf = new TranslateTransform();
             var trkTrf = new TranslateTransform();
 
@@ -206,6 +198,9 @@ namespace SpotifyListener.Classes
             PlayProgress.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             ShuffleButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             RepeatButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
+            SearchButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
+            MinimizeButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
+            CloseButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             Border.BeginAnimation(UIElement.OpacityProperty, BorderOut);
 
         }

@@ -59,7 +59,7 @@ namespace SpotifyListener
             {
                 this.WindowStartupLocation = WindowStartupLocation.Manual;
                 Left = location_X.Value - this.Width - 7;
-                Top = location_Y.Value + 7;
+                Top = location_Y.Value - 7;
             }
 
 

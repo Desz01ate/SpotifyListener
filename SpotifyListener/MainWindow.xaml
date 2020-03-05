@@ -32,12 +32,14 @@
             </Style.Triggers>
         </Style>
 
-        <Geometry x:Key="playPath">M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
+        <Geometry x:Key="playPath">
+            M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
 		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z 
               M293.909,187.215l-111.818-73.591C162.792,100.926,147,109.445,147,132.545V287.42c0,23.1,15.813,31.647,35.147,18.998
 		L293.86,233.31C313.187,220.647,313.208,199.913,293.909,187.215z M279.006,217.868l-99.295,64.981
 		c-6.44,4.221-11.711,1.372-11.711-6.328V143.437c0-7.7,5.264-10.535,11.697-6.3l99.33,65.366
-		C285.46,206.731,285.453,213.647,279.006,217.868z</Geometry>
+		C285.46,206.731,285.453,213.647,279.006,217.868z
+        </Geometry>
         <Geometry x:Key="backPath">M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
 		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z
               M98.147,233.275l83.713,54.782c19.334,12.656,35.14,4.102,35.14-18.998V251.51l55.86,36.554
@@ -95,8 +97,37 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
 			s61.931-22.592,71.189-53.333h270.144c11.797,0,21.333-9.557,21.333-21.333C512,244.224,502.464,234.667,490.667,234.667z
 			 M149.333,288c-17.643,0-32-14.357-32-32s14.357-32,32-32c17.643,0,32,14.357,32,32S166.976,288,149.333,288z
         </Geometry>
-        <Geometry x:Key="phonePath">
-            M358.75,0H114.061C97.555,0,84.128,13.428,84.128,29.934v412.944c0,16.505,13.428,29.934,29.934,29.934H358.75   c16.506,0,29.934-13.428,29.934-29.934V29.934C388.683,13.428,375.256,0,358.75,0z M99.128,75.236h274.556v312.687H99.128V75.236z    M114.061,15H358.75c8.234,0,14.934,6.699,14.934,14.934v35.302H99.128V29.934C99.128,21.699,105.827,15,114.061,15z    M358.75,457.811H114.061c-8.234,0-14.934-6.699-14.934-14.934v-44.955h274.556v44.955   C373.683,451.112,366.984,457.811,358.75,457.811z
+        <!--<Geometry x:Key="phonePath" Transform="translate(0.000000,511.000000) scale(0.100000,-0.100000)">
+            M1201.1,2764.9c-70.8-30.6-134-99.5-160.8-170.3c-15.3-38.3-21.1-779-21.1-2379V-2108H581c-505.3,0-490,5.7-476.6-162.7c9.6-112.9,45.9-179.9,137.8-246.9c51.7-40.2,59.3-40.2,2815.4-45.9l2763.7-3.8l-26.8,67c-21.1,47.9-28.7,149.3-28.7,382.8v315.8H3545.7H1325.5V341.9v2143.6h3368.5h3368.5v-306.2V1873h155h153.1l-5.7,361.7c-5.7,396.2-11.5,413.4-137.8,507.2l-51.7,40.2L4717,2786C1863.3,2789.8,1249,2786,1201.1,2764.9z M5383.1-2132.8c0-15.3-23-45.9-49.8-72.7l-49.8-45.9h-589.5h-589.5l-49.8,45.9c-103.3,97.6-103.3,97.6,639.3,97.6C5252.9-2108,5383.1-2111.8,5383.1-2132.8z
+            M5984.1,1654.9l-65.1-65.1V-423.7v-2013.5l65.1-65.1l65.1-65.1H7075h1025.9l-19.1,49.8c-11.5,26.8-19.1,147.4-19.1,267.9v218.2h-957h-957v1684.3v1684.3h1378h1378v-268V801.2h114.8h114.8v394.3v394.3l-65.1,65.1l-65.1,65.1H7526.7H6049.1L5984.1,1654.9z M7603.3-2222.8c21-21.1,38.3-55.5,38.3-76.6c0-21.1-17.2-55.5-38.3-76.6c-21-21.1-55.5-38.3-76.6-38.3s-55.5,17.2-76.6,38.3c-21,21.1-38.3,55.5-38.3,76.6c0,21,17.2,55.5,38.3,76.6c21,21.1,55.5,38.3,76.6,38.3S7582.2-2201.7,7603.3-2222.8z
+            M8263.6,600.3l-47.9-45.9V-959.6v-1513.9l47.9-45.9l45.9-47.8h748.3h748.3l45.9,47.8l47.9,45.9v1513.9V554.3l-47.9,45.9l-45.9,47.9h-748.3h-748.3L8263.6,600.3z M9651.2-883v-1148.4h-612.5h-612.5V-883V265.3h612.5h612.5V-883z M9134.4-2222.8c21-21.1,38.3-55.5,38.3-76.6c0-21.1-17.2-55.5-38.3-76.6c-21.1-21.1-55.5-38.3-76.6-38.3s-55.5,17.2-76.6,38.3c-21,21.1-38.3,55.5-38.3,76.6c0,21,17.2,55.5,38.3,76.6c21.1,21.1,55.5,38.3,76.6,38.3S9113.4-2201.7,9134.4-2222.8z
+        </Geometry>-->
+        <PathGeometry x:Key="phonePath">
+            <PathGeometry.Figures>
+                M1201.1,2764.9c-70.8-30.6-134-99.5-160.8-170.3c-15.3-38.3-21.1-779-21.1-2379V-2108H581c-505.3,0-490,5.7-476.6-162.7c9.6-112.9,45.9-179.9,137.8-246.9c51.7-40.2,59.3-40.2,2815.4-45.9l2763.7-3.8l-26.8,67c-21.1,47.9-28.7,149.3-28.7,382.8v315.8H3545.7H1325.5V341.9v2143.6h3368.5h3368.5v-306.2V1873h155h153.1l-5.7,361.7c-5.7,396.2-11.5,413.4-137.8,507.2l-51.7,40.2L4717,2786C1863.3,2789.8,1249,2786,1201.1,2764.9z M5383.1-2132.8c0-15.3-23-45.9-49.8-72.7l-49.8-45.9h-589.5h-589.5l-49.8,45.9c-103.3,97.6-103.3,97.6,639.3,97.6C5252.9-2108,5383.1-2111.8,5383.1-2132.8z
+                    M5984.1,1654.9l-65.1-65.1V-423.7v-2013.5l65.1-65.1l65.1-65.1H7075h1025.9l-19.1,49.8c-11.5,26.8-19.1,147.4-19.1,267.9v218.2h-957h-957v1684.3v1684.3h1378h1378v-268V801.2h114.8h114.8v394.3v394.3l-65.1,65.1l-65.1,65.1H7526.7H6049.1L5984.1,1654.9z M7603.3-2222.8c21-21.1,38.3-55.5,38.3-76.6c0-21.1-17.2-55.5-38.3-76.6c-21-21.1-55.5-38.3-76.6-38.3s-55.5,17.2-76.6,38.3c-21,21.1-38.3,55.5-38.3,76.6c0,21,17.2,55.5,38.3,76.6c21,21.1,55.5,38.3,76.6,38.3S7582.2-2201.7,7603.3-2222.8z
+                    M8263.6,600.3l-47.9-45.9V-959.6v-1513.9l47.9-45.9l45.9-47.8h748.3h748.3l45.9,47.8l47.9,45.9v1513.9V554.3l-47.9,45.9l-45.9,47.9h-748.3h-748.3L8263.6,600.3z M9651.2-883v-1148.4h-612.5h-612.5V-883V265.3h612.5h612.5V-883z M9134.4-2222.8c21-21.1,38.3-55.5,38.3-76.6c0-21.1-17.2-55.5-38.3-76.6c-21.1-21.1-55.5-38.3-76.6-38.3s-55.5,17.2-76.6,38.3c-21,21.1-38.3,55.5-38.3,76.6c0,21,17.2,55.5,38.3,76.6c21.1,21.1,55.5,38.3,76.6,38.3S9113.4-2201.7,9134.4-2222.8z
+            </PathGeometry.Figures>
+            <PathGeometry.Transform>
+                <ScaleTransform ScaleX="0.100000" ScaleY="-0.100000"/>
+                <!--<TranslateTransform X="0.000000" Y="511.000000"/>-->
+            </PathGeometry.Transform>
+        </PathGeometry>
+        <Geometry x:Key="magnifyingPath">
+            M508.874,478.708L360.142,329.976c28.21-34.827,45.191-79.103,45.191-127.309c0-111.75-90.917-202.667-202.667-202.667
+			S0,90.917,0,202.667s90.917,202.667,202.667,202.667c48.206,0,92.482-16.982,127.309-45.191l148.732,148.732
+			c4.167,4.165,10.919,4.165,15.086,0l15.081-15.082C513.04,489.627,513.04,482.873,508.874,478.708z M202.667,362.667
+			c-88.229,0-160-71.771-160-160s71.771-160,160-160s160,71.771,160,160S290.896,362.667,202.667,362.667z
+        </Geometry>
+        <Geometry x:Key="closePath">
+            M284.286,256.002L506.143,34.144c7.811-7.811,7.811-20.475,0-28.285c-7.811-7.81-20.475-7.811-28.285,0L256,227.717
+			L34.143,5.859c-7.811-7.811-20.475-7.811-28.285,0c-7.81,7.811-7.811,20.475,0,28.285l221.857,221.857L5.858,477.859
+			c-7.811,7.811-7.811,20.475,0,28.285c3.905,3.905,9.024,5.857,14.143,5.857c5.119,0,10.237-1.952,14.143-5.857L256,284.287
+			l221.857,221.857c3.905,3.905,9.024,5.857,14.143,5.857s10.237-1.952,14.143-5.857c7.811-7.811,7.811-20.475,0-28.285
+			L284.286,256.002z
+        </Geometry>
+        <Geometry x:Key="downArrowPath">
+            M492,236H20c-11.046,0-20,8.954-20,20c0,11.046,8.954,20,20,20h472c11.046,0,20-8.954,20-20S503.046,236,492,236z
         </Geometry>
     </Window.Resources>
     <Window.CommandBindings>
@@ -107,52 +138,13 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
     </Window.InputBindings>
     <Grid Margin="1,1,1,1" Name="MainWindowGrid" Background="Transparent">
         <Border x:Name="border_Form" Opacity="0.97" Background="{Binding AlbumBackgroundSource}" Margin="5" Padding="5" BorderThickness="0.7" BorderBrush="#d9d9d9" CornerRadius="0"/>
-        <local:PathButton x:Name="btn_settings" Visibility="Hidden" Data="{StaticResource settingsPath}" Margin="0,17,95,0" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="AdjustSettings_Click" />
-        <local:PathButton x:Name="btn_device" Visibility="Hidden" Data="{StaticResource phonePath}" Margin="0,16,145,0" Width="21" Height="21" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_device_Click" />
-        <Button x:Name="btn_Minimize" Content="-" FontSize="25" BorderThickness="0" Margin="0,5,44,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="40" Height="40" Visibility="Hidden">
-            <Button.Style>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Border Background="{TemplateBinding Background}">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="Gold"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-        </Button>
-        <Button x:Name="btn_Close" Content="x" FontSize="20" BorderThickness="0" Margin="0,5,6,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="40" Height="40" Visibility="Hidden" >
-            <Button.Style>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Border Background="{TemplateBinding Background}">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="Gold"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-        </Button>
+        <local:PathButton x:Name="btn_search"   Opacity="0" Data="{StaticResource magnifyingPath}" Margin="0,0,110,20" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_search_Click" />
+        <local:PathButton x:Name="btn_settings" Opacity="0" Data="{StaticResource settingsPath}" Margin="0,0,20,20" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="AdjustSettings_Click" />
+        <local:PathButton x:Name="btn_device"   Opacity="0" Data="{StaticResource phonePath}" Margin="0,0,60,17" Width="27" Height="27" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_device_Click" />
+        <local:PathButton x:Name="btn_Minimize" Opacity="0" Data="{StaticResource downArrowPath}" Margin="0,20,65,0" Width="15" Height="15" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" />
+        <local:PathButton x:Name="btn_Close"    Opacity="0" Data="{StaticResource closePath}" Margin="0,20,20,0" Width="15" Height="15" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" />
+
+        <!--<local:PathButton x:Name="btn_Close" Data="{StaticResource closePath}" BorderThickness="0" Margin="0,5,6,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="20" Height="20" Background="Transparent" Fill="White" Opacity="0" Click="btn_Close_Click" />-->
 
         <Image x:Name="AlbumImage" Source="{Binding AlbumSource}" Margin="0,40,0,0" Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Top">
             <Image.Clip>
@@ -165,7 +157,7 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
         <Label x:Name="lbl_Album" Content="{Binding Album}" HorizontalAlignment="Center" Margin="0,350,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="18" Foreground="White" HorizontalContentAlignment="Center"/>
         <Label x:Name="lbl_Artist" Content="{Binding Artist}" HorizontalAlignment="Center" Margin="0,385,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="18" Foreground="White" HorizontalContentAlignment="Center"/>
 
-        <ProgressBar x:Name="PlayProgress" Value="{Binding Position_ms,Mode=OneWay}" Maximum="{Binding Duration_ms,Mode=OneWay}" Opacity="0.7" HorizontalAlignment="Center" Height="32" Margin="0,423,0,20" VerticalAlignment="Top" Width="630" MouseDown="PlayProgress_Click" Visibility="Hidden">
+        <ProgressBar x:Name="PlayProgress" Value="{Binding Position_ms,Mode=OneWay}" Maximum="{Binding Duration_ms,Mode=OneWay}" HorizontalAlignment="Center" Height="32" Margin="0,423,0,20" VerticalAlignment="Top" Width="630" MouseDown="PlayProgress_Click" Opacity="0">
             <ProgressBar.Background>
                 <SolidColorBrush Color="#FFE6E6E6" Opacity="0.1"/>
             </ProgressBar.Background>
@@ -173,8 +165,8 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
         <local:PathButton Visibility="Hidden" x:Name="btn_Repeat" Data="{StaticResource RepeatPath`}" Background="Transparent" BorderBrush="Transparent" Opacity="0" Margin="0,423,-850,20" VerticalAlignment="Top" Width="20" Height="20" RenderTransformOrigin="1,2" Click="Btn_Repeat_Click" Focusable="False" Style="{StaticResource PathButtonStyle}" Fill="White"/>
         <local:PathButton Visibility="Hidden" x:Name="btn_Shuffle" Data="{StaticResource ShufflePath}" Background="Transparent" BorderBrush="Transparent" Opacity="0" Margin="0,423,850,20" VerticalAlignment="Top" Width="20" Height="20" RenderTransformOrigin="1,2" Click="Btn_Shuffle_Click" Focusable="False" Style="{StaticResource PathButtonStyle}" Fill="White"/>
 
-        <Label x:Name="lbl_CurrentTime" Content="{Binding CurrentTime}" HorizontalAlignment="Center" Margin="15,423,723,20" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" HorizontalContentAlignment="Center" Foreground="White" Visibility="Hidden"/>
-        <Label x:Name="lbl_TimeLeft" Content="{Binding TimeLeft}" HorizontalAlignment="Center" Margin="723,423,15,20" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" HorizontalContentAlignment="Center" Foreground="White" Visibility="Hidden"/>
+        <Label x:Name="lbl_CurrentTime" Content="{Binding CurrentTime}" HorizontalAlignment="Center" Margin="15,423,723,20" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" HorizontalContentAlignment="Center" Foreground="White" Opacity="0"/>
+        <Label x:Name="lbl_TimeLeft" Content="{Binding TimeLeft}" HorizontalAlignment="Center" Margin="723,423,15,20" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" HorizontalContentAlignment="Center" Foreground="White" Opacity="0"/>
         <Menu Name="menu1" Margin="0,0,0,0" Width="0" Height="0">
             <MenuItem Header="_File" >
                 <MenuItem Name="menuOpen" Header="_Open..." Command="Open" InputGestureText="Ctrl+O"  />

@@ -22,6 +22,7 @@ namespace SpotifyListener
             Stretched
         }
         string OriginalBackgroundImagePath { get; }
+
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern int SystemParametersInfo(UInt32 action, UInt32 uParam, String vParam, UInt32 winIni);
 
@@ -32,6 +33,7 @@ namespace SpotifyListener
         public readonly float FontSize;
         public readonly string FontFamily;
         public IMusic Player;
+        private string temporaryWaitForDeleteFiles = "";
         public Wallpaper(float fontSize, string fontFamily)
         {
             OriginalBackgroundImagePath = BAK_IMAGE;
@@ -87,67 +89,75 @@ namespace SpotifyListener
         }
         private bool Set(Image image, Style style, string path = "")
         {
-            bool Success = false;
-            string TempPath = Path.Combine(Path.GetTempPath(), "wallpaper.bmp");
+            DeleteTempFile();
+            bool success = false;
+            string tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".jpg");
+            RegistryKey desktopKey = default, lockScreenKey = default;
+            temporaryWaitForDeleteFiles = tempPath;
             try
             {
                 if (image != null)
                 {
-                    File.Create(TempPath).Close();
-                    image.Save(TempPath, ImageFormat.Bmp);
+                    File.Create(tempPath).Close();
+                    image.Save(tempPath, ImageFormat.Bmp);
                 }
-
-                RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
-
+                desktopKey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
+                lockScreenKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP", true);
+                if (lockScreenKey == null)
+                {
+                    lockScreenKey = Registry.LocalMachine.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP", true);
+                    lockScreenKey.SetValue("LockScreenImagePath", "");
+                    lockScreenKey.SetValue("LockScreenImageUrl", "");
+                    lockScreenKey.SetValue("LockScreenImageStatus", 0, RegistryValueKind.DWord);
+                }
                 switch (style)
                 {
                     case Style.Stretched:
-                        key.SetValue(@"WallpaperStyle", 2.ToString());
-
-                        key.SetValue(@"TileWallpaper", 0.ToString());
-
+                        desktopKey.SetValue(@"WallpaperStyle", "2");
+                        desktopKey.SetValue(@"TileWallpaper", "0");
                         break;
-
                     case Style.Centered:
-                        key.SetValue(@"WallpaperStyle", 1.ToString());
-
-                        key.SetValue(@"TileWallpaper", 0.ToString());
-
+                        desktopKey.SetValue(@"WallpaperStyle", "1");
+                        desktopKey.SetValue(@"TileWallpaper", "0");
                         break;
-
                     default:
                     case Style.Tiled:
-                        key.SetValue(@"WallpaperStyle", 1.ToString());
-
-                        key.SetValue(@"TileWallpaper", 1.ToString());
-
+                        desktopKey.SetValue(@"WallpaperStyle", "1");
+                        desktopKey.SetValue(@"TileWallpaper", "1");
                         break;
-
                 }
                 if (!string.IsNullOrWhiteSpace(path))
                 {
-                    SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
+                    lockScreenKey?.SetValue("LockScreenImagePath", path);
+                    lockScreenKey?.SetValue("LockScreenImageUrl", path);
+                    lockScreenKey.SetValue("LockScreenImageStatus", 1, RegistryValueKind.DWord);
+                    _ = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
                 }
                 else
                 {
-                    SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, TempPath, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
+                    lockScreenKey?.SetValue("LockScreenImagePath", tempPath);
+                    lockScreenKey?.SetValue("LockScreenImageUrl", tempPath);
+                    lockScreenKey.SetValue("LockScreenImageStatus", 1, RegistryValueKind.DWord);
+                    _ = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, tempPath, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
                 }
-                Success = true;
-
+                success = true;
             }
-            catch
+            catch (Exception ex)
             {
                 //ex.HandleException();
             }
             finally
             {
-                if (File.Exists(TempPath))
-                {
-                    File.Delete(TempPath);
-                }
+                //if (File.Exists(TempPath))
+                //{
+                //    File.Delete(TempPath);
+                //}
+                desktopKey?.Close();
+                lockScreenKey?.Close();
                 image?.Dispose();
+
             }
-            return Success;
+            return success;
         }
         internal void SetPlayerBase(IMusic music)
         {
@@ -213,6 +223,14 @@ namespace SpotifyListener
             if (disposing)
             {
                 this.Disable();
+                DeleteTempFile();
+            }
+        }
+        private void DeleteTempFile()
+        {
+            if (File.Exists(temporaryWaitForDeleteFiles))
+            {
+                File.Delete(temporaryWaitForDeleteFiles);
             }
         }
         public void Dispose()

@@ -12,7 +12,7 @@ namespace SpotifyListener.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.3.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -20,54 +20,6 @@ namespace SpotifyListener.Properties {
         public static Settings Default {
             get {
                 return defaultInstance;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%track - %artist")]
-        public string DiscordPlayDetail {
-            get {
-                return ((string)(this["DiscordPlayDetail"]));
-            }
-            set {
-                this["DiscordPlayDetail"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%playlist_name")]
-        public string DiscordPlayState {
-            get {
-                return ((string)(this["DiscordPlayState"]));
-            }
-            set {
-                this["DiscordPlayState"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%track - %artist")]
-        public string DiscordPauseDetail {
-            get {
-                return ((string)(this["DiscordPauseDetail"]));
-            }
-            set {
-                this["DiscordPauseDetail"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Paused")]
-        public string DiscordPauseState {
-            get {
-                return ((string)(this["DiscordPauseState"]));
-            }
-            set {
-                this["DiscordPauseState"] = value;
             }
         }
         
@@ -140,18 +92,6 @@ namespace SpotifyListener.Properties {
             }
             set {
                 this["Volume"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool DiscordRichPresenceEnable {
-            get {
-                return ((bool)(this["DiscordRichPresenceEnable"]));
-            }
-            set {
-                this["DiscordRichPresenceEnable"] = value;
             }
         }
         
