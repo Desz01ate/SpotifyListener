@@ -147,7 +147,7 @@ namespace SpotifyListener
                     //Player.PlayAsync("");
                     break;
                 case MouseButton.Right:
-                    Task.Run(() => Process.Start(Player.URL));
+                    Task.Run(() => Process.Start(Player.Url));
                     break;
             }
         }
@@ -249,7 +249,7 @@ namespace SpotifyListener
         private void FacebookShare()
         {
             var app_id = "139971873511766"; //StatusReporter
-            var href = Player.URL;
+            var href = Player.Url;
             var redirect_uri = string.Empty;
             var hashtag = $"%23{Player.Artist}_{Player.Track}";
             hashtag = Regex.Replace(hashtag, @"[^0-9a-zA-Z:_%]+", "");
@@ -290,14 +290,14 @@ namespace SpotifyListener
                         Process.Start("https://github.com/Desz01ate/iTunesListenerX");
                         break;
                     case Key.O:
-                        Process.Start(Player.URL);
+                        Process.Start(Player.Url);
                         break;
                     case Key.P:
                         GenerateFormImage();
                         break;
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 //pass
             }

@@ -253,35 +253,24 @@ new ColoreColor(255,0  ,32 )
             public static void SetChromaPeakVolume(this ref MouseCustom MouseGrid, float volume)
             {
 
-                try
+                var absolutePosition = Math.Round((volume * Constant.LeftStrip.Length), 0);
+                for (var i = 0; i < absolutePosition; i++)
                 {
-                    var absolutePosition = Math.Round((volume * Constant.LeftStrip.Length), 0);
-                    //var currentDensity = (double)(absolutePosition) / (double)Constant.LeftStrip.Length;
-                    for (var i = 0; i < absolutePosition; i++)
-                    {
-                        var color = colors.Peek().ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
-                        if (i > 0)
-                            MouseGrid[GridLed.Logo] = ColoreColor.White.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);//colors[1].
-                        if (i == Constant.LeftStrip.Length - 1)
-                            MouseGrid[GridLed.ScrollWheel] = color;//colors[i].ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
-                        MouseGrid[Constant.RightStrip_Reverse[i]] = color;
-                        MouseGrid[Constant.LeftStrip_Reverse[i]] = color;
-                    }
-                    var speed = (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
-                    changeRate += speed;//
-                    if (changeRate >= 44)
-                    {
-                        colors.ShiftLeft();//.ShiftRight();
-                                           //colors = colors.Slice(1, colors.Length - 1).ToArray().Add(colors[0]);
-                        changeRate = 0;
-                    }
+                    var color = colors.Peek().ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
+                    if (i > 0)
+                        MouseGrid[GridLed.Logo] = ColoreColor.White.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);//colors[1].
+                    if (i == Constant.LeftStrip.Length - 1)
+                        MouseGrid[GridLed.ScrollWheel] = color;//colors[i].ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
+                    MouseGrid[Constant.RightStrip_Reverse[i]] = color;
+                    MouseGrid[Constant.LeftStrip_Reverse[i]] = color;
                 }
-                catch (Exception ex)
+                var speed = (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
+                changeRate += speed;
+                if (changeRate >= 44)
                 {
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine(ex.StackTrace);
+                    colors.ShiftLeft();
+                    changeRate = 0;
                 }
-
             }
             public static void SetPeakVolume(this ref KeyboardCustom KeyboardGrid, ColoreColor VolumeColor, float volume)
             {

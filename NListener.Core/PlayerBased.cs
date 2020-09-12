@@ -1,33 +1,9 @@
-﻿using SpotifyListener.Interfaces;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using SpotifyListener.Delegations;
-using SpotifyListener.DatabaseManager;
-using SpotifyListener.DatabaseManager.Models;
-using Dapper;
-using SpotifyAPI.Web.Models;
-using Image = System.Drawing.Image;
-using SpotifyAPI.Web.Enums;
-using SpotifyListener.Enums;
-using SpotifyListener.Configurations;
-using SpotifyAPI.Web;
-using System.ComponentModel;
-using System.Windows.Media;
-using SpotifyListener.Classes;
-using System.Drawing.Imaging;
+﻿using System;
 
-namespace SpotifyListener
+namespace NListener.Core
 {
-    public class SpotifyPlayer : IStreamableMusic, IChromaRender
+    public abstract class PlayerBased 
     {
-        private readonly HttpClient httpClient;
-        private readonly SpotifyWebAPI client;
         private string _track, _album, _artist, _genre, _type, _url, _artworkUrl;
         private int _pos_ms, _dur_ms, _vol;
         private bool _isPlaying, _isShuffle, _isRepeat;
@@ -91,7 +67,7 @@ namespace SpotifyListener
                 OnPropertyChanged(nameof(Type));
             }
         }
-        public string Url
+        public string URL
         {
             get
             {
@@ -100,7 +76,7 @@ namespace SpotifyListener
             private set
             {
                 _url = value;
-                OnPropertyChanged(nameof(Url));
+                OnPropertyChanged(nameof(URL));
             }
         }
         public string ArtworkURL
@@ -179,9 +155,9 @@ namespace SpotifyListener
                 _albumImage = value;
                 if (value != null)
                 {
-                    _albumSource = value?.ToBitmapImage(ImageFormat.Jpeg);
                     OnPropertyChanged(nameof(AlbumSource));
-                    using var background = Effects.BitmapHelper.CalculateBackgroundSource(value);
+                    var background = Effects.Bitmap.CalculateBackgroundSource(AlbumArtwork.Clone() as Image);
+                    //var bitmapImage = background.ToBitmapImage();
                     AlbumBackgroundSource = ImageProcessing.ToSafeMemoryBrush(background as Bitmap);
                     AlbumBackgroundSource.Freeze();
                     OnPropertyChanged(nameof(AlbumBackgroundSource));
@@ -190,8 +166,8 @@ namespace SpotifyListener
         }
 
 
-        private ImageSource _albumSource;
-        public ImageSource AlbumSource => _albumSource;
+
+        public ImageSource AlbumSource => AlbumArtwork?.ToBitmapImage();
         public System.Windows.Media.Brush AlbumBackgroundSource { get; private set; } = System.Windows.Media.Brushes.Gray;
         public bool IsPlaying
         {
@@ -243,7 +219,6 @@ namespace SpotifyListener
         public SpotifyPlayer(SpotifyWebAPI client)
         {
             this.client = client;
-            this.httpClient = new HttpClient();
             _trackFetcherTimer.Interval = 1000;
             _trackFetcherTimer.Tick += async (s, e) => await GetAsync().ConfigureAwait(false);
             _trackFetcherTimer.Start();
@@ -283,6 +258,10 @@ namespace SpotifyListener
                     this.IsShuffle = currentTrack.ShuffleState;
                     this.IsRepeat = currentTrack.RepeatState == SpotifyAPI.Web.Enums.RepeatState.Context;
 
+                    //if (currentActiveDevice.VolumePercent != Volume)
+                    //{
+                    //    Volume = ActiveDevice.VolumePercent;
+                    //}
                     if (currentTrack.Item != null)
                     {
                         Duration_ms = currentTrack.Item.DurationMs;
@@ -290,9 +269,9 @@ namespace SpotifyListener
                         Volume = currentActiveDevice.VolumePercent;
                         var testURL = currentTrack.Item.ExternUrls.FirstOrDefault();
                         var url = testURL.Equals(default(KeyValuePair<string, string>)) ? string.Empty : testURL.Value;
-                        if (Url != url)
+                        if (URL != url)
                         {
-                            Url = url;
+                            URL = url;
                             AlbumArtwork?.Dispose();
                             AlbumArtwork = null;
                         }
@@ -320,7 +299,12 @@ namespace SpotifyListener
                             if (currentTrack.Item.Album.Images.Any())
                             {
                                 ArtworkURL = currentTrack.Item.Album.Images[0].Url;
-                                AlbumArtwork = await GetImageAsync(ArtworkURL);
+                                using (var client = new HttpClient())
+                                {
+                                    var byteArray = await client.GetByteArrayAsync(ArtworkURL);
+                                    Image image = (Image)(new ImageConverter()).ConvertFrom(byteArray);
+                                    AlbumArtwork = image;
+                                }
                             }
                             else
                             {
@@ -328,7 +312,7 @@ namespace SpotifyListener
                             }
                             _standardColor.Standard = albumColoreMode == 0 ? AlbumArtwork.DominantColor() : AlbumArtwork.AverageColor();
                             _standardColor.Complemented = _standardColor.Standard.InverseColor();
-                            _razerColor.Standard = _standardColor.Standard.ToColoreColor();
+                            _razerColor.Standard = _standardColor.Standard.ToColoreColor();//.SoftColor().ToColoreColor();
                             _razerColor.Complemented = _standardColor.Complemented.ToColoreColor();
                             await Service.Context.ListenHistory.InsertAsync(new ListenHistory(this)).ConfigureAwait(false);
                             OnTrackChanged?.Invoke(this);
@@ -351,32 +335,11 @@ namespace SpotifyListener
                 IsPlaying = currentTrack.IsPlaying;
                 OnTrackDurationChanged?.Invoke(this);
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex);
+
             }
         }
-
-        private async ValueTask<Image> GetImageAsync(string artworkUrl)
-        {
-            Image image;
-            var lookupKey = artworkUrl.Substring(artworkUrl.LastIndexOf("/") + 1);
-            if (CacheFileManager.TryGetFileCache(lookupKey, out var fs))
-            {
-                using (fs)
-                {
-                    image = Image.FromStream(fs);
-                }
-            }
-            else
-            {
-                var imageBytes = await httpClient.GetByteArrayAsync(new Uri(artworkUrl));
-                image = (Image)(new ImageConverter()).ConvertFrom(imageBytes);
-                CacheFileManager.SaveCache(lookupKey, imageBytes);
-            }
-            return image;
-        }
-
         public virtual void PlayPause()
         {
 
@@ -394,10 +357,12 @@ namespace SpotifyListener
             if (IsPlaying)
             {
                 await client.PausePlaybackAsync().ConfigureAwait(false);
+                //OnPaused(null, null);
             }
             else
             {
                 await client.ResumePlaybackAsync("", "", null, "", Position_ms).ConfigureAwait(false);
+                //OnResume(null, null);
             }
         }
 
@@ -457,7 +422,7 @@ namespace SpotifyListener
         }
         public virtual async Task SetActiveDeviceAsync(object id)
         {
-            var res = await client.ResumePlaybackAsync(id as string, "", new List<string>(new string[] { Url }), "", Position_ms).ConfigureAwait(false);
+            var res = await client.ResumePlaybackAsync(id as string, "", new List<string>(new string[] { URL }), "", Position_ms).ConfigureAwait(false);
         }
         public virtual void ClearImage()
         {
@@ -471,7 +436,6 @@ namespace SpotifyListener
                 _trackFetcherTimer?.Dispose();
                 AlbumArtwork?.Dispose();
                 client?.Dispose();
-                httpClient?.Dispose();
             }
         }
         public void Dispose()

@@ -100,19 +100,18 @@ namespace SpotifyListener
             }
             return image;
         }
-        public static Image Cut(this Image image, double width, double height)
+        public static Image Cut(this Bitmap image, double width, double height)
         {
             var diffOffset = height / width;
             if (!(0 < diffOffset && diffOffset < 1)) throw new Exception("width and height offset is out of range (height divide by width must inside of range 0~1).");
 
             var scale = 96;// (int)((((1920 - System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width) * 0.0000732421875) + 0.05) * System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width);//96;
-            var baseBitmap = (Bitmap)image;
-            baseBitmap.SetResolution(scale, scale);
-            var newImage = new Bitmap(baseBitmap.Width, (int)(baseBitmap.Width * diffOffset));
+            image.SetResolution(scale, scale);
+            var newImage = new Bitmap(image.Width, (int)(image.Width * diffOffset));
             var drawer = Graphics.FromImage(newImage);
             var offsetX = 0;//(int)(image.Height * (1 - diffOffset) / 2);
-            var offsetY = (int)(baseBitmap.Width * (1 - diffOffset) / 2);
-            drawer.DrawImage(baseBitmap, 0, 0, new Rectangle(offsetX, offsetY, baseBitmap.Width, baseBitmap.Width), GraphicsUnit.Pixel);
+            var offsetY = (int)(image.Width * (1 - diffOffset) / 2);
+            drawer.DrawImage(image, 0, 0, new Rectangle(offsetX, offsetY, image.Width, image.Width), GraphicsUnit.Pixel);
             return newImage;
         }
         public static Image Blur(this Image image, int radial)
@@ -128,17 +127,10 @@ namespace SpotifyListener
             if (img == null || (img.Width == outputWidth && img.Height == outputHeight)) return img;
             Bitmap outputImage;
             Graphics graphics;
-            try
-            {
-                outputImage = new Bitmap(outputWidth, outputHeight, System.Drawing.Imaging.PixelFormat.Format16bppRgb555);
-                graphics = Graphics.FromImage(outputImage);
-                graphics.DrawImage(img, new Rectangle(0, 0, outputWidth, outputHeight),new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
-                return outputImage;
-            }
-            catch
-            {
-                throw;
-            }
+            outputImage = new Bitmap(outputWidth, outputHeight, System.Drawing.Imaging.PixelFormat.Format16bppRgb555);
+            graphics = Graphics.FromImage(outputImage);
+            graphics.DrawImage(img, new Rectangle(0, 0, outputWidth, outputHeight), new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
+            return outputImage;
         }
         public static Color ContrastColor(this Color c)
         {
@@ -245,11 +237,11 @@ namespace SpotifyListener
                 return result;
             }
         }
-        public static BitmapImage ToBitmapImage(this Bitmap src)
+        public static BitmapImage ToBitmapImage(this Bitmap src, ImageFormat format)
         {
             using (MemoryStream memory = new MemoryStream())
             {
-                src.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
+                src.Save(memory, format);
                 memory.Position = 0;
                 BitmapImage bitmapimage = new BitmapImage();
                 bitmapimage.BeginInit();
@@ -260,9 +252,11 @@ namespace SpotifyListener
                 return bitmapimage;
             }
         }
-        public static BitmapImage ToBitmapImage(this Image src)
+        public static BitmapImage ToBitmapImage(this Image src, ImageFormat format)
         {
-            return ToBitmapImage(src as Bitmap);
+            using var bitmap = new Bitmap(src);
+            var result = ToBitmapImage(bitmap, format);
+            return result;
         }
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -302,8 +296,6 @@ namespace GaussianBlur
 {
     public class GaussianBlur
     {
-
-
         private readonly int[] _alpha;
         private readonly int[] _red;
         private readonly int[] _green;
@@ -311,12 +303,12 @@ namespace GaussianBlur
 
         private readonly int _width;
         private readonly int _height;
-        private readonly ParallelOptions _pOptions = new ParallelOptions { MaxDegreeOfParallelism = 16 };
-        public GaussianBlur(Bitmap image)
+        private static readonly ParallelOptions _pOptions = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
+        private GaussianBlur(Bitmap image)
         {
             var rct = new Rectangle(0, 0, image.Width, image.Height);
             var source = new int[rct.Width * rct.Height];
-            var cloneImage = image.Clone() as Bitmap;
+            var cloneImage = image;
             var bits = cloneImage.LockBits(rct, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
             Marshal.Copy(bits.Scan0, source, 0, source.Length);
             cloneImage.UnlockBits(bits);
@@ -342,7 +334,7 @@ namespace GaussianBlur
             var gb = new GaussianBlur(image);
             return gb.Process(radial);
         }
-        public Bitmap Process(int radial)
+        private Bitmap Process(int radial)
         {
             var newAlpha = new int[_width * _height];
             var newRed = new int[_width * _height];

@@ -18,7 +18,7 @@ namespace SpotifyListener.Interfaces
         string Artist { get; }
         string Genre { get; }
         string Type { get; }
-        string URL { get; }
+        string Url { get; }
         int Position_ms { get; }
         int Duration_ms { get; }
         int Volume { get; }

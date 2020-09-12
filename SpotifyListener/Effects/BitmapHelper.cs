@@ -8,20 +8,19 @@ using System.Windows.Media;
 
 namespace SpotifyListener.Effects
 {
-    public static class Bitmap
+    public static class BitmapHelper
     {
         public static Image CalculateBackgroundSource(Image AlbumArtwork)
         {
             if (AlbumArtwork == null) return null;
             var width = MainWindow.Context.InitWidth;
             var height = MainWindow.Context.InitHeight;
-            using (var background = AlbumArtwork)
-            {
-                var cutBg = background.Cut(width, height);
-                var opacBg = cutBg.SetOpacity(0.6d, System.Drawing.Color.Black);
-                var blurBg = opacBg.Blur(Properties.Settings.Default.BlurRadial);
-                return blurBg;
-            }
+            using var background = new Bitmap(AlbumArtwork);
+            var cutBg = background.Cut(width, height);
+            var opacBg = cutBg.SetOpacity(0.6d, System.Drawing.Color.Black);
+            var blurBg = opacBg.Blur(Properties.Settings.Default.BlurRadial);
+            return blurBg;
+
         }
     }
 }

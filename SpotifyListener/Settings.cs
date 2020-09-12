@@ -23,11 +23,6 @@ namespace SpotifyListener
             InitializeComponent();
             this.Icon = Properties.Resources.spotify;
             //Due to Facebook updated policy (https://developers.facebook.com/blog/post/2018/04/24/new-facebook-platform-product-changes-policy-updates/), now publish_actions is deprecated so this feature might be remove soon as well
-#if WIN32
-            DiscordRichPresenceEnable.Visible = false;
-            DiscordGroupBox.Text = "Discord RPC is not working on x86 system";
-            DiscordGroupBox.ForeColor = Color.Red;
-#endif
             Adaptive = Properties.Settings.Default.AdaptiveDensity;
             AlbumCoverRenderEnable = Properties.Settings.Default.AlbumCoverRenderEnable;
             RenderPeakVolumeEnable = Properties.Settings.Default.RenderPeakVolumeEnable;

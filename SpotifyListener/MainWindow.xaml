@@ -97,11 +97,6 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
 			s61.931-22.592,71.189-53.333h270.144c11.797,0,21.333-9.557,21.333-21.333C512,244.224,502.464,234.667,490.667,234.667z
 			 M149.333,288c-17.643,0-32-14.357-32-32s14.357-32,32-32c17.643,0,32,14.357,32,32S166.976,288,149.333,288z
         </Geometry>
-        <!--<Geometry x:Key="phonePath" Transform="translate(0.000000,511.000000) scale(0.100000,-0.100000)">
-            M1201.1,2764.9c-70.8-30.6-134-99.5-160.8-170.3c-15.3-38.3-21.1-779-21.1-2379V-2108H581c-505.3,0-490,5.7-476.6-162.7c9.6-112.9,45.9-179.9,137.8-246.9c51.7-40.2,59.3-40.2,2815.4-45.9l2763.7-3.8l-26.8,67c-21.1,47.9-28.7,149.3-28.7,382.8v315.8H3545.7H1325.5V341.9v2143.6h3368.5h3368.5v-306.2V1873h155h153.1l-5.7,361.7c-5.7,396.2-11.5,413.4-137.8,507.2l-51.7,40.2L4717,2786C1863.3,2789.8,1249,2786,1201.1,2764.9z M5383.1-2132.8c0-15.3-23-45.9-49.8-72.7l-49.8-45.9h-589.5h-589.5l-49.8,45.9c-103.3,97.6-103.3,97.6,639.3,97.6C5252.9-2108,5383.1-2111.8,5383.1-2132.8z
-            M5984.1,1654.9l-65.1-65.1V-423.7v-2013.5l65.1-65.1l65.1-65.1H7075h1025.9l-19.1,49.8c-11.5,26.8-19.1,147.4-19.1,267.9v218.2h-957h-957v1684.3v1684.3h1378h1378v-268V801.2h114.8h114.8v394.3v394.3l-65.1,65.1l-65.1,65.1H7526.7H6049.1L5984.1,1654.9z M7603.3-2222.8c21-21.1,38.3-55.5,38.3-76.6c0-21.1-17.2-55.5-38.3-76.6c-21-21.1-55.5-38.3-76.6-38.3s-55.5,17.2-76.6,38.3c-21,21.1-38.3,55.5-38.3,76.6c0,21,17.2,55.5,38.3,76.6c21,21.1,55.5,38.3,76.6,38.3S7582.2-2201.7,7603.3-2222.8z
-            M8263.6,600.3l-47.9-45.9V-959.6v-1513.9l47.9-45.9l45.9-47.8h748.3h748.3l45.9,47.8l47.9,45.9v1513.9V554.3l-47.9,45.9l-45.9,47.9h-748.3h-748.3L8263.6,600.3z M9651.2-883v-1148.4h-612.5h-612.5V-883V265.3h612.5h612.5V-883z M9134.4-2222.8c21-21.1,38.3-55.5,38.3-76.6c0-21.1-17.2-55.5-38.3-76.6c-21.1-21.1-55.5-38.3-76.6-38.3s-55.5,17.2-76.6,38.3c-21,21.1-38.3,55.5-38.3,76.6c0,21,17.2,55.5,38.3,76.6c21.1,21.1,55.5,38.3,76.6,38.3S9113.4-2201.7,9134.4-2222.8z
-        </Geometry>-->
         <PathGeometry x:Key="phonePath">
             <PathGeometry.Figures>
                 M1201.1,2764.9c-70.8-30.6-134-99.5-160.8-170.3c-15.3-38.3-21.1-779-21.1-2379V-2108H581c-505.3,0-490,5.7-476.6-162.7c9.6-112.9,45.9-179.9,137.8-246.9c51.7-40.2,59.3-40.2,2815.4-45.9l2763.7-3.8l-26.8,67c-21.1,47.9-28.7,149.3-28.7,382.8v315.8H3545.7H1325.5V341.9v2143.6h3368.5h3368.5v-306.2V1873h155h153.1l-5.7,361.7c-5.7,396.2-11.5,413.4-137.8,507.2l-51.7,40.2L4717,2786C1863.3,2789.8,1249,2786,1201.1,2764.9z M5383.1-2132.8c0-15.3-23-45.9-49.8-72.7l-49.8-45.9h-589.5h-589.5l-49.8,45.9c-103.3,97.6-103.3,97.6,639.3,97.6C5252.9-2108,5383.1-2111.8,5383.1-2132.8z
@@ -110,7 +105,6 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
             </PathGeometry.Figures>
             <PathGeometry.Transform>
                 <ScaleTransform ScaleX="0.100000" ScaleY="-0.100000"/>
-                <!--<TranslateTransform X="0.000000" Y="511.000000"/>-->
             </PathGeometry.Transform>
         </PathGeometry>
         <Geometry x:Key="magnifyingPath">
@@ -144,13 +138,7 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
         <local:PathButton x:Name="btn_Minimize" Opacity="0" Data="{StaticResource downArrowPath}" Margin="0,20,65,0" Width="15" Height="15" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" />
         <local:PathButton x:Name="btn_Close"    Opacity="0" Data="{StaticResource closePath}" Margin="0,20,20,0" Width="15" Height="15" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" />
 
-        <!--<local:PathButton x:Name="btn_Close" Data="{StaticResource closePath}" BorderThickness="0" Margin="0,5,6,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="20" Height="20" Background="Transparent" Fill="White" Opacity="0" Click="btn_Close_Click" />-->
-
-        <Image x:Name="AlbumImage" Source="{Binding AlbumSource}" Margin="0,40,0,0" Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Top">
-            <Image.Clip>
-                <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,250" x:Name="AlbumImageRectangle"/>
-            </Image.Clip>
-        </Image>
+        <Image x:Name="AlbumImage" Source="{Binding AlbumSource}" Margin="0,40,0,0" Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
         <Label x:Name="lbl_Track" Content="{Binding Track}" HorizontalAlignment="Center" Margin="0,310,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalContentAlignment="Center" BorderThickness="1">
         </Label>
@@ -162,17 +150,10 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
                 <SolidColorBrush Color="#FFE6E6E6" Opacity="0.1"/>
             </ProgressBar.Background>
         </ProgressBar>
-        <local:PathButton Visibility="Hidden" x:Name="btn_Repeat" Data="{StaticResource RepeatPath`}" Background="Transparent" BorderBrush="Transparent" Opacity="0" Margin="0,423,-850,20" VerticalAlignment="Top" Width="20" Height="20" RenderTransformOrigin="1,2" Click="Btn_Repeat_Click" Focusable="False" Style="{StaticResource PathButtonStyle}" Fill="White"/>
-        <local:PathButton Visibility="Hidden" x:Name="btn_Shuffle" Data="{StaticResource ShufflePath}" Background="Transparent" BorderBrush="Transparent" Opacity="0" Margin="0,423,850,20" VerticalAlignment="Top" Width="20" Height="20" RenderTransformOrigin="1,2" Click="Btn_Shuffle_Click" Focusable="False" Style="{StaticResource PathButtonStyle}" Fill="White"/>
 
         <Label x:Name="lbl_CurrentTime" Content="{Binding CurrentTime}" HorizontalAlignment="Center" Margin="15,423,723,20" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" HorizontalContentAlignment="Center" Foreground="White" Opacity="0"/>
         <Label x:Name="lbl_TimeLeft" Content="{Binding TimeLeft}" HorizontalAlignment="Center" Margin="723,423,15,20" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="15" HorizontalContentAlignment="Center" Foreground="White" Opacity="0"/>
-        <Menu Name="menu1" Margin="0,0,0,0" Width="0" Height="0">
-            <MenuItem Header="_File" >
-                <MenuItem Name="menuOpen" Header="_Open..." Command="Open" InputGestureText="Ctrl+O"  />
-                <MenuItem Name="menuSaveAs" Header="_Save as..." Command="SaveAs" InputGestureText="Ctrl+S"  />
-            </MenuItem>
-        </Menu>
+
         <local:PathButton x:Name="BackPath" Data="{StaticResource backPath}" Background="Transparent" BorderBrush="Transparent" Opacity="0" Margin="100,150,0,0" VerticalAlignment="Top" Width="40" Height="40" RenderTransformOrigin="1,2" Click="BackPath_Click" Focusable="False" Style="{StaticResource PathButtonStyle}" Fill="White"/>
         <local:PathButton x:Name="PlayPath" Data="{StaticResource playPath}" Background="Transparent" BorderBrush="Transparent" Opacity="0" Margin="300,150,0,0" VerticalAlignment="Top" Width="40" Height="40" RenderTransformOrigin="1,2" Click="PlayPath_Click" Focusable="False" Style="{StaticResource PathButtonStyle}" Fill="White"/>
         <local:PathButton x:Name="NextPath" Data="{StaticResource nextPath}" Background="Transparent" BorderBrush="Transparent" Opacity="0" Margin="500,150,0,0" VerticalAlignment="Top" Width="40" Height="40" RenderTransformOrigin="1,2" Click="NextPath_Click" Focusable="False" Style="{StaticResource PathButtonStyle}" Fill="White"/>

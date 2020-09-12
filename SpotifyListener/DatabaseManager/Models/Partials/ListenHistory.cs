@@ -12,7 +12,7 @@ namespace SpotifyListener.DatabaseManager.Models
             this.Artist = player.Artist;
             this.Genre = player.Genre;
             this.Type = player.Type;
-            this.Url = player.URL;
+            this.Url = player.Url;
             this.PlayOn = DateTime.Now;
         }
         public ListenHistory()
