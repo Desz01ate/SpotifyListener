@@ -354,7 +354,7 @@ namespace SpotifyListener
             ChromaTimer?.Dispose();
             wallpaper?.Dispose();
             Player?.Dispose();
-            //widget?.Close();
+            Chroma?.Dispose();
             base.OnClosing(e);
         }
 

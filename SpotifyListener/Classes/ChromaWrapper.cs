@@ -15,7 +15,7 @@ namespace SpotifyListener
 {
     namespace ChromaExtension
     {
-        class ChromaWrapper
+        class ChromaWrapper : IDisposable
         {
             public ColoreColor BackgroundColor_Playing { get; private set; } = Properties.Settings.Default.Background_Playing.ToColoreColor();
             public ColoreColor BackgroundColor_Pause { get; private set; } = Properties.Settings.Default.Background_Pause.ToColoreColor();
@@ -23,10 +23,10 @@ namespace SpotifyListener
             public ColoreColor PositionColor_Background { get; private set; } = Properties.Settings.Default.Position_Background.ToColoreColor();
             public ColoreColor VolumeColor { get; private set; } = Properties.Settings.Default.Volume.ToColoreColor();
             public ColoreColor BackgroundColor { get; set; } = ColoreColor.Black;
-            public KeyboardCustom KeyboardGrid = KeyboardCustom.Create();
-            public MouseCustom MouseGrid = MouseCustom.Create();
-            public MousepadCustom MousepadGrid = MousepadCustom.Create();
-            public HeadsetCustom HeadsetGrid = HeadsetCustom.Create();
+            public CustomKeyboardEffect KeyboardGrid = CustomKeyboardEffect.Create();
+            public CustomMouseEffect MouseGrid = CustomMouseEffect.Create();
+            public CustomMousepadEffect MousepadGrid = CustomMousepadEffect.Create();
+            public CustomHeadsetEffect HeadsetGrid = CustomHeadsetEffect.Create();
             private IChroma Chroma;
             public static ChromaWrapper GetInstance { get; } = new ChromaWrapper();
             public bool IsError { get; private set; }
@@ -70,7 +70,7 @@ namespace SpotifyListener
                 HeadsetGrid.Clear();
                 MousepadGrid.Clear();
             }
-            public delegate void CustomApplyEffects(ref MouseCustom mouse, ref KeyboardCustom keyboard, ref MousepadCustom mousepad, ref HeadsetCustom headset);
+            public delegate void CustomApplyEffects(ref CustomMouseEffect mouse, ref CustomKeyboardEffect keyboard, ref CustomMousepadEffect mousepad, ref CustomHeadsetEffect headset);
             /// <summary>
             /// Apply effects to devices
             /// </summary>
@@ -127,6 +127,19 @@ namespace SpotifyListener
                 if (Properties.Settings.Default.PeakChroma) BackgroundColor = ColoreColor.Black;
                 density = density < 0.1 ? 0.1 : density;
                 BackgroundColor = BackgroundColor.ChangeColorDensity(density);
+            }
+
+            protected void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    this.Chroma.Dispose();
+                }
+            }
+            public void Dispose()
+            {
+                this.Dispose(true);
+                GC.SuppressFinalize(this);
             }
         }
         static class ChromaEffectsExtension
@@ -235,7 +248,7 @@ new ColoreColor(255,0  ,32 )
 //new ColoreColor(224,0  ,32 ),
         };
             static CircularQueue<ColoreColor> colors = new CircularQueue<ColoreColor>(rotationColors);
-            public static void SetPeakVolume(this ref MouseCustom MouseGrid, ColoreColor VolumeColor, float volume)
+            public static void SetPeakVolume(this ref CustomMouseEffect MouseGrid, ColoreColor VolumeColor, float volume)
             {
                 var absolutePosition = Math.Round((volume * Constant.LeftStrip.Length), 0);
                 for (var i = 0; i < absolutePosition; i++)
@@ -250,7 +263,7 @@ new ColoreColor(255,0  ,32 )
                 }
             }
             private static int changeRate = 0;
-            public static void SetChromaPeakVolume(this ref MouseCustom MouseGrid, float volume)
+            public static void SetChromaPeakVolume(this ref CustomMouseEffect MouseGrid, float volume)
             {
 
                 var absolutePosition = Math.Round((volume * Constant.LeftStrip.Length), 0);
@@ -272,7 +285,7 @@ new ColoreColor(255,0  ,32 )
                     changeRate = 0;
                 }
             }
-            public static void SetPeakVolume(this ref KeyboardCustom KeyboardGrid, ColoreColor VolumeColor, float volume)
+            public static void SetPeakVolume(this ref CustomKeyboardEffect KeyboardGrid, ColoreColor VolumeColor, float volume)
             {
                 //var absolutePosition = Math.Round((volume * Constant.FunctionKeys.Length), 0);
                 //for (var i = 0; i < absolutePosition; i++)
@@ -292,7 +305,7 @@ new ColoreColor(255,0  ,32 )
                     }
                 }
             }
-            public static void SetChromaPeakVolume(this ref KeyboardCustom KeyboardGrid, float volume)
+            public static void SetChromaPeakVolume(this ref CustomKeyboardEffect KeyboardGrid, float volume)
             {
                 //var absolutePosition = Math.Round((volume * Constant.FunctionKeys.Length), 0);
                 //for (var i = 0; i < absolutePosition; i++)
@@ -329,15 +342,15 @@ new ColoreColor(255,0  ,32 )
                     }
                 }
             }
-            public static void SetPeakVolume(this ref MousepadCustom MousepadGrid, ColoreColor VolumeColor)
+            public static void SetPeakVolume(this ref CustomMousepadEffect MousepadGrid, ColoreColor VolumeColor)
             {
                 MousepadGrid.Set(VolumeColor);
             }
-            public static void SetPeakVolume(this ref HeadsetCustom HeadsetGrid, ColoreColor VolumeColor)
+            public static void SetPeakVolume(this ref CustomHeadsetEffect HeadsetGrid, ColoreColor VolumeColor)
             {
                 HeadsetGrid.Set(VolumeColor);
             }
-            public static void SetVolumeScale(this ref MouseCustom MouseGrid, ColoreColor VolumeColor, int volume, bool switchStripSide = false)
+            public static void SetVolumeScale(this ref CustomMouseEffect MouseGrid, ColoreColor VolumeColor, int volume, bool switchStripSide = false)
             {
                 var mouseStrip = !switchStripSide ? Constant.RightStrip_Reverse : Constant.LeftStrip_Reverse;
                 for (var i = 0; i < (volume * mouseStrip.Length) / 100; i++)
@@ -345,14 +358,14 @@ new ColoreColor(255,0  ,32 )
                     MouseGrid[mouseStrip[i]] = VolumeColor;
                 }
             }
-            public static void SetVolumeScale(this ref KeyboardCustom KeyboardGrid, ColoreColor VolumeColor, int volume)
+            public static void SetVolumeScale(this ref CustomKeyboardEffect KeyboardGrid, ColoreColor VolumeColor, int volume)
             {
                 for (var i = 0; i < (volume * Constant.DPadKeys.Length) / 100; i++)
                 {
                     KeyboardGrid[Constant.DPadKeys[i]] = VolumeColor;
                 }
             }
-            public static void SetPeakVolumeSymmetric(this ref MouseCustom MouseGrid, ColoreColor VolumeColor, float volume)
+            public static void SetPeakVolumeSymmetric(this ref CustomMouseEffect MouseGrid, ColoreColor VolumeColor, float volume)
             {
                 var fullLength = Constant.RightStrip.Length;
                 var startPosition = (fullLength / 2);
@@ -377,7 +390,7 @@ new ColoreColor(255,0  ,32 )
                     MouseGrid[Constant.LeftStrip_Reverse[i]] = VolumeColor;
                 }*/
             }
-            public static void SetPeakVolumeSymmetric(this ref KeyboardCustom KeyboardGrid, ColoreColor VolumeColor, float volume)
+            public static void SetPeakVolumeSymmetric(this ref CustomKeyboardEffect KeyboardGrid, ColoreColor VolumeColor, float volume)
             {
                 var fullLength = Constant.FunctionKeys.Length;
                 var startPosition = (fullLength / 2);
@@ -389,7 +402,7 @@ new ColoreColor(255,0  ,32 )
                     KeyboardGrid[Constant.FunctionKeys[fullLength - i - 1]] = color;// VolumeColor;
                 }
             }
-            public static void SetPlayingTime(this ref KeyboardCustom KeyboardGrid, TimeSpan time)
+            public static void SetPlayingTime(this ref CustomKeyboardEffect KeyboardGrid, TimeSpan time)
             {
                 KeyboardGrid[Constant.NumpadKeys[time.Minutes]] = ColoreColor.Red;
                 //                                                                                    ie.        47           -             7          = 40/10 = 4
@@ -397,7 +410,7 @@ new ColoreColor(255,0  ,32 )
                 KeyboardGrid[Constant.NumpadKeys[time.Seconds / 10]] = ColoreColor.Green;
                 KeyboardGrid[Constant.NumpadKeys[time.Seconds % 10]] = ColoreColor.Blue;
             }
-            public static void SetPlayingPosition(this ref MouseCustom MouseGrid, ColoreColor ForegroundColor, ColoreColor BackgroundColor, double position, bool switchStripSide = false)
+            public static void SetPlayingPosition(this ref CustomMouseEffect MouseGrid, ColoreColor ForegroundColor, ColoreColor BackgroundColor, double position, bool switchStripSide = false)
             {
                 var mouseStrip = !switchStripSide ? Constant.LeftStrip : Constant.RightStrip;
                 var currentPlayPosition = (int)Math.Round(position * ((double)(mouseStrip.Length - 1) / 10), 0);
@@ -407,7 +420,7 @@ new ColoreColor(255,0  ,32 )
                 }
                 MouseGrid[mouseStrip[currentPlayPosition]] = ForegroundColor;
             }
-            public static void SetPlayingPosition(this ref KeyboardCustom KeyboardGrid, ColoreColor ForegroundColor, ColoreColor BackgroundColor, double position, bool switchStripSide = false)
+            public static void SetPlayingPosition(this ref CustomKeyboardEffect KeyboardGrid, ColoreColor ForegroundColor, ColoreColor BackgroundColor, double position, bool switchStripSide = false)
             {
                 var currentPlayPosition = (int)Math.Round(position * ((double)(Constant.FunctionKeys.Length - 1) / 10), 0);
                 for (var i = 0; i < currentPlayPosition + 1; i++)
