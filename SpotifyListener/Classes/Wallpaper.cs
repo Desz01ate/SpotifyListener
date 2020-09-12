@@ -157,10 +157,10 @@ namespace SpotifyListener
         {
             Player = music;
         }
-        private Image CalculateBackgroundImage(Image highlightImg, Image backgroundImg, string track, string album, string artist)
+        private Image CalculateBackgroundImage(Image highlightImg, Image backgroundImg, string track, string album, string artist, double? width = null, double? height = null)
         {
-            var screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
-            var screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+            var screenWidth = width ?? System.Windows.SystemParameters.PrimaryScreenWidth;
+            var screenHeight = height ?? System.Windows.SystemParameters.PrimaryScreenHeight;
 
             backgroundImg = backgroundImg.Resize((int)screenWidth, (int)screenHeight);
             using var g = Graphics.FromImage(backgroundImg);
@@ -182,7 +182,7 @@ namespace SpotifyListener
 
             return backgroundImg;
         }
-        private Image CalculateBackgroundImage()
+        private Image CalculateBackgroundImage(double? width = null, double? height = null)
         {
             var highlightSize = (int)Math.Round(System.Windows.SystemParameters.PrimaryScreenHeight * 0.555);
 
@@ -192,16 +192,18 @@ namespace SpotifyListener
             var image = CalculateBackgroundImage(
                 highlight,
                 background,
-                Player.Track, Player.Album, Player.Artist);
+                Player.Track,
+                Player.Album,
+                Player.Artist,
+                width,
+                height);
 
             return image;
         }
         public void SaveWallpaperToFile(string filePath)
         {
-            using (var image = CalculateBackgroundImage())
-            {
-                image.Save(filePath);
-            }
+            using var image = CalculateBackgroundImage(3840, 2160);
+            image.Save(filePath);
         }
         protected void Dispose(bool disposing)
         {

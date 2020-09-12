@@ -286,14 +286,12 @@ namespace SpotifyListener
                     case Key.F:
                         FacebookShare();
                         break;
-                    case Key.R:
-                        Process.Start("https://github.com/Desz01ate/iTunesListenerX");
-                        break;
                     case Key.O:
                         Process.Start(Player.Url);
                         break;
                     case Key.P:
                         GenerateFormImage();
+                        System.Threading.Thread.Sleep(100);
                         break;
                 }
             }
@@ -363,7 +361,6 @@ namespace SpotifyListener
             var file = Path.GetTempFileName().Replace("tmp", "jpg");
             wallpaper.SaveWallpaperToFile(file);
             Process.Start(file);
-
         }
 
         private void Btn_Repeat_Click(object sender, RoutedEventArgs e)

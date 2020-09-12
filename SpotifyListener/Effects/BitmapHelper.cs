@@ -16,7 +16,7 @@ namespace SpotifyListener.Effects
             var width = MainWindow.Context.InitWidth;
             var height = MainWindow.Context.InitHeight;
             using var background = new Bitmap(AlbumArtwork);
-            var cutBg = background.Cut(width, height);
+            using var cutBg = background.Cut(width, height);
             var opacBg = cutBg.SetOpacity(0.6d, System.Drawing.Color.Black);
             var blurBg = opacBg.Blur(Properties.Settings.Default.BlurRadial);
             return blurBg;

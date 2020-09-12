@@ -96,20 +96,18 @@ namespace SpotifyListener
                 {
                     g.FillRectangle(brush, new Rectangle(0, 0, image.Width, image.Height));
                 }
-
             }
             return image;
         }
         public static Image Cut(this Bitmap image, double width, double height)
         {
             var diffOffset = height / width;
-            if (!(0 < diffOffset && diffOffset < 1)) throw new Exception("width and height offset is out of range (height divide by width must inside of range 0~1).");
+            if (!(0 < diffOffset && diffOffset < 1)) 
+                throw new ArgumentException("width and height offset is out of range (height divide by width must be inside of range 0~1).");
 
-            var scale = 96;// (int)((((1920 - System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width) * 0.0000732421875) + 0.05) * System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width);//96;
-            image.SetResolution(scale, scale);
-            var newImage = new Bitmap(image.Width, (int)(image.Width * diffOffset));
+            var newImage = new Bitmap(image.Width, (int)(image.Width * diffOffset),PixelFormat.Format32bppArgb);
             var drawer = Graphics.FromImage(newImage);
-            var offsetX = 0;//(int)(image.Height * (1 - diffOffset) / 2);
+            var offsetX = 0;
             var offsetY = (int)(image.Width * (1 - diffOffset) / 2);
             drawer.DrawImage(image, 0, 0, new Rectangle(offsetX, offsetY, image.Width, image.Width), GraphicsUnit.Pixel);
             return newImage;
@@ -127,7 +125,7 @@ namespace SpotifyListener
             if (img == null || (img.Width == outputWidth && img.Height == outputHeight)) return img;
             Bitmap outputImage;
             Graphics graphics;
-            outputImage = new Bitmap(outputWidth, outputHeight, System.Drawing.Imaging.PixelFormat.Format16bppRgb555);
+            outputImage = new Bitmap(outputWidth, outputHeight, PixelFormat.Format32bppArgb);
             graphics = Graphics.FromImage(outputImage);
             graphics.DrawImage(img, new Rectangle(0, 0, outputWidth, outputHeight), new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
             return outputImage;
@@ -331,6 +329,10 @@ namespace GaussianBlur
         }
         public static Bitmap Blur(Bitmap image, int radial)
         {
+            if (image == null)
+                throw new ArgumentNullException(nameof(image));
+            if (radial == 0)
+                return image;
             var gb = new GaussianBlur(image);
             return gb.Process(radial);
         }
