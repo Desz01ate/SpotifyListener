@@ -29,10 +29,10 @@ namespace SpotifyListener
         public static readonly uint SPI_SETDESKWALLPAPER = 0x14;
         public static readonly uint SPIF_UPDATEINIFILE = 0x01;
         public static readonly uint SPIF_SENDWININICHANGE = 0x02;
-        private static string BAK_IMAGE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "IMGBAK.bak");
-        public readonly float FontSize;
-        public readonly string FontFamily;
-        public IMusic Player;
+        private static readonly string BAK_IMAGE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "IMGBAK.bak");
+        private readonly float FontSize;
+        private readonly string FontFamily;
+        private IMusic Player;
         private string temporaryWaitForDeleteFiles = "";
         public Wallpaper(float fontSize, string fontFamily)
         {
@@ -90,7 +90,7 @@ namespace SpotifyListener
             DeleteTempFile();
             bool success = false;
             string tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".jpg");
-            RegistryKey desktopKey = default, lockScreenKey = default;
+            RegistryKey desktopKey = default;
             temporaryWaitForDeleteFiles = tempPath;
             try
             {
@@ -100,14 +100,6 @@ namespace SpotifyListener
                     image.Save(tempPath, ImageFormat.Bmp);
                 }
                 desktopKey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
-                lockScreenKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP", true);
-                if (lockScreenKey == null)
-                {
-                    lockScreenKey = Registry.LocalMachine.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP", true);
-                    lockScreenKey.SetValue("LockScreenImagePath", "");
-                    lockScreenKey.SetValue("LockScreenImageUrl", "");
-                    lockScreenKey.SetValue("LockScreenImageStatus", 0, RegistryValueKind.DWord);
-                }
                 switch (style)
                 {
                     case Style.Stretched:
@@ -126,16 +118,10 @@ namespace SpotifyListener
                 }
                 if (!string.IsNullOrWhiteSpace(path))
                 {
-                    lockScreenKey?.SetValue("LockScreenImagePath", path);
-                    lockScreenKey?.SetValue("LockScreenImageUrl", path);
-                    lockScreenKey.SetValue("LockScreenImageStatus", 1, RegistryValueKind.DWord);
                     Task.Run(() => SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE));
                 }
                 else
                 {
-                    lockScreenKey?.SetValue("LockScreenImagePath", tempPath);
-                    lockScreenKey?.SetValue("LockScreenImageUrl", tempPath);
-                    lockScreenKey.SetValue("LockScreenImageStatus", 1, RegistryValueKind.DWord);
                     Task.Run(() => SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, tempPath, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE));
                 }
                 success = true;
@@ -147,7 +133,6 @@ namespace SpotifyListener
             finally
             {
                 desktopKey?.Close();
-                lockScreenKey?.Close();
                 image?.Dispose();
 
             }
@@ -187,8 +172,14 @@ namespace SpotifyListener
             var highlightSize = (int)Math.Round(System.Windows.SystemParameters.PrimaryScreenHeight * 0.555);
 
             var artwork = Player.AlbumArtwork;
-            using var background = Effects.BitmapHelper.CalculateBackgroundSource(artwork);
+            using var background = Effects.BitmapHelper.CalculateBackgroundSource(
+                artwork, 
+                System.Windows.SystemParameters.PrimaryScreenWidth, 
+                System.Windows.SystemParameters.PrimaryScreenHeight
+                );
             using var highlight = artwork.Resize(highlightSize, highlightSize);
+            background.Save(@"C:\Users\kunvu\Desktop\temp0.jpg");
+            highlight.Save(@"C:\Users\kunvu\Desktop\temp.jpg");
             var image = CalculateBackgroundImage(
                 highlight,
                 background,

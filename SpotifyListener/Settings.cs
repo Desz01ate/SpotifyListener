@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpotifyListener.Classes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -67,7 +68,6 @@ namespace SpotifyListener
             {
                 Properties.Settings.Default.RenderFPS = safeConvertFps;
                 Properties.Settings.Default.Save();
-                MainWindow.Context.Restart();
             }
             Dispose();
         }
@@ -93,7 +93,6 @@ namespace SpotifyListener
             {
                 Properties.Settings.Default.Reset();
                 Properties.Settings.Default.Save();
-                MainWindow.Context.Restart();
             }
         }
 
@@ -179,6 +178,22 @@ namespace SpotifyListener
         private void trackbar_VolumeScale_Scroll(object sender, EventArgs e)
         {
             txt_volScale.Text = trackbar_VolumeScale.Value * 10 + "%";
+        }
+
+        private void ClearCache_Click(object sender, EventArgs e)
+        {
+            CacheFileManager.ClearCache();
+            CacheSize.Text = CacheFileManager.GetCacheSize();
+        }
+
+        private void Settings_Load_1(object sender, EventArgs e)
+        {
+            this.CacheSize.Text = CacheFileManager.GetCacheSize();
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

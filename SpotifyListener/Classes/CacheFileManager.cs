@@ -58,5 +58,17 @@ namespace SpotifyListener.Classes
             using var fs = File.Create(Path.Combine(CACHE_DIR, fileName));
             fs.Write(data, 0, data.Length);
         }
+        public static void ClearCache()
+        {
+            foreach (var file in Directory.EnumerateFiles(CACHE_DIR))
+            {
+                File.Delete(file);
+            }
+        }
+        public static string GetCacheSize()
+        {
+            var totalSize = Math.Round(Directory.EnumerateFiles(CACHE_DIR).Sum(f => new FileInfo(f).Length) / 1024f / 1024f, 2);
+            return $"{totalSize} MB";
+        }
     }
 }
