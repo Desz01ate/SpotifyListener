@@ -2,18 +2,19 @@
 using System.Data.SQLite;
 using System.Linq;
 using Utilities.SQL;
+using Utilities.SQL.Extension;
 
 namespace SpotifyListener.DatabaseManager
 {
-    public sealed class SQLite : DatabaseConnector<SQLiteConnection, SQLiteParameter>
+    public sealed class SQLite : DatabaseConnector
     {
         private static string FilePath = "listener.db";
         private static string dbpath = $"Data Source={FilePath};Version=3";
-        public SQLite() : base(dbpath)
+        public SQLite() : base(typeof(SQLiteConnection), dbpath)
         {
             Initialization();
         }
-        public SQLite(string connectionString) : base(connectionString)
+        public SQLite(string connectionString) : base(typeof(SQLiteConnection), connectionString)
         {
             Initialization();
         }

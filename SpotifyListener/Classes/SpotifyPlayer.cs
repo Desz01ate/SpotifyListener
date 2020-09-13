@@ -354,7 +354,7 @@ namespace SpotifyListener
             }
         }
 
-        private async ValueTask<Image> GetImageAsync(string artworkUrl)
+        private async Task<Image> GetImageAsync(string artworkUrl)
         {
             Image image;
             var lookupKey = artworkUrl.Substring(artworkUrl.LastIndexOf("/") + 1);

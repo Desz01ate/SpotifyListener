@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Transactions;
 using Utilities.Interfaces;
+using Utilities.SQL.Extension;
 
 namespace SpotifyListener.DatabaseManager.Repositories.Based
 {
@@ -23,20 +24,18 @@ namespace SpotifyListener.DatabaseManager.Repositories.Based
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="TDatabase"></typeparam>
     /// <typeparam name="TParameter"></typeparam>
-    public partial class Repository<T, TDatabase, TParameter> : IEnumerable<T>
+    public partial class Repository<T> : IEnumerable<T>
         where T : class, new()
-        where TDatabase : DbConnection, new()
-        where TParameter : DbParameter, new()
     {
         /// <summary>
         /// Instance of database connector.
         /// </summary>
-        protected readonly IDatabaseConnectorExtension<TDatabase, TParameter> Connector;
+        protected readonly IDatabaseConnector Connector;
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="databaseConnector">Instance of DatabaseConnector.</param>
-        public Repository(IDatabaseConnectorExtension<TDatabase, TParameter> databaseConnector)
+        public Repository(IDatabaseConnector databaseConnector)
         {
             Connector = databaseConnector;
         }

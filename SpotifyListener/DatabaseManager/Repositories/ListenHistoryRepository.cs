@@ -14,9 +14,9 @@ namespace SpotifyListener.DatabaseManager.Repositories
 	///<summary>
 	/// Data contractor for ListenHistory
 	///</summary>
-	public partial class ListenHistoryRepository : Repository<ListenHistory,System.Data.SQLite.SQLiteConnection,System.Data.SQLite.SQLiteParameter>
+	public partial class ListenHistoryRepository : Repository<ListenHistory>
 	{
-		public ListenHistoryRepository(IDatabaseConnectorExtension<System.Data.SQLite.SQLiteConnection,System.Data.SQLite.SQLiteParameter> connector) : base(connector)
+		public ListenHistoryRepository(IDatabaseConnector connector) : base(connector)
 		{
 		}
 	}
