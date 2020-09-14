@@ -100,6 +100,9 @@
     <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.1.50.2\lib\net451\Dapper.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.11.24.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.11.24\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="JetBrains.Annotations, Version=2020.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2020.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
@@ -163,6 +166,9 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -194,6 +200,7 @@
     </ApplicationDefinition>
     <Compile Include="Classes\AnimationController.cs" />
     <Compile Include="Classes\CacheFileManager.cs" />
+    <Compile Include="Classes\LyricsHelpers.cs" />
     <Compile Include="Classes\RotationQueue.cs" />
     <Compile Include="ColorSettings.cs">
       <SubType>Form</SubType>

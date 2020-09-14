@@ -25,7 +25,7 @@ namespace SpotifyListener
     {
         private readonly HttpClient httpClient;
         private readonly SpotifyWebAPI client;
-        private string _track, _album, _artist, _genre, _type, _url, _artworkUrl;
+        private string _track, _album, _artist, _genre, _type, _url, _artworkUrl, _lyrics;
         private int _pos_ms, _dur_ms, _vol;
         private bool _isPlaying, _isShuffle, _isRepeat;
         public string Track
@@ -38,6 +38,17 @@ namespace SpotifyListener
             {
                 _track = value;
                 OnPropertyChanged(nameof(Track));
+            }
+        }
+        public string Lyrics
+        {
+            get
+            {
+                return _lyrics;
+            }
+            private set
+            {
+                _lyrics = value;
             }
         }
         public string Album
@@ -303,16 +314,18 @@ namespace SpotifyListener
                             }
                             Track = currentTrack.Item.Name;
                             Album = currentTrack.Item.Album.Name;
+                            var mainArtist = currentTrack.Item.Artists.First().Name;
                             if (currentTrack.Item.Artists.Count() > 1)
                             {
-                                var artistFeat = $@"{currentTrack.Item.Artists.First().Name} feat. ";
+                                var artistFeat = $@"{mainArtist} feat. ";
                                 artistFeat += string.Join(", ", currentTrack.Item.Artists.Skip(1).Select(x => x.Name));
                                 Artist = artistFeat;
                             }
                             else
                             {
-                                Artist = currentTrack.Item.Artists.First().Name;
+                                Artist = mainArtist;
                             }
+                            Lyrics = await LyricsHelpers.GetLyricsAsync(mainArtist, this.Track);
 
                             if (currentTrack.Item.Album.Images.Any())
                             {
@@ -354,7 +367,7 @@ namespace SpotifyListener
             }
         }
 
-        private async Task<Image> GetImageAsync(string artworkUrl)
+        private async ValueTask<Image> GetImageAsync(string artworkUrl)
         {
             Image image;
             var lookupKey = artworkUrl.Substring(artworkUrl.LastIndexOf("/") + 1);

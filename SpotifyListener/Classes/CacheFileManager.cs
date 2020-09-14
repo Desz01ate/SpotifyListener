@@ -58,6 +58,14 @@ namespace SpotifyListener.Classes
             using var fs = File.Create(Path.Combine(CACHE_DIR, fileName));
             fs.Write(data, 0, data.Length);
         }
+        public static void SaveCache(string fileName, string content)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new ArgumentNullException(nameof(fileName));
+
+            var contentBytes = Encoding.UTF8.GetBytes(content);
+            SaveCache(fileName, contentBytes);
+        }
         public static void ClearCache()
         {
             foreach (var file in Directory.EnumerateFiles(CACHE_DIR))

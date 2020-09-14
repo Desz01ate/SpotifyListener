@@ -403,6 +403,11 @@ namespace SpotifyListener
             }
         }
 
+        private void btn_lyrics_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.MessageBox.Show(Player.Lyrics);
+        }
+
         private void Btn_SaveImage_Click(object sender, RoutedEventArgs e)
         {
             GenerateFormImage();
