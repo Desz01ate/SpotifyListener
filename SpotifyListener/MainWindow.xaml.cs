@@ -405,7 +405,13 @@ namespace SpotifyListener
 
         private void btn_lyrics_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show(Player.Lyrics);
+            if (string.IsNullOrWhiteSpace(Player.Lyrics))
+            {
+                System.Windows.Forms.MessageBox.Show("No lyrics found for this song.");
+                return;
+            }
+            var lyricsForm = new LyricsDisplay(Player);
+            lyricsForm.ShowDialog();
         }
 
         private void Btn_SaveImage_Click(object sender, RoutedEventArgs e)

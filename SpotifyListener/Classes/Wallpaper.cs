@@ -178,8 +178,6 @@ namespace SpotifyListener
                 System.Windows.SystemParameters.PrimaryScreenHeight
                 );
             using var highlight = artwork.Resize(highlightSize, highlightSize);
-            background.Save(@"C:\Users\kunvu\Desktop\temp0.jpg");
-            highlight.Save(@"C:\Users\kunvu\Desktop\temp.jpg");
             var image = CalculateBackgroundImage(
                 highlight,
                 background,

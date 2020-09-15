@@ -49,6 +49,7 @@ namespace SpotifyListener
             private set
             {
                 _lyrics = value;
+                OnPropertyChanged(nameof(Lyrics));
             }
         }
         public string Album

@@ -25,7 +25,6 @@ namespace SpotifyListener.Classes
                     using var stream = new StreamReader(fs);
                     return await stream.ReadToEndAsync();
                 }
-
             }
             var url = $"https://www.azlyrics.com/lyrics/{artist}/{song}.html";
             var response = await httpClient.GetAsync(url);

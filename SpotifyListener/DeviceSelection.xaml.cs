@@ -139,7 +139,6 @@ namespace SpotifyListener
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-
             switch (msg)
             {
                 case WM_SYSCOMMAND:

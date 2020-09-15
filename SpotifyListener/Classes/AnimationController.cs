@@ -77,6 +77,7 @@ namespace SpotifyListener.Classes
         private readonly Label TrackLabel;
         private readonly Button SettingsLabel;
         private readonly Button ChangeDeviceButton;
+        private readonly Button LyricsButton;
         private readonly Label CurrentTimeLabel;
         private readonly Label TimeLeftLabel;
         private readonly Button BackButton;
@@ -107,6 +108,7 @@ namespace SpotifyListener.Classes
             PlayProgress = mainWnd.PlayProgress;
             SettingsLabel = mainWnd.btn_settings;
             ChangeDeviceButton = mainWnd.btn_device;
+            LyricsButton = mainWnd.btn_lyrics;
             CurrentTimeLabel = mainWnd.lbl_CurrentTime;
             TimeLeftLabel = mainWnd.lbl_TimeLeft;
             MinimizeButton = mainWnd.btn_Minimize;
@@ -151,6 +153,7 @@ namespace SpotifyListener.Classes
 
             SettingsLabel.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             ChangeDeviceButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
+            LyricsButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             CurrentTimeLabel.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             TimeLeftLabel.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             PlayProgress.BeginAnimation(UIElement.OpacityProperty, FadeIn);
@@ -181,6 +184,7 @@ namespace SpotifyListener.Classes
 
             SettingsLabel.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             ChangeDeviceButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
+            LyricsButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             CurrentTimeLabel.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             TimeLeftLabel.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             PlayProgress.BeginAnimation(UIElement.OpacityProperty, FadeOut);

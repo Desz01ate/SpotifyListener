@@ -231,6 +231,9 @@
     <Compile Include="Interfaces\IChromaMusic.cs" />
     <Compile Include="Interfaces\IMusic.cs" />
     <Compile Include="Components\PathButton.cs" />
+    <Compile Include="LyricsDisplay.xaml.cs">
+      <DependentUpon>LyricsDisplay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SearchPanel.xaml.cs">
       <DependentUpon>SearchPanel.xaml</DependentUpon>
     </Compile>
@@ -245,6 +248,10 @@
       <DependentUpon>Widget.xaml</DependentUpon>
     </Compile>
     <Page Include="DeviceSelection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LyricsDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
