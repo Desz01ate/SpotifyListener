@@ -173,8 +173,8 @@ namespace SpotifyListener
 
             var artwork = Player.AlbumArtwork;
             using var background = Effects.BitmapHelper.CalculateBackgroundSource(
-                artwork, 
-                System.Windows.SystemParameters.PrimaryScreenWidth, 
+                artwork,
+                System.Windows.SystemParameters.PrimaryScreenWidth,
                 System.Windows.SystemParameters.PrimaryScreenHeight
                 );
             using var highlight = artwork.Resize(highlightSize, highlightSize);
@@ -191,7 +191,7 @@ namespace SpotifyListener
         }
         public void SaveWallpaperToFile(string filePath)
         {
-            using var image = CalculateBackgroundImage(3840, 2160);
+            using var image = CalculateBackgroundImage(2560, 1440);
             image.Save(filePath);
         }
         protected void Dispose(bool disposing)

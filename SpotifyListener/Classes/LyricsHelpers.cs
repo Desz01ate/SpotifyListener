@@ -36,6 +36,8 @@ namespace SpotifyListener.Classes
             doc.LoadHtml(html);
             var lyrics = doc.DocumentNode.SelectNodes("//div").OrderByDescending(x => x.InnerText.Length).Select(x => x.InnerText).FirstOrDefault();
             lyrics = lyrics.Trim();
+            lyrics = lyrics.Substring(0, lyrics.IndexOf("Submit Corrections") - 1);
+            lyrics = lyrics.Replace("[Romanized:]", "");
             CacheFileManager.SaveCache($"{artist}{song}", lyrics);
             return lyrics ?? "";
         }

@@ -158,6 +158,7 @@ namespace SpotifyListener
             {
                 this.Title = $"Listening to {Player.Track} by {Player.Artist} on {Player.ActiveDevice.Name}";
                 this.Icon = Player.AlbumSource;
+                this.btn_lyrics.Visibility = string.IsNullOrWhiteSpace(playbackContext.Lyrics) ? Visibility.Hidden : Visibility.Visible;
                 wallpaper.Enable();
             });
         }
@@ -405,12 +406,7 @@ namespace SpotifyListener
 
         private void btn_lyrics_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(Player.Lyrics))
-            {
-                System.Windows.Forms.MessageBox.Show("No lyrics found for this song.");
-                return;
-            }
-            var lyricsForm = new LyricsDisplay(Player);
+            var lyricsForm = new LyricsDisplay(Player, this.Left + InitWidth, this.Top);
             lyricsForm.ShowDialog();
         }
 

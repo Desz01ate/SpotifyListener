@@ -21,11 +21,14 @@ namespace SpotifyListener
     public partial class LyricsDisplay : Window
     {
         private readonly IMusic music;
-        public LyricsDisplay(IMusic music)
+        public LyricsDisplay(IMusic music, double x, double y)
         {
             InitializeComponent();
             this.music = music;
             this.DataContext = this.music;
+            this.WindowStartupLocation = WindowStartupLocation.Manual;
+            this.Left = x;
+            this.Top = y;
             //this.Title = $"{track} by {artist}";
             //this.txt_Lyrics.Document.Blocks.Add(new Paragraph(new Run(lyrics)));
         }

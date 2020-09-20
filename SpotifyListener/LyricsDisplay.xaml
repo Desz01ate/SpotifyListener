@@ -12,7 +12,7 @@
             <ColumnDefinition Width="58*"/>
             <ColumnDefinition Width="113*"/>
         </Grid.ColumnDefinitions>
-        <RichTextBox x:Name="txt_Lyrics" HorizontalAlignment="Left" Height="529" VerticalAlignment="Top" Width="342" Grid.ColumnSpan="2">
+        <RichTextBox x:Name="txt_Lyrics" HorizontalAlignment="Left" Height="529" VerticalAlignment="Top" Width="342" Grid.ColumnSpan="2" IsReadOnly="True">
             <FlowDocument>
                 <Paragraph>
                     <Run Text="{Binding Lyrics,Mode=OneWay}"/>

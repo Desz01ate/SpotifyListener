@@ -123,6 +123,26 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
         <Geometry x:Key="downArrowPath">
             M492,236H20c-11.046,0-20,8.954-20,20c0,11.046,8.954,20,20,20h472c11.046,0,20-8.954,20-20S503.046,236,492,236z
         </Geometry>
+        <Geometry x:Key="lyricsSvgPath">
+            M201.47,440.387h-73.687c-5.545,0-10.039,4.495-10.039,10.039s4.495,10.039,10.039,10.039h73.687
+			c5.545,0,10.039-4.495,10.039-10.039S207.015,440.387,201.47,440.387z
+			
+		M227.783,440.387c-12.919,0-12.941,20.078,0,20.078C240.702,460.466,240.723,440.387,227.783,440.387z
+
+		M444.938,0H182.583c-0.047,0-0.091,0.006-0.139,0.007c-0.283,0.004-0.566,0.015-0.847,0.043
+			c-0.167,0.016-0.329,0.047-0.494,0.071c-0.16,0.023-0.319,0.041-0.478,0.073c-0.18,0.036-0.354,0.084-0.531,0.13
+			c-0.141,0.036-0.282,0.066-0.422,0.108c-0.172,0.052-0.338,0.116-0.506,0.177c-0.141,0.051-0.283,0.097-0.422,0.155
+			c-0.158,0.065-0.308,0.142-0.462,0.214c-0.144,0.068-0.288,0.131-0.43,0.207c-0.147,0.078-0.286,0.168-0.429,0.253
+			c-0.138,0.083-0.28,0.162-0.416,0.252c-0.156,0.104-0.302,0.22-0.452,0.332c-0.112,0.084-0.228,0.163-0.338,0.253
+			c-0.257,0.211-0.504,0.433-0.739,0.668L59.964,118.461c-0.235,0.234-0.457,0.481-0.667,0.738c-0.091,0.111-0.172,0.23-0.258,0.344
+			c-0.11,0.147-0.224,0.291-0.327,0.445c-0.093,0.14-0.174,0.283-0.259,0.426c-0.083,0.139-0.17,0.274-0.246,0.418
+			c-0.077,0.145-0.143,0.294-0.213,0.442c-0.07,0.15-0.145,0.296-0.209,0.449c-0.059,0.143-0.106,0.289-0.159,0.434
+			c-0.059,0.164-0.122,0.325-0.173,0.493c-0.043,0.145-0.075,0.291-0.112,0.437c-0.043,0.172-0.091,0.34-0.125,0.515
+			c-0.033,0.167-0.052,0.335-0.077,0.504c-0.023,0.156-0.052,0.309-0.067,0.467c-0.03,0.306-0.044,0.614-0.046,0.922
+			c0,0.022-0.003,0.044-0.003,0.067v376.401c0,5.545,4.495,10.039,10.039,10.039h377.876c5.544,0,10.039-4.495,10.039-10.039V10.039
+			C454.977,4.495,450.482,0,444.938,0z M172.544,34.276v81.245H91.299L172.544,34.276z M434.899,491.922H77.101V135.6h105.482
+			c5.545,0,10.039-4.495,10.039-10.039V20.078h242.276V491.922z
+        </Geometry>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="SaveAs" Executed="CommandBinding_Executed"></CommandBinding>
@@ -132,7 +152,7 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
     </Window.InputBindings>
     <Grid Margin="1,1,1,1" Name="MainWindowGrid" Background="Transparent">
         <Border x:Name="border_Form" Opacity="0.97" Background="{Binding AlbumBackgroundSource}" Margin="5" Padding="5" BorderThickness="0.7" BorderBrush="#d9d9d9" CornerRadius="0"/>
-        <local:PathButton x:Name="btn_lyrics"   Opacity="0" Data="{StaticResource magnifyingPath}" Margin="0,0,140,20" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_lyrics_Click" />
+        <local:PathButton x:Name="btn_lyrics"   Opacity="0" Data="{StaticResource lyricsSvgPath}" Margin="0,0,140,20" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_lyrics_Click" />
         <local:PathButton x:Name="btn_search"   Opacity="0" Data="{StaticResource magnifyingPath}" Margin="0,0,100,20" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_search_Click" />
         <local:PathButton x:Name="btn_device"   Opacity="0" Data="{StaticResource phonePath}" Margin="0,0,60,17" Width="27" Height="27" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_device_Click" />
         <local:PathButton x:Name="btn_settings" Opacity="0" Data="{StaticResource settingsPath}" Margin="0,0,20,20" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="AdjustSettings_Click" />
