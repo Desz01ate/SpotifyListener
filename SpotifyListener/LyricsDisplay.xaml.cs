@@ -21,8 +21,15 @@ namespace SpotifyListener
     public partial class LyricsDisplay : Window
     {
         private readonly IMusic music;
-        public LyricsDisplay(IMusic music, double x, double y)
+        private readonly Action callback;
+        public LyricsDisplay(IMusic music, double x, double y, Action callback = null)
         {
+            this.callback = callback;
+            this.Closing += delegate
+            {
+                callback?.Invoke();
+            };
+
             InitializeComponent();
             this.music = music;
             this.DataContext = this.music;

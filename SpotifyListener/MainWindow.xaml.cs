@@ -30,8 +30,7 @@ namespace SpotifyListener
     /// </summary>
     public partial class MainWindow : Window
     {
-        readonly Timer ChromaTimer = new Timer();
-        public SpotifyPlayer Player { get; }
+        private readonly Timer ChromaTimer = new Timer();
         private AnimationController animation;
         private static MMDevice ActiveDevice;
         private static readonly ChromaWrapper Chroma = ChromaWrapper.GetInstance;
@@ -39,8 +38,11 @@ namespace SpotifyListener
         private readonly SolidColorBrush playColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
         private readonly SolidColorBrush pauseColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#FF5a5a"));
 
-        Wallpaper wallpaper = null;
-        SearchPanel searchPanel;
+        private Wallpaper wallpaper;
+        private SearchPanel searchPanel;
+        private LyricsDisplay lyricsDisplay;
+
+        public SpotifyPlayer Player { get; }
 
         public static MainWindow Context { get; private set; }
         public readonly double InitWidth, InitHeight;
@@ -261,6 +263,10 @@ namespace SpotifyListener
         {
             try
             {
+                if (!e.IsDown)
+                {
+                    return;
+                }
                 switch (e.Key)
                 {
                     case Key.A:
@@ -292,7 +298,6 @@ namespace SpotifyListener
                         break;
                     case Key.P:
                         GenerateFormImage();
-                        System.Threading.Thread.Sleep(100);
                         break;
                 }
             }
@@ -406,8 +411,15 @@ namespace SpotifyListener
 
         private void btn_lyrics_Click(object sender, RoutedEventArgs e)
         {
-            var lyricsForm = new LyricsDisplay(Player, this.Left + InitWidth, this.Top);
-            lyricsForm.ShowDialog();
+            if (lyricsDisplay != null)
+            {
+                lyricsDisplay.BringToFront();
+            }
+            else
+            {
+                lyricsDisplay = new LyricsDisplay(Player, this.Left + InitWidth, this.Top);
+                lyricsDisplay.Show();
+            }
         }
 
         private void Btn_SaveImage_Click(object sender, RoutedEventArgs e)
