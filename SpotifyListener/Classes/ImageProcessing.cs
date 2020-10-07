@@ -71,11 +71,11 @@ namespace SpotifyListener
             }
 
         }
-        public static byte[] ToByteArray(this Image image)
+        public static byte[] ToByteArray(this Image image, ImageFormat imageFormat = null)
         {
             using (var memoryStream = new MemoryStream())
             {
-                image.Save(memoryStream, image.RawFormat);
+                image.Save(memoryStream, imageFormat ?? image.RawFormat);
                 return memoryStream.ToArray();
             }
         }
@@ -102,10 +102,10 @@ namespace SpotifyListener
         public static Image Cut(this Bitmap image, double width, double height)
         {
             var diffOffset = height / width;
-            if (!(0 < diffOffset && diffOffset < 1)) 
+            if (!(0 < diffOffset && diffOffset < 1))
                 throw new ArgumentException("width and height offset is out of range (height divide by width must be inside of range 0~1).");
 
-            var newImage = new Bitmap(image.Width, (int)(image.Width * diffOffset),PixelFormat.Format32bppArgb);
+            var newImage = new Bitmap(image.Width, (int)(image.Width * diffOffset), PixelFormat.Format32bppArgb);
             var drawer = Graphics.FromImage(newImage);
             var offsetX = 0;
             var offsetY = (int)(image.Width * (1 - diffOffset) / 2);

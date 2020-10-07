@@ -226,6 +226,7 @@
     <Compile Include="Enums\PlayState.cs" />
     <Compile Include="Enums\RepeatState.cs" />
     <Compile Include="Foundation\Struct\DrawingColor.cs" />
+    <Compile Include="Helpers\RegularExpressionHelpers.cs" />
     <Compile Include="Interfaces\IChangableDevice.cs" />
     <Compile Include="Interfaces\IChromaArtwork.cs" />
     <Compile Include="Interfaces\IChromaMusic.cs" />

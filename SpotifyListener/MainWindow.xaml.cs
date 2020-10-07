@@ -22,6 +22,8 @@ using SpotifyListener.Configurations;
 using System.Text;
 using System.Net.Http;
 using System.Net;
+using System.Drawing.Imaging;
+using SpotifyListener.Helpers;
 
 namespace SpotifyListener
 {
@@ -35,8 +37,11 @@ namespace SpotifyListener
         private static MMDevice ActiveDevice;
         private static readonly ChromaWrapper Chroma = ChromaWrapper.GetInstance;
 
-        private readonly SolidColorBrush playColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
-        private readonly SolidColorBrush pauseColor = (SolidColorBrush)(new BrushConverter().ConvertFromString("#FF5a5a"));
+        private readonly SolidColorBrush playColor =
+            (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
+
+        private readonly SolidColorBrush pauseColor =
+            (SolidColorBrush)(new BrushConverter().ConvertFromString("#FF5a5a"));
 
         private Wallpaper wallpaper;
         private SearchPanel searchPanel;
@@ -46,6 +51,7 @@ namespace SpotifyListener
 
         public static MainWindow Context { get; private set; }
         public readonly double InitWidth, InitHeight;
+
         public MainWindow()
         {
             try
@@ -58,14 +64,12 @@ namespace SpotifyListener
                 Visibility = Visibility.Hidden;
 
                 SpotifyWebAPI client = default;
-                SpotifyConfiguration.Context.OnClientReady += (s, e) =>
-                {
-                    client = e;
-                };
+                SpotifyConfiguration.Context.OnClientReady += (s, e) => { client = e; };
                 while (client == null)
                 {
                     System.Threading.Thread.Sleep(100);
                 }
+
                 Player = new SpotifyPlayer(client);
 
                 VolumePath.Fill = playColor;
@@ -73,10 +77,7 @@ namespace SpotifyListener
 
                 Player.OnTrackChanged += OnTrackChanged;
                 Player.OnDeviceChanged += Player_OnDeviceChanged;
-                Player.OnTrackDurationChanged += (p) =>
-                {
-                    this.VolumePath.Fill = p.IsMute ? pauseColor : playColor;
-                };
+                Player.OnTrackDurationChanged += (p) => { this.VolumePath.Fill = p.IsMute ? pauseColor : playColor; };
                 Player.OnPlayStateChanged += (state) =>
                 {
                     Dispatcher.InvokeAsync(() =>
@@ -85,7 +86,8 @@ namespace SpotifyListener
                     });
                 };
                 using (var devices = new MMDeviceEnumerator())
-                    ActiveDevice = devices.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active).OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
+                    ActiveDevice = devices.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active)
+                        .OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
                 KeyDown += MainWindowGrid_PreviewKeyDown;
                 Loaded += MainWindow_Loaded;
                 MouseDown += Window_MouseDown;
@@ -95,7 +97,9 @@ namespace SpotifyListener
 
                 if (!Chroma.IsError)
                 {
-                    ChromaTimer.Interval = (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);//TimeSpan.FromMilliseconds((int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0));
+                    ChromaTimer.Interval =
+                        (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS),
+                            0); //TimeSpan.FromMilliseconds((int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0));
                     ChromaTimer.Tick += ChromaTimer_Tick;
                     ChromaTimer.Start();
                 }
@@ -104,6 +108,7 @@ namespace SpotifyListener
             {
                 System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
+
             this.Visibility = Visibility.Visible;
             Context = this;
             this.DataContext = Player;
@@ -123,6 +128,7 @@ namespace SpotifyListener
 
             MouseEnter += OnMouseEnterEvent;
             MouseLeave += OnMouseLeaveEvent;
+
             #region get current background image
 
             if (Wallpaper.TryGetWallpaper(out var filePath))
@@ -134,9 +140,10 @@ namespace SpotifyListener
                 wallpaper = new Wallpaper(20f, this.FontFamily.ToString());
                 System.Windows.Forms.Application.Exit();
             }
-            wallpaper.SetPlayerBase(Player);
-            #endregion
 
+            wallpaper.SetPlayerBase(Player);
+
+            #endregion
         }
 
 
@@ -160,7 +167,9 @@ namespace SpotifyListener
             {
                 this.Title = $"Listening to {Player.Track} by {Player.Artist} on {Player.ActiveDevice.Name}";
                 this.Icon = Player.AlbumSource;
-                this.btn_lyrics.Visibility = string.IsNullOrWhiteSpace(playbackContext.Lyrics) ? Visibility.Hidden : Visibility.Visible;
+                this.btn_lyrics.Visibility = string.IsNullOrWhiteSpace(playbackContext.Lyrics)
+                    ? Visibility.Hidden
+                    : Visibility.Visible;
                 wallpaper.Enable();
             });
         }
@@ -177,14 +186,17 @@ namespace SpotifyListener
                 //do not remove try/catch block as the form will error when focus is lost.
             }
         }
+
         private void OnMouseLeaveEvent(object sender, System.Windows.Input.MouseEventArgs e)
         {
             animation.TransitionDisable();
         }
+
         private void OnMouseEnterEvent(object sender, System.Windows.Input.MouseEventArgs e)
         {
             animation.TransitionEnable();
         }
+
         private void ChromaTimer_Tick(object sender, EventArgs e)
         {
             try
@@ -194,9 +206,13 @@ namespace SpotifyListener
                     Chroma.SDKDisable();
                     return;
                 }
-                var volume = ActiveDevice.AudioMeterInformation.MasterPeakValue * (Properties.Settings.Default.VolumeScale / 10.0f);
+
+                var volume = ActiveDevice.AudioMeterInformation.MasterPeakValue *
+                             (Properties.Settings.Default.VolumeScale / 10.0f);
                 if (volume > 1) volume = 1;
-                var density = Properties.Settings.Default.AdaptiveDensity && Player.IsPlaying ? volume * 0.7f : (Properties.Settings.Default.Density / 10.0);
+                var density = Properties.Settings.Default.AdaptiveDensity && Player.IsPlaying
+                    ? volume * 0.7f
+                    : (Properties.Settings.Default.Density / 10.0);
                 Chroma.LoadColor(Player, Player.IsPlaying, density);
                 Chroma.SetDevicesBackground();
                 if (Properties.Settings.Default.RenderPeakVolumeEnable)
@@ -219,15 +235,21 @@ namespace SpotifyListener
                         //Chroma.SetPeakVolume_Keyboard(ActiveDevice.AudioMeterInformation.MasterPeakValue);
                         //Chroma.SetPeakVolume_Headset_Mousepad();
                     }
+
                     Chroma.HeadsetGrid.SetPeakVolume(Chroma.VolumeColor);
                     Chroma.MousepadGrid.SetPeakVolume(Chroma.VolumeColor);
                 }
                 else
                 {
-                    Chroma.MouseGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.PositionColor_Background, Player.CalculatedPosition, Properties.Settings.Default.ReverseLEDRender);
-                    Chroma.KeyboardGrid.SetPlayingPosition(Chroma.PositionColor_Foreground, Chroma.PositionColor_Background, Player.CalculatedPosition);
-                    Chroma.MouseGrid.SetVolumeScale(Chroma.VolumeColor, Player.Volume, Properties.Settings.Default.ReverseLEDRender);
+                    Chroma.MouseGrid.SetPlayingPosition(Chroma.PositionColor_Foreground,
+                        Chroma.PositionColor_Background, Player.CalculatedPosition,
+                        Properties.Settings.Default.ReverseLEDRender);
+                    Chroma.KeyboardGrid.SetPlayingPosition(Chroma.PositionColor_Foreground,
+                        Chroma.PositionColor_Background, Player.CalculatedPosition);
+                    Chroma.MouseGrid.SetVolumeScale(Chroma.VolumeColor, Player.Volume,
+                        Properties.Settings.Default.ReverseLEDRender);
                 }
+
                 Chroma.KeyboardGrid.SetVolumeScale(Properties.Settings.Default.Volume.ToColoreColor(), Player.Volume);
                 Chroma.KeyboardGrid.SetPlayingTime(TimeSpan.FromMilliseconds(Player.Position_ms));
                 Chroma.MousepadGrid.SetPeakVolume(Chroma.VolumeColor);
@@ -247,18 +269,20 @@ namespace SpotifyListener
 
         private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
         }
+
         private void FacebookShare()
         {
             var app_id = "139971873511766"; //StatusReporter
             var href = Player.Url;
             var redirect_uri = string.Empty;
             var hashtag = $"%23{Player.Artist}_{Player.Track}";
-            hashtag = Regex.Replace(hashtag, @"[^0-9a-zA-Z:_%]+", "");
-            var requestText = $"https://www.facebook.com/dialog/share?app_id={app_id}&text=test&display=page&href={href}&redirect_uri={redirect_uri}&hashtag={hashtag}";
+            hashtag = RegularExpressionHelpers.AlphabetCleaner(hashtag);
+            var requestText =
+                $"https://www.facebook.com/dialog/share?app_id={app_id}&text=test&display=page&href={href}&redirect_uri={redirect_uri}&hashtag={hashtag}";
             Process.Start(requestText);
         }
+
         private void MainWindowGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             try
@@ -267,6 +291,7 @@ namespace SpotifyListener
                 {
                     return;
                 }
+
                 switch (e.Key)
                 {
                     case Key.A:
@@ -350,6 +375,7 @@ namespace SpotifyListener
                 setting.ShowDialog();
             }
         }
+
         protected override void OnClosing(CancelEventArgs e)
         {
             //keep this running on main thread, otherwise it will terminated before the task is done.
@@ -364,9 +390,18 @@ namespace SpotifyListener
 
         private void GenerateFormImage()
         {
-            var file = Path.GetTempFileName().Replace("tmp", "jpg");
-            wallpaper.SaveWallpaperToFile(file);
-            Process.Start(file);
+            var fileName = RegularExpressionHelpers.AlphabetCleaner($"{Player.Track}-{Player.Album}-{Player.Artist}-{Properties.Settings.Default.BlurRadial}") + ".jpg";
+            string path;
+            if (CacheFileManager.IsFileExists(fileName))
+            {
+                path = CacheFileManager.GetFullCachePath(fileName);
+            }
+            else
+            {
+                using var image = wallpaper.GetWallpaperImage(2560, 1440);
+                path = CacheFileManager.SaveCache(fileName, image.ToByteArray(ImageFormat.Jpeg));
+            }
+            Process.Start(path);
         }
 
         private void Btn_Repeat_Click(object sender, RoutedEventArgs e)
@@ -394,8 +429,8 @@ namespace SpotifyListener
 
         private void btn_Close_Click(object sender, RoutedEventArgs e)
         {
-
         }
+
         private void btn_search_Click(object sender, RoutedEventArgs e)
         {
             if (searchPanel != null)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using SpotifyListener.Classes;
 using SpotifyListener.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace SpotifyListener
             Centered,
             Stretched
         }
+
         string OriginalBackgroundImagePath { get; }
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
@@ -34,6 +36,7 @@ namespace SpotifyListener
         private readonly string FontFamily;
         private IMusic Player;
         private string temporaryWaitForDeleteFiles = "";
+
         public Wallpaper(float fontSize, string fontFamily)
         {
             OriginalBackgroundImagePath = BAK_IMAGE;
@@ -41,6 +44,7 @@ namespace SpotifyListener
             FontFamily = fontFamily;
             Disable();
         }
+
         public Wallpaper(string backgroundImagePath, float fontSize, string fontFamily)
         {
             OriginalBackgroundImagePath = backgroundImagePath;
@@ -52,9 +56,9 @@ namespace SpotifyListener
             }
             catch
             {
-
             }
         }
+
         public static bool TryGetWallpaper(out string imagePath)
         {
             try
@@ -64,9 +68,13 @@ namespace SpotifyListener
                     byte[] dest = new byte[source.Length - pos];
                     Array.Copy(source, pos, dest, 0, dest.Length);
                     return dest;
-                };
-                byte[] path = (byte[])Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Control Panel\\Desktop").GetValue("TranscodedImageCache");
-                var wallpaper_file_path = System.Text.Encoding.Unicode.GetString(SliceMe(path, 24)).TrimEnd("\0".ToCharArray());
+                }
+
+                ;
+                byte[] path = (byte[])Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Control Panel\\Desktop")
+                    .GetValue("TranscodedImageCache");
+                var wallpaper_file_path = System.Text.Encoding.Unicode.GetString(SliceMe(path, 24))
+                    .TrimEnd("\0".ToCharArray());
                 imagePath = wallpaper_file_path;
                 return File.Exists(wallpaper_file_path);
             }
@@ -76,20 +84,23 @@ namespace SpotifyListener
                 return false;
             }
         }
+
         public void Enable()
         {
             using var image = CalculateBackgroundImage();
             Set(image, Wallpaper.Style.Stretched);
         }
+
         public void Disable()
         {
             Set(null, Wallpaper.Style.Stretched, OriginalBackgroundImagePath);
         }
+
         private bool Set(Image image, Style style, string path = "")
         {
             DeleteTempFile();
             bool success = false;
-            string tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".jpg");
+            string tempPath = CacheFileManager.GetTempPath().Replace("tmp", "jpg");
             RegistryKey desktopKey = default;
             temporaryWaitForDeleteFiles = tempPath;
             try
@@ -97,8 +108,9 @@ namespace SpotifyListener
                 if (image != null)
                 {
                     File.Create(tempPath).Close();
-                    image.Save(tempPath, ImageFormat.Bmp);
+                    image.Save(tempPath, image.RawFormat);
                 }
+
                 desktopKey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
                 switch (style)
                 {
@@ -116,14 +128,19 @@ namespace SpotifyListener
                         desktopKey.SetValue(@"TileWallpaper", "1");
                         break;
                 }
+
                 if (!string.IsNullOrWhiteSpace(path))
                 {
-                    Task.Run(() => SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE));
+                    Task.Run(() =>
+                        SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path,
+                            SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE));
                 }
                 else
                 {
-                    Task.Run(() => SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, tempPath, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE));
+                    Task.Run(() => SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, tempPath,
+                        SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE));
                 }
+
                 success = true;
             }
             catch (Exception ex)
@@ -134,15 +151,18 @@ namespace SpotifyListener
             {
                 desktopKey?.Close();
                 image?.Dispose();
-
             }
+
             return success;
         }
+
         internal void SetPlayerBase(IMusic music)
         {
             Player = music;
         }
-        private Image CalculateBackgroundImage(Image highlightImg, Image backgroundImg, string track, string album, string artist, double? width = null, double? height = null)
+
+        private Image CalculateBackgroundImage(Image highlightImg, Image backgroundImg, string track, string album,
+            string artist, double? width = null, double? height = null)
         {
             var screenWidth = width ?? System.Windows.SystemParameters.PrimaryScreenWidth;
             var screenHeight = height ?? System.Windows.SystemParameters.PrimaryScreenHeight;
@@ -161,12 +181,16 @@ namespace SpotifyListener
             var albumMeasure = g.MeasureString(album, font);
             var artistMeasure = g.MeasureString(artist, font);
 
-            g.DrawString(track, trackFont, Brushes.White, (int)((screenWidth - trackMeasure.Width) / 2), highlightY + highlightImg.Height + (int)(screenHeight * 0.07));
-            g.DrawString(album, font, Brushes.White, (int)((screenWidth - albumMeasure.Width) / 2), highlightY + highlightImg.Height + (int)(screenHeight * 0.15));
-            g.DrawString(artist, font, Brushes.White, (int)((screenWidth - artistMeasure.Width) / 2), highlightY + highlightImg.Height + (int)(screenHeight * 0.2));
+            g.DrawString(track, trackFont, Brushes.White, (int)((screenWidth - trackMeasure.Width) / 2),
+                highlightY + highlightImg.Height + (int)(screenHeight * 0.07));
+            g.DrawString(album, font, Brushes.White, (int)((screenWidth - albumMeasure.Width) / 2),
+                highlightY + highlightImg.Height + (int)(screenHeight * 0.15));
+            g.DrawString(artist, font, Brushes.White, (int)((screenWidth - artistMeasure.Width) / 2),
+                highlightY + highlightImg.Height + (int)(screenHeight * 0.2));
 
             return backgroundImg;
         }
+
         private Image CalculateBackgroundImage(double? width = null, double? height = null)
         {
             var highlightSize = (int)Math.Round(System.Windows.SystemParameters.PrimaryScreenHeight * 0.555);
@@ -176,7 +200,7 @@ namespace SpotifyListener
                 artwork,
                 System.Windows.SystemParameters.PrimaryScreenWidth,
                 System.Windows.SystemParameters.PrimaryScreenHeight
-                );
+            );
             using var highlight = artwork.Resize(highlightSize, highlightSize);
             var image = CalculateBackgroundImage(
                 highlight,
@@ -189,11 +213,19 @@ namespace SpotifyListener
 
             return image;
         }
+
         public void SaveWallpaperToFile(string filePath)
         {
-            using var image = CalculateBackgroundImage(2560, 1440);
+            using var image = GetWallpaperImage(2560, 1440);
             image.Save(filePath);
         }
+
+        public Image GetWallpaperImage(int width, int height)
+        {
+            var image = CalculateBackgroundImage(width, height);
+            return image;
+        }
+
         protected void Dispose(bool disposing)
         {
             if (disposing)
@@ -202,6 +234,7 @@ namespace SpotifyListener
                 DeleteTempFile();
             }
         }
+
         private void DeleteTempFile()
         {
             if (File.Exists(temporaryWaitForDeleteFiles))
@@ -209,11 +242,11 @@ namespace SpotifyListener
                 File.Delete(temporaryWaitForDeleteFiles);
             }
         }
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
     }
-
 }
