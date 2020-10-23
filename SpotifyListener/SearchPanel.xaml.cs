@@ -1,12 +1,10 @@
 ﻿using Listener.Core.Framework.Players;
-using SpotifyAPI.Web.Enums;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using SpotifySearchType = SpotifyAPI.Web.Enums.SearchType;
 using SearchType = Listener.Core.Framework.Events.SearchType;
 
 namespace SpotifyListener
@@ -30,26 +28,26 @@ namespace SpotifyListener
             {
                 var q = cb_searchBox.Text;
                 string query = default;
-                SpotifySearchType searchType = SpotifySearchType.All;
+                SearchType searchType = SearchType.All;
                 if (q.Contains(":"))
                 {
                     var data = q.Split(':');
                     var qtype = data[0].ToLower();
                     if (qtype == "t" || qtype == "track")
                     {
-                        searchType = SpotifySearchType.Track;
+                        searchType = SearchType.Track;
                     }
                     else if (qtype == "ab" || qtype == "album")
                     {
-                        searchType = SpotifySearchType.Album;
+                        searchType = SearchType.Album;
                     }
                     else if (qtype == "a" || qtype == "artist")
                     {
-                        searchType = SpotifySearchType.Artist;
+                        searchType = SearchType.Artist;
                     }
                     else if (qtype == "p" || qtype == "playlist")
                     {
-                        searchType = SpotifySearchType.Playlist;
+                        searchType = SearchType.Playlist;
                     }
                     query = data[1];
                 }
@@ -63,7 +61,7 @@ namespace SpotifyListener
                     grid_searchResult.Children.Clear();
                     return;
                 }
-                var result = (await Player.SearchAsync(query, (SearchType)searchType, 10)).ToArray();
+                var result = (await Player.SearchAsync(query, searchType, 10)).ToArray();
                 if (result == null) return;
                 do
                 {
@@ -89,7 +87,7 @@ namespace SpotifyListener
                     button.Style = (Style)this.Resources["PathButtonStyle"];
                     button.Click += async delegate
                     {
-                        switch (element.SearchType)
+                        switch (searchType)
                         {
                             case SearchType.Artist:
                                 Process.Start(element.Uri.AbsoluteUri);

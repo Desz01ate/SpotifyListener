@@ -5,11 +5,11 @@ using Colore.Effects.Mouse;
 using Colore.Effects.Mousepad;
 using Listener.Core.Framework.Players;
 using Listener.ImageProcessing;
+using SpotifyListener.Classes;
 using SpotifyListener.Foundation.Struct;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using Utilities.Classes;
 using ColoreColor = Colore.Data.Color;
 
 namespace SpotifyListener
