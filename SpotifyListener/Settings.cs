@@ -1,4 +1,5 @@
-﻿using SpotifyListener.Classes;
+﻿using Listener.Core.Framework.Helpers;
+using SpotifyListener.Classes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

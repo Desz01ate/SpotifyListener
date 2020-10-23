@@ -1,18 +1,13 @@
-﻿using SpotifyAPI.Web.Enums;
+﻿using Listener.Core.Framework.Players;
+using SpotifyAPI.Web.Enums;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using SpotifySearchType = SpotifyAPI.Web.Enums.SearchType;
+using SearchType = Listener.Core.Framework.Events.SearchType;
 
 namespace SpotifyListener
 {
@@ -21,10 +16,10 @@ namespace SpotifyListener
     /// </summary>
     public partial class SearchPanel : Window
     {
-        private readonly SpotifyPlayer Player;
+        private readonly IStreamablePlayerHost Player;
         private readonly Geometry playPath;
         private readonly Action Callback;
-        public SearchPanel(SpotifyPlayer player, Action callback = null)
+        public SearchPanel(IStreamablePlayerHost player, Action callback = null)
         {
             Player = player;
             InitializeComponent();
@@ -35,26 +30,26 @@ namespace SpotifyListener
             {
                 var q = cb_searchBox.Text;
                 string query = default;
-                SearchType searchType = SearchType.All;
+                SpotifySearchType searchType = SpotifySearchType.All;
                 if (q.Contains(":"))
                 {
                     var data = q.Split(':');
                     var qtype = data[0].ToLower();
                     if (qtype == "t" || qtype == "track")
                     {
-                        searchType = SearchType.Track;
+                        searchType = SpotifySearchType.Track;
                     }
                     else if (qtype == "ab" || qtype == "album")
                     {
-                        searchType = SearchType.Album;
+                        searchType = SpotifySearchType.Album;
                     }
                     else if (qtype == "a" || qtype == "artist")
                     {
-                        searchType = SearchType.Artist;
+                        searchType = SpotifySearchType.Artist;
                     }
                     else if (qtype == "p" || qtype == "playlist")
                     {
-                        searchType = SearchType.Playlist;
+                        searchType = SpotifySearchType.Playlist;
                     }
                     query = data[1];
                 }
@@ -68,7 +63,7 @@ namespace SpotifyListener
                     grid_searchResult.Children.Clear();
                     return;
                 }
-                var result = (await Player.SearchAsync(query, searchType, 10)).ToArray();
+                var result = (await Player.SearchAsync(query, (SearchType)searchType, 10)).ToArray();
                 if (result == null) return;
                 do
                 {
@@ -94,23 +89,23 @@ namespace SpotifyListener
                     button.Style = (Style)this.Resources["PathButtonStyle"];
                     button.Click += async delegate
                     {
-                        switch (element.searchType)
+                        switch (element.SearchType)
                         {
                             case SearchType.Artist:
-                                Process.Start(element.uri);
+                                Process.Start(element.Uri.AbsoluteUri);
                                 break;
                             case SearchType.Track:
                             case SearchType.All:
-                                await Player.PlayTrackAsync(element.uri);
+                                await Player.PlayTrackAsync(element.Uri.AbsoluteUri);
                                 break;
                             default:
-                                await Player.PlayAsync(element.uri);
+                                await Player.PlayAsync(element.Uri.AbsoluteUri);
                                 break;
                         }
                     };
                     grid_searchResult.Children.Add(button);
                     var text = new TextBlock();
-                    text.Text = element.track;
+                    text.Text = element.Track;
                     text.Margin = new Thickness(50, (i + 1) * 50, 0, 0);
                     text.Width = 1920;
                     text.HorizontalAlignment = HorizontalAlignment.Left;

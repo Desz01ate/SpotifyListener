@@ -91,6 +91,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.10.1.1\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Colore, Version=6.0.0.14, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Colore.6.0.0-rc0014\lib\net452\Colore.dll</HintPath>
     </Reference>
@@ -199,7 +202,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\AnimationController.cs" />
-    <Compile Include="Classes\CacheFileManager.cs" />
     <Compile Include="Classes\LyricsHelpers.cs" />
     <Compile Include="Classes\CircularQueue.cs" />
     <Compile Include="ColorSettings.cs">
@@ -209,28 +211,12 @@
       <DependentUpon>ColorSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\CustomProgresBar.cs" />
-    <Compile Include="Configurations\SpotifyConfiguration.cs" />
-    <Compile Include="DatabaseManager\Models\ListenHistory.cs" />
-    <Compile Include="DatabaseManager\Models\Partials\ListenHistory.cs" />
-    <Compile Include="DatabaseManager\Repositories\Based\Repository.cs" />
-    <Compile Include="DatabaseManager\Repositories\ListenHistoryRepository.cs" />
-    <Compile Include="DatabaseManager\Repositories\Partials\ListenHistoryRepository.cs" />
-    <Compile Include="DatabaseManager\Service.cs" />
-    <Compile Include="DatabaseManager\ServicePartial.cs" />
-    <Compile Include="DatabaseManager\SQLite.cs" />
-    <Compile Include="Delegations\MusicDelegate.cs" />
     <Compile Include="DeviceSelection.xaml.cs">
       <DependentUpon>DeviceSelection.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Effects\BitmapHelper.cs" />
-    <Compile Include="Enums\PlayState.cs" />
-    <Compile Include="Enums\RepeatState.cs" />
     <Compile Include="Foundation\Struct\DrawingColor.cs" />
     <Compile Include="Helpers\RegularExpressionHelpers.cs" />
-    <Compile Include="Interfaces\IChangableDevice.cs" />
-    <Compile Include="Interfaces\IChromaArtwork.cs" />
-    <Compile Include="Interfaces\IChromaMusic.cs" />
-    <Compile Include="Interfaces\IMusic.cs" />
+    <Compile Include="Foundation\Struct\ColorStruct.cs" />
     <Compile Include="Components\PathButton.cs" />
     <Compile Include="LyricsDisplay.xaml.cs">
       <DependentUpon>LyricsDisplay.xaml</DependentUpon>
@@ -266,7 +252,7 @@
     </Compile>
     <Compile Include="Classes\ChromaWrapper.cs" />
     <Compile Include="Classes\Extension.cs" />
-    <Compile Include="Classes\ImageProcessing.cs" />
+    <Compile Include="Classes\ColoreColorProcessor.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -281,7 +267,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\SpotifyPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -359,6 +344,20 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\adjust.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Listener.Core.Framework\Listener.Core.Framework.csproj">
+      <Project>{c2c24ed5-d802-4ac0-9e06-6e3d00eaf895}</Project>
+      <Name>Listener.Core.Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Listener.ImageProcessing\Listener.ImageProcessing.csproj">
+      <Project>{868E0F87-0F7F-4D5C-8FEB-95895051066C}</Project>
+      <Name>Listener.ImageProcessing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Listener.Player.Spotify\Listener.Player.Spotify.csproj">
+      <Project>{7064fa7b-102f-4883-a75f-ea969f9ec272}</Project>
+      <Name>Listener.Player.Spotify</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

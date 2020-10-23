@@ -1,21 +1,14 @@
-﻿using SpotifyListener.Interfaces;
+﻿using Listener.Core.Framework.Players;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace SpotifyListener
 {
@@ -34,8 +27,8 @@ namespace SpotifyListener
         private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
         private bool initializing;
         private readonly double? location_X, location_Y;
-        private readonly IChangableDevice player;
-        public DeviceSelection(IChangableDevice player, double? location_X = null, double? location_Y = null)
+        private readonly IStreamablePlayerHost player;
+        public DeviceSelection(IStreamablePlayerHost player, double? location_X = null, double? location_Y = null)
         {
             InitializeComponent();
             this.location_X = location_X;
@@ -43,7 +36,7 @@ namespace SpotifyListener
             this.player = player;
             this.SourceInitialized += DeviceSelectionForm_SourceInitialized;
             this.lbl_close.MouseDown += (s, e) => this.Close();
-            (this.player as SpotifyPlayer).OnDeviceChanged += delegate
+            this.player.OnDeviceChanged += delegate
             {
                 Refresh();
             };

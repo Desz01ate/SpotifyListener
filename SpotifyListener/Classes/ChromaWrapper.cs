@@ -3,12 +3,13 @@ using Colore.Effects.Headset;
 using Colore.Effects.Keyboard;
 using Colore.Effects.Mouse;
 using Colore.Effects.Mousepad;
-using SpotifyListener.Interfaces;
+using Listener.Core.Framework.Players;
+using Listener.ImageProcessing;
+using SpotifyListener.Foundation.Struct;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using Utilities.Classes;
-using Utilities.Shared;
 using ColoreColor = Colore.Data.Color;
 
 namespace SpotifyListener
@@ -106,14 +107,21 @@ namespace SpotifyListener
             /// </summary>
             /// <param name="player">player instance</param>
             /// <param name="density">density for adaptive color</param>
-            public virtual void LoadColor(IChromaRender player, bool isPlaying, double density)
+            public virtual void LoadColor(IPlayerHost player, bool isPlaying, double density)
             {
                 if (Properties.Settings.Default.AlbumCoverRenderEnable)
                 {
-                    PositionColor_Background = player.Album_RazerColor.Standard;
-                    PositionColor_Foreground = player.Album_RazerColor.Complemented;
-                    VolumeColor = player.Album_RazerColor.Complemented;
-                    BackgroundColor = player.Album_RazerColor.Standard;
+                    var standardColor = new StandardColor();
+                    standardColor.Standard = player.AlbumArtwork.DominantColor();
+                    standardColor.Complemented = standardColor.Standard.InverseColor();
+                    var razerColor = new ChromaDevicesColor();
+                    razerColor.Standard = standardColor.Standard.ToColoreColor();
+                    razerColor.Complemented = standardColor.Complemented.ToColoreColor();
+
+                    PositionColor_Background = razerColor.Standard;
+                    PositionColor_Foreground = razerColor.Complemented;
+                    VolumeColor = razerColor.Complemented;
+                    BackgroundColor = razerColor.Standard;
                 }
                 else
                 {

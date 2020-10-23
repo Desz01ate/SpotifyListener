@@ -2,8 +2,6 @@
 using NAudio.CoreAudioApi;
 using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,19 +9,16 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using System.Text.RegularExpressions;
 using System.ComponentModel;
-using SpotifyListener.Interfaces;
 using SpotifyListener.Classes;
-//using SpotifyAPI.Web.Models;
-using SpotifyAPI.Web.Enums;
-using SpotifyAPI.Web;
-using SpotifyListener.Configurations;
-using System.Text;
-using System.Net.Http;
-using System.Net;
 using System.Drawing.Imaging;
 using SpotifyListener.Helpers;
+using Listener.Core.Framework.Players;
+using Listener.Core.Framework.Events;
+using Listener.Core.Framework.Models;
+using Listener.Player.Spotify;
+using Listener.Core.Framework.Helpers;
+using Listener.ImageProcessing;
 
 namespace SpotifyListener
 {
@@ -47,7 +42,7 @@ namespace SpotifyListener
         private SearchPanel searchPanel;
         private LyricsDisplay lyricsDisplay;
 
-        public SpotifyPlayer Player { get; }
+        public readonly IStreamablePlayerHost Player;
 
         public static MainWindow Context { get; private set; }
         public readonly double InitWidth, InitHeight;
@@ -63,26 +58,23 @@ namespace SpotifyListener
                 ResizeMode = ResizeMode.CanMinimize;
                 Visibility = Visibility.Hidden;
 
-                SpotifyWebAPI client = default;
-                SpotifyConfiguration.Context.OnClientReady += (s, e) => { client = e; };
-                while (client == null)
-                {
-                    System.Threading.Thread.Sleep(100);
-                }
-
-                Player = new SpotifyPlayer(client);
+                Player = new SpotifyPlayerHost(this.InitWidth, this.InitHeight);
 
                 VolumePath.Fill = playColor;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
 
                 Player.OnTrackChanged += OnTrackChanged;
                 Player.OnDeviceChanged += Player_OnDeviceChanged;
-                Player.OnTrackDurationChanged += (p) => { this.VolumePath.Fill = p.IsMute ? pauseColor : playColor; };
-                Player.OnPlayStateChanged += (state) =>
+                Player.OnTrackDurationChanged += (p) =>
+                {
+                    this.VolumePath.Fill = p.IsMute ? pauseColor : playColor;
+                };
+
+                Player.OnTrackPlayStateChanged += (state) =>
                 {
                     Dispatcher.InvokeAsync(() =>
                     {
-                        this.PlayProgress.Foreground = state == Enums.PlayState.Play ? playColor : pauseColor;
+                        this.PlayProgress.Foreground = state == PlayState.Play ? playColor : pauseColor;
                     });
                 };
                 using (var devices = new MMDeviceEnumerator())
@@ -99,7 +91,7 @@ namespace SpotifyListener
                 {
                     ChromaTimer.Interval =
                         (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS),
-                            0); //TimeSpan.FromMilliseconds((int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0));
+                            0);
                     ChromaTimer.Tick += ChromaTimer_Tick;
                     ChromaTimer.Start();
                 }
@@ -114,7 +106,7 @@ namespace SpotifyListener
             this.DataContext = Player;
         }
 
-        private void Player_OnDeviceChanged(object sender, EventArgs e)
+        private void Player_OnDeviceChanged(Device device)
         {
             Dispatcher.InvokeAsync(() =>
             {
@@ -161,7 +153,7 @@ namespace SpotifyListener
             }
         }
 
-        private void OnTrackChanged(IMusic playbackContext)
+        private void OnTrackChanged(IPlayerHost playbackContext)
         {
             Dispatcher.InvokeAsync(() =>
             {
@@ -264,7 +256,7 @@ namespace SpotifyListener
 
         private void PlayProgress_Click(object sender, EventArgs e)
         {
-            Player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue()).ConfigureAwait(false);
+            Player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue());
         }
 
         private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -410,7 +402,7 @@ namespace SpotifyListener
 
         private void Btn_Shuffle_Click(object sender, RoutedEventArgs e)
         {
-            Player.ToggleShuffle();
+
         }
 
         private void AdjustSettings_Click(object sender, RoutedEventArgs e)

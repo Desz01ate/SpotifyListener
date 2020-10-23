@@ -1,15 +1,12 @@
-﻿using Microsoft.Win32;
+﻿using Listener.Core.Framework.Helpers;
+using Listener.Core.Framework.Players;
+using Listener.ImageProcessing;
+using Microsoft.Win32;
 using SpotifyListener.Classes;
-using SpotifyListener.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SpotifyListener
@@ -34,7 +31,7 @@ namespace SpotifyListener
         private static readonly string BAK_IMAGE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "IMGBAK.bak");
         private readonly float FontSize;
         private readonly string FontFamily;
-        private IMusic Player;
+        private IPlayerHost Player;
         private string temporaryWaitForDeleteFiles = "";
 
         public Wallpaper(float fontSize, string fontFamily)
@@ -161,7 +158,7 @@ namespace SpotifyListener
             return success;
         }
 
-        internal void SetPlayerBase(IMusic music)
+        internal void SetPlayerBase(IPlayerHost music)
         {
             Player = music;
         }
@@ -201,10 +198,11 @@ namespace SpotifyListener
             var highlightSize = (int)Math.Round(System.Windows.SystemParameters.PrimaryScreenHeight * 0.555);
 
             var artwork = Player.AlbumArtwork;
-            using var background = Effects.BitmapHelper.CalculateBackgroundSource(
+            using var background = ImageProcessing.CalculateBackgroundSource(
                 artwork,
                 width ?? System.Windows.SystemParameters.PrimaryScreenWidth,
-                height ?? System.Windows.SystemParameters.PrimaryScreenHeight
+                height ?? System.Windows.SystemParameters.PrimaryScreenHeight,
+                10
             );
             using var highlight = artwork.Resize(highlightSize, highlightSize);
             var image = CalculateBackgroundImage(
