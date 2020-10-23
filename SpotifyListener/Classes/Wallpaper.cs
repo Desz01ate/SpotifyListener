@@ -23,7 +23,7 @@ namespace SpotifyListener
             Stretched
         }
 
-        string OriginalBackgroundImagePath { get; }
+        readonly string OriginalBackgroundImagePath;
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern int SystemParametersInfo(UInt32 action, UInt32 uParam, String vParam, UInt32 winIni);
@@ -63,6 +63,11 @@ namespace SpotifyListener
         {
             try
             {
+                if (File.Exists(BAK_IMAGE))
+                {
+                    imagePath = null;
+                    return false;
+                }
                 byte[] SliceMe(byte[] source, int pos)
                 {
                     byte[] dest = new byte[source.Length - pos];
@@ -100,7 +105,7 @@ namespace SpotifyListener
         {
             DeleteTempFile();
             bool success = false;
-            string tempPath = CacheFileManager.GetTempPath().Replace("tmp", "jpg");
+            string tempPath = CacheFileManager.GetTempPath();
             RegistryKey desktopKey = default;
             temporaryWaitForDeleteFiles = tempPath;
             try
@@ -198,8 +203,8 @@ namespace SpotifyListener
             var artwork = Player.AlbumArtwork;
             using var background = Effects.BitmapHelper.CalculateBackgroundSource(
                 artwork,
-                System.Windows.SystemParameters.PrimaryScreenWidth,
-                System.Windows.SystemParameters.PrimaryScreenHeight
+                width ?? System.Windows.SystemParameters.PrimaryScreenWidth,
+                height ?? System.Windows.SystemParameters.PrimaryScreenHeight
             );
             using var highlight = artwork.Resize(highlightSize, highlightSize);
             var image = CalculateBackgroundImage(
@@ -231,6 +236,10 @@ namespace SpotifyListener
             if (disposing)
             {
                 this.Disable();
+                if (File.Exists(BAK_IMAGE))
+                {
+                    File.Delete(BAK_IMAGE);
+                }
                 DeleteTempFile();
             }
         }

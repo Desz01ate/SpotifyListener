@@ -390,7 +390,7 @@ namespace SpotifyListener
 
         private void GenerateFormImage()
         {
-            var fileName = RegularExpressionHelpers.AlphabetCleaner($"{Player.Track}-{Player.Album}-{Player.Artist}-{Properties.Settings.Default.BlurRadial}") + ".jpg";
+            var fileName = Properties.Settings.Default.BlurRadial + "." + RegularExpressionHelpers.AlphabetCleaner($"{Player.Track}-{Player.Album}-{Player.Artist}") + ".jpg";
             string path;
             if (CacheFileManager.IsFileExists(fileName))
             {
@@ -452,7 +452,7 @@ namespace SpotifyListener
             }
             else
             {
-                lyricsDisplay = new LyricsDisplay(Player, this.Left + InitWidth, this.Top);
+                lyricsDisplay = new LyricsDisplay(Player, this.Left + InitWidth, this.Top, () => lyricsDisplay = null);
                 lyricsDisplay.Show();
             }
         }
