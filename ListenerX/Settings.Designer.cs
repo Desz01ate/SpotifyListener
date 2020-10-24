@@ -31,8 +31,9 @@
             this.SaveButton = new System.Windows.Forms.Label();
             this.ResetButton = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.trackbar_BlurRadial = new System.Windows.Forms.TrackBar();
+            this.ClearCache = new System.Windows.Forms.Label();
+            this.CacheSize = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txt_volScale = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
@@ -51,11 +52,8 @@
             this.ReverseLEDRender = new System.Windows.Forms.CheckBox();
             this.ColorSettingsButton = new System.Windows.Forms.Label();
             this.ChromaSDKEnable = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.CacheSize = new System.Windows.Forms.Label();
-            this.ClearCache = new System.Windows.Forms.Label();
+            this.lbl_Metadata = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackbar_BlurRadial)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ColorDensity)).BeginInit();
@@ -64,7 +62,7 @@
             // SaveButton
             // 
             this.SaveButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.SaveButton.Location = new System.Drawing.Point(850, 405);
+            this.SaveButton.Location = new System.Drawing.Point(605, 380);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(76, 37);
             this.SaveButton.TabIndex = 1;
@@ -74,7 +72,7 @@
             // ResetButton
             // 
             this.ResetButton.ForeColor = System.Drawing.Color.Red;
-            this.ResetButton.Location = new System.Drawing.Point(944, 405);
+            this.ResetButton.Location = new System.Drawing.Point(699, 380);
             this.ResetButton.Name = "ResetButton";
             this.ResetButton.Size = new System.Drawing.Size(76, 37);
             this.ResetButton.TabIndex = 4;
@@ -86,33 +84,41 @@
             this.groupBox3.Controls.Add(this.ClearCache);
             this.groupBox3.Controls.Add(this.CacheSize);
             this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Controls.Add(this.label14);
-            this.groupBox3.Controls.Add(this.trackbar_BlurRadial);
             this.groupBox3.Location = new System.Drawing.Point(12, 13);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(616, 361);
+            this.groupBox3.Size = new System.Drawing.Size(372, 361);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Preferences";
             this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
             // 
-            // label14
+            // ClearCache
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(7, 24);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(125, 13);
-            this.label14.TabIndex = 3;
-            this.label14.Text = "Background Blur Radial :";
+            this.ClearCache.ForeColor = System.Drawing.Color.Red;
+            this.ClearCache.Location = new System.Drawing.Point(169, 26);
+            this.ClearCache.Name = "ClearCache";
+            this.ClearCache.Size = new System.Drawing.Size(41, 13);
+            this.ClearCache.TabIndex = 7;
+            this.ClearCache.Text = "Clear";
+            this.ClearCache.Click += new System.EventHandler(this.ClearCache_Click);
             // 
-            // trackbar_BlurRadial
+            // CacheSize
             // 
-            this.trackbar_BlurRadial.Location = new System.Drawing.Point(138, 24);
-            this.trackbar_BlurRadial.Minimum = 1;
-            this.trackbar_BlurRadial.Name = "trackbar_BlurRadial";
-            this.trackbar_BlurRadial.Size = new System.Drawing.Size(355, 45);
-            this.trackbar_BlurRadial.TabIndex = 2;
-            this.trackbar_BlurRadial.Value = 1;
+            this.CacheSize.AutoSize = true;
+            this.CacheSize.Location = new System.Drawing.Point(90, 26);
+            this.CacheSize.Name = "CacheSize";
+            this.CacheSize.Size = new System.Drawing.Size(13, 13);
+            this.CacheSize.TabIndex = 5;
+            this.CacheSize.Text = "$";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 26);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(77, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Data caching :";
             // 
             // groupBox2
             // 
@@ -133,7 +139,7 @@
             this.groupBox2.Controls.Add(this.ReverseLEDRender);
             this.groupBox2.Controls.Add(this.ColorSettingsButton);
             this.groupBox2.Controls.Add(this.ChromaSDKEnable);
-            this.groupBox2.Location = new System.Drawing.Point(635, 13);
+            this.groupBox2.Location = new System.Drawing.Point(390, 13);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(366, 361);
             this.groupBox2.TabIndex = 6;
@@ -313,39 +319,21 @@
             this.ChromaSDKEnable.Text = "Enable Razer Chroma SDK";
             this.ChromaSDKEnable.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // lbl_Metadata
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 78);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Data caching :";
-            // 
-            // CacheSize
-            // 
-            this.CacheSize.AutoSize = true;
-            this.CacheSize.Location = new System.Drawing.Point(90, 78);
-            this.CacheSize.Name = "CacheSize";
-            this.CacheSize.Size = new System.Drawing.Size(13, 13);
-            this.CacheSize.TabIndex = 5;
-            this.CacheSize.Text = "$";
-            // 
-            // ClearCache
-            // 
-            this.ClearCache.ForeColor = System.Drawing.Color.Red;
-            this.ClearCache.Location = new System.Drawing.Point(169, 78);
-            this.ClearCache.Name = "ClearCache";
-            this.ClearCache.Size = new System.Drawing.Size(41, 13);
-            this.ClearCache.TabIndex = 7;
-            this.ClearCache.Text = "Clear";
-            this.ClearCache.Click += new System.EventHandler(this.ClearCache_Click);
+            this.lbl_Metadata.AutoSize = true;
+            this.lbl_Metadata.Location = new System.Drawing.Point(12, 380);
+            this.lbl_Metadata.Name = "lbl_Metadata";
+            this.lbl_Metadata.Size = new System.Drawing.Size(13, 13);
+            this.lbl_Metadata.TabIndex = 7;
+            this.lbl_Metadata.Text = "$";
             // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1007, 426);
+            this.ClientSize = new System.Drawing.Size(771, 405);
+            this.Controls.Add(this.lbl_Metadata);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.ResetButton);
@@ -358,12 +346,12 @@
             this.Load += new System.EventHandler(this.Settings_Load_1);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackbar_BlurRadial)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ColorDensity)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -386,13 +374,12 @@
         private System.Windows.Forms.CheckBox ReverseLEDRender;
         private System.Windows.Forms.Label ColorSettingsButton;
         private System.Windows.Forms.CheckBox ChromaSDKEnable;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.TrackBar trackbar_BlurRadial;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TrackBar trackbar_VolumeScale;
         private System.Windows.Forms.Label txt_volScale;
         private System.Windows.Forms.Label ClearCache;
         private System.Windows.Forms.Label CacheSize;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lbl_Metadata;
     }
 }

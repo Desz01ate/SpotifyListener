@@ -211,6 +211,7 @@
     </Compile>
     <Compile Include="Foundation\Struct\DrawingColor.cs" />
     <Compile Include="Helpers\ActivatorHelpers.cs" />
+    <Compile Include="Helpers\AssemblyHelpers.cs" />
     <Compile Include="Helpers\RegularExpressionHelpers.cs" />
     <Compile Include="Foundation\Struct\ColorStruct.cs" />
     <Compile Include="Components\PathButton.cs" />
