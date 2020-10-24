@@ -1,5 +1,6 @@
 ﻿using Listener.Core.Framework.Helpers;
 using ListenerX.Classes;
+using ListenerX.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -39,9 +40,10 @@ namespace ListenerX
             AlbumColorMode.SelectedIndex = Properties.Settings.Default.AlbumColorMode;
 
             ChromaSDKEnable_CheckedChanged(null, EventArgs.Empty);
-            trackbar_BlurRadial.Value = Properties.Settings.Default.BlurRadial;
             trackbar_VolumeScale.Value = Properties.Settings.Default.VolumeScale;
             trackbar_VolumeScale_Scroll(trackbar_VolumeScale, null);
+
+            this.lbl_Metadata.Text = $"Active module : {ActivatorHelpers.Metadata.ModuleName} {ActivatorHelpers.Metadata.VersionName}";
 
         }
 
@@ -60,7 +62,6 @@ namespace ListenerX
             Properties.Settings.Default.Density = ColorDensity.Value;
 
             Properties.Settings.Default.AlbumColorMode = (byte)AlbumColorMode.SelectedIndex;
-            Properties.Settings.Default.BlurRadial = trackbar_BlurRadial.Value;
             Properties.Settings.Default.VolumeScale = trackbar_VolumeScale.Value;
             Properties.Settings.Default.Save();
 

@@ -26,10 +26,12 @@ namespace ListenerX
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly Timer ChromaTimer = new Timer();
+        private readonly Timer chromaTimer = new Timer();
+        private readonly Timer defaultAudioEndpointTimer = new Timer();
         private AnimationController animation;
-        private static MMDevice ActiveDevice;
-        private static readonly ChromaWrapper Chroma = ChromaWrapper.GetInstance;
+        private readonly MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
+        private MMDevice defaultAudioEndpoint;
+        private static readonly ChromaWrapper chromaWrapper = ChromaWrapper.GetInstance;
 
         private readonly SolidColorBrush playColor =
             (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
@@ -41,10 +43,9 @@ namespace ListenerX
         private SearchPanel searchPanel;
         private LyricsDisplay lyricsDisplay;
 
-        public readonly IStreamablePlayerHost Player;
+        private readonly IStreamablePlayerHost player;
 
-        public static MainWindow Context { get; private set; }
-        public readonly double InitWidth, InitHeight;
+        private readonly double InitWidth, InitHeight;
 
         public MainWindow()
         {
@@ -56,28 +57,29 @@ namespace ListenerX
                 ResizeMode = ResizeMode.CanMinimize;
                 Visibility = Visibility.Hidden;
 
-                Player = this.LoadPlayerHost<Listener.Player.Spotify.SpotifyPlayerHost>();
+                player = this.LoadPlayerHost<Listener.Player.Spotify.SpotifyPlayerHost>();
 
                 VolumePath.Fill = playColor;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
 
-                Player.OnTrackChanged += OnTrackChanged;
-                Player.OnDeviceChanged += Player_OnDeviceChanged;
-                Player.OnTrackDurationChanged += (p) =>
+                player.OnTrackChanged += OnTrackChanged;
+                player.OnDeviceChanged += Player_OnDeviceChanged;
+                player.OnTrackDurationChanged += (p) =>
                 {
                     this.VolumePath.Fill = p.IsMute ? pauseColor : playColor;
                 };
 
-                Player.OnTrackPlayStateChanged += (state) =>
+                player.OnTrackPlayStateChanged += (state) =>
                 {
                     Dispatcher.InvokeAsync(() =>
                     {
                         this.PlayProgress.Foreground = state == PlayState.Play ? playColor : pauseColor;
                     });
                 };
-                using (var devices = new MMDeviceEnumerator())
-                    ActiveDevice = devices.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active)
-                        .OrderByDescending(x => x.AudioMeterInformation.MasterPeakValue).FirstOrDefault();
+
+                defaultAudioEndpointTimer.Interval = 1000;
+                defaultAudioEndpointTimer.Tick += DefaultAudioEndpointTimer_Tick;
+                defaultAudioEndpointTimer.Start();
                 KeyDown += MainWindowGrid_PreviewKeyDown;
                 Loaded += MainWindow_Loaded;
                 MouseDown += Window_MouseDown;
@@ -85,13 +87,13 @@ namespace ListenerX
                 btn_Close.Click += (s, e) => this.Close();
                 this.AlbumImage.MouseDown += AlbumImage_MouseDown;
 
-                if (!Chroma.IsError)
+                if (!chromaWrapper.IsError)
                 {
-                    ChromaTimer.Interval =
+                    chromaTimer.Interval =
                         (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS),
                             0);
-                    ChromaTimer.Tick += ChromaTimer_Tick;
-                    ChromaTimer.Start();
+                    chromaTimer.Tick += ChromaTimer_Tick;
+                    chromaTimer.Start();
                 }
             }
             catch (Exception ex)
@@ -101,15 +103,24 @@ namespace ListenerX
             }
 
             this.Visibility = Visibility.Visible;
-            Context = this;
-            this.DataContext = Player;
+            this.DataContext = player;
+        }
+
+        private void DefaultAudioEndpointTimer_Tick(object sender, EventArgs e)
+        {
+            var currentDefaultAudioEndpoint = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
+            if (defaultAudioEndpoint == null || defaultAudioEndpoint.FriendlyName != currentDefaultAudioEndpoint.FriendlyName)
+            {
+                defaultAudioEndpoint?.Dispose();
+                defaultAudioEndpoint = currentDefaultAudioEndpoint;
+            }
         }
 
         private void Player_OnDeviceChanged(Device device)
         {
             Dispatcher.InvokeAsync(() =>
             {
-                this.Title = $"Listening to {Player.Track} by {Player.Artist} on {Player.ActiveDevice.Name}";
+                this.Title = $"Listening to {player.Track} by {player.Artist} on {player.ActiveDevice.Name}";
             });
         }
 
@@ -132,7 +143,7 @@ namespace ListenerX
                 System.Windows.Forms.Application.Exit();
             }
 
-            wallpaper.SetPlayerBase(Player);
+            wallpaper.SetPlayerBase(player);
 
             #endregion
         }
@@ -143,11 +154,11 @@ namespace ListenerX
             switch (e.ChangedButton)
             {
                 case MouseButton.Left:
-                    Player.PlayPause();
+                    player.PlayPause();
                     //Player.PlayAsync("");
                     break;
                 case MouseButton.Right:
-                    Task.Run(() => Process.Start(Player.Url));
+                    Task.Run(() => Process.Start(player.Url));
                     break;
             }
         }
@@ -156,8 +167,8 @@ namespace ListenerX
         {
             Dispatcher.InvokeAsync(() =>
             {
-                this.Title = $"Listening to {Player.Track} by {Player.Artist} on {Player.ActiveDevice.Name}";
-                this.Icon = Player.AlbumSource;
+                this.Title = $"Listening to {player.Track} by {player.Artist} on {player.ActiveDevice.Name}";
+                this.Icon = player.AlbumSource;
                 this.btn_lyrics.Visibility = string.IsNullOrWhiteSpace(playbackContext.Lyrics)
                     ? Visibility.Hidden
                     : Visibility.Visible;
@@ -192,70 +203,70 @@ namespace ListenerX
         {
             try
             {
-                if (!Properties.Settings.Default.ChromaSDKEnable)
+                if (!Properties.Settings.Default.ChromaSDKEnable || defaultAudioEndpoint == null)
                 {
-                    Chroma.SDKDisable();
+                    chromaWrapper.SDKDisable();
                     return;
                 }
 
-                var volume = ActiveDevice.AudioMeterInformation.MasterPeakValue *
+                var volume = defaultAudioEndpoint.AudioMeterInformation.MasterPeakValue *
                              (Properties.Settings.Default.VolumeScale / 10.0f);
                 if (volume > 1) volume = 1;
-                var density = Properties.Settings.Default.AdaptiveDensity && Player.IsPlaying
+                var density = Properties.Settings.Default.AdaptiveDensity && player.IsPlaying
                     ? volume * 0.7f
                     : (Properties.Settings.Default.Density / 10.0);
-                Chroma.LoadColor(Player, Player.IsPlaying, density);
-                Chroma.SetDevicesBackground();
+                chromaWrapper.LoadColor(player, player.IsPlaying, density);
+                chromaWrapper.SetDevicesBackground();
                 if (Properties.Settings.Default.RenderPeakVolumeEnable)
                 {
                     if (Properties.Settings.Default.SymmetricRenderEnable)
                     {
-                        Chroma.MouseGrid.SetPeakVolumeSymmetric(Chroma.VolumeColor, volume);
-                        Chroma.KeyboardGrid.SetPeakVolumeSymmetric(Chroma.VolumeColor, volume);
+                        chromaWrapper.MouseGrid.SetPeakVolumeSymmetric(chromaWrapper.VolumeColor, volume);
+                        chromaWrapper.KeyboardGrid.SetPeakVolumeSymmetric(chromaWrapper.VolumeColor, volume);
                     }
                     else if (Properties.Settings.Default.PeakChroma)
                     {
-                        Chroma.MouseGrid.SetChromaPeakVolume(volume);
-                        Chroma.KeyboardGrid.SetChromaPeakVolume(volume);
+                        chromaWrapper.MouseGrid.SetChromaPeakVolume(volume);
+                        chromaWrapper.KeyboardGrid.SetChromaPeakVolume(volume);
                     }
                     else
                     {
-                        Chroma.MouseGrid.SetPeakVolume(Chroma.VolumeColor, volume);
-                        Chroma.KeyboardGrid.SetPeakVolume(Chroma.VolumeColor, volume);
+                        chromaWrapper.MouseGrid.SetPeakVolume(chromaWrapper.VolumeColor, volume);
+                        chromaWrapper.KeyboardGrid.SetPeakVolume(chromaWrapper.VolumeColor, volume);
                         //Chroma.SetPeakVolume_Mouse(ActiveDevice.AudioMeterInformation.MasterPeakValue);
                         //Chroma.SetPeakVolume_Keyboard(ActiveDevice.AudioMeterInformation.MasterPeakValue);
                         //Chroma.SetPeakVolume_Headset_Mousepad();
                     }
 
-                    Chroma.HeadsetGrid.SetPeakVolume(Chroma.VolumeColor);
-                    Chroma.MousepadGrid.SetPeakVolume(Chroma.VolumeColor);
+                    chromaWrapper.HeadsetGrid.SetPeakVolume(chromaWrapper.VolumeColor);
+                    chromaWrapper.MousepadGrid.SetPeakVolume(chromaWrapper.VolumeColor);
                 }
                 else
                 {
-                    Chroma.MouseGrid.SetPlayingPosition(Chroma.PositionColor_Foreground,
-                        Chroma.PositionColor_Background, Player.CalculatedPosition,
+                    chromaWrapper.MouseGrid.SetPlayingPosition(chromaWrapper.PositionColor_Foreground,
+                        chromaWrapper.PositionColor_Background, player.CalculatedPosition,
                         Properties.Settings.Default.ReverseLEDRender);
-                    Chroma.KeyboardGrid.SetPlayingPosition(Chroma.PositionColor_Foreground,
-                        Chroma.PositionColor_Background, Player.CalculatedPosition);
-                    Chroma.MouseGrid.SetVolumeScale(Chroma.VolumeColor, Player.Volume,
+                    chromaWrapper.KeyboardGrid.SetPlayingPosition(chromaWrapper.PositionColor_Foreground,
+                        chromaWrapper.PositionColor_Background, player.CalculatedPosition);
+                    chromaWrapper.MouseGrid.SetVolumeScale(chromaWrapper.VolumeColor, player.Volume,
                         Properties.Settings.Default.ReverseLEDRender);
                 }
 
-                Chroma.KeyboardGrid.SetVolumeScale(Properties.Settings.Default.Volume.ToColoreColor(), Player.Volume);
-                Chroma.KeyboardGrid.SetPlayingTime(TimeSpan.FromMilliseconds(Player.Position_ms));
-                Chroma.MousepadGrid.SetPeakVolume(Chroma.VolumeColor);
-                Chroma.HeadsetGrid.SetPeakVolume(Chroma.VolumeColor);
-                Chroma.Apply();
+                chromaWrapper.KeyboardGrid.SetVolumeScale(Properties.Settings.Default.Volume.ToColoreColor(), player.Volume);
+                chromaWrapper.KeyboardGrid.SetPlayingTime(TimeSpan.FromMilliseconds(player.Position_ms));
+                chromaWrapper.MousepadGrid.SetPeakVolume(chromaWrapper.VolumeColor);
+                chromaWrapper.HeadsetGrid.SetPeakVolume(chromaWrapper.VolumeColor);
+                chromaWrapper.Apply();
             }
             catch
             {
-                Chroma.SDKDisable();
+                chromaWrapper.SDKDisable();
             }
         }
 
         private void PlayProgress_Click(object sender, EventArgs e)
         {
-            Player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue());
+            player.SetPositionAsync((int)PlayProgress.CalculateRelativeValue());
         }
 
         private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -265,9 +276,9 @@ namespace ListenerX
         private void FacebookShare()
         {
             var app_id = "139971873511766"; //StatusReporter
-            var href = Player.Url;
+            var href = player.Url;
             var redirect_uri = string.Empty;
-            var hashtag = $"%23{Player.Artist}_{Player.Track}";
+            var hashtag = $"%23{player.Artist}_{player.Track}";
             hashtag = RegularExpressionHelpers.AlphabetCleaner(hashtag);
             var requestText =
                 $"https://www.facebook.com/dialog/share?app_id={app_id}&text=test&display=page&href={href}&redirect_uri={redirect_uri}&hashtag={hashtag}";
@@ -292,16 +303,16 @@ namespace ListenerX
                         NextPath_Click(null, null);
                         break;
                     case Key.W:
-                        Player.SetVolume(Player.Volume + 10);
+                        player.SetVolume(player.Volume + 10);
                         break;
                     case Key.S:
-                        Player.SetVolume(Player.Volume - 10);
+                        player.SetVolume(player.Volume - 10);
                         break;
                     case Key.Q:
-                        Player.SetPosition(Player.Position_ms - 15);
+                        player.SetPosition(player.Position_ms - 15);
                         break;
                     case Key.E:
-                        Player.SetPosition(Player.Position_ms + 15);
+                        player.SetPosition(player.Position_ms + 15);
                         break;
                     case Key.Space:
                         PlayPath_Click(null, null);
@@ -310,7 +321,7 @@ namespace ListenerX
                         FacebookShare();
                         break;
                     case Key.O:
-                        Process.Start(Player.Url);
+                        Process.Start(player.Url);
                         break;
                     case Key.P:
                         GenerateFormImage();
@@ -325,38 +336,38 @@ namespace ListenerX
 
         private void BackPath_Click(object sender, RoutedEventArgs e)
         {
-            if (Player.Position_ms > 3000)
-                Player.SetPositionAsync(0).ConfigureAwait(false);
+            if (player.Position_ms > 3000)
+                player.SetPositionAsync(0).ConfigureAwait(false);
             else
-                Player.Previous();
+                player.Previous();
         }
 
         private void PlayPath_Click(object sender, RoutedEventArgs e)
         {
-            Player.PlayPause();
+            player.PlayPause();
         }
 
         private void NextPath_Click(object sender, RoutedEventArgs e)
         {
-            Player.Next();
+            player.Next();
         }
 
         private void VolumePath_Click(object sender, RoutedEventArgs e)
         {
-            if (Player.Volume > 0)
+            if (player.Volume > 0)
             {
-                Player.Mute();
+                player.Mute();
             }
             else
             {
-                Player.Unmute();
+                player.Unmute();
             }
         }
 
         private void VolumeProgress_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var value = (int)VolumeProgress.CalculateRelativeValue();
-            Player.SetVolume(value);
+            player.SetVolume(value);
         }
 
         private void Settings_Click(object sender, MouseButtonEventArgs e)
@@ -372,16 +383,19 @@ namespace ListenerX
             //keep this running on main thread, otherwise it will terminated before the task is done.
             this.Hide();
             searchPanel?.Close();
-            ChromaTimer?.Dispose();
+            chromaTimer?.Dispose();
+            defaultAudioEndpointTimer?.Dispose();
             wallpaper?.Dispose();
-            Player?.Dispose();
-            Chroma?.Dispose();
+            player?.Dispose();
+            chromaWrapper?.Dispose();
+            defaultAudioEndpoint?.Dispose();
+            deviceEnumerator?.Dispose();
             base.OnClosing(e);
         }
 
         private void GenerateFormImage()
         {
-            var fileName = Properties.Settings.Default.BlurRadial + "." + RegularExpressionHelpers.AlphabetCleaner($"{Player.Track}-{Player.Album}-{Player.Artist}") + ".jpg";
+            var fileName = "10." + RegularExpressionHelpers.AlphabetCleaner($"{player.Track}-{player.Album}-{player.Artist}") + ".jpg";
             string path;
             if (CacheFileManager.IsFileExists(fileName))
             {
@@ -414,7 +428,7 @@ namespace ListenerX
 
         private void btn_device_Click(object sender, RoutedEventArgs e)
         {
-            var ds = new DeviceSelection(Player, this.Left + this.InitWidth, this.Top + this.InitHeight);
+            var ds = new DeviceSelection(player, this.Left + this.InitWidth, this.Top + this.InitHeight);
             ds.ShowDialog();
         }
 
@@ -430,7 +444,7 @@ namespace ListenerX
             }
             else
             {
-                searchPanel = new SearchPanel(Player, () => searchPanel = null);
+                searchPanel = new SearchPanel(player, () => searchPanel = null);
                 searchPanel.Show();
             }
         }
@@ -443,7 +457,7 @@ namespace ListenerX
             }
             else
             {
-                lyricsDisplay = new LyricsDisplay(Player, this.Left + InitWidth, this.Top, () => lyricsDisplay = null);
+                lyricsDisplay = new LyricsDisplay(player, this.Left + InitWidth, this.Top, () => lyricsDisplay = null);
                 lyricsDisplay.Show();
             }
         }
