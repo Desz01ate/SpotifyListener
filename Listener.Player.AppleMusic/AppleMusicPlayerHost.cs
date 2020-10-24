@@ -234,6 +234,8 @@ namespace Listener.Player.AppleMusic
         public event TrackPlayStateChangedEventHandler OnTrackPlayStateChanged;
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private ITPlayerState currentPlayState;
+
         private readonly double context_width, context_height;
 
         private readonly iTunesApp app;
@@ -241,6 +243,7 @@ namespace Listener.Player.AppleMusic
         private readonly HttpClient httpClient;
 
         private System.Windows.Forms.Timer _trackFetcherTimer = new System.Windows.Forms.Timer();
+
         delegate void Router(object arg);
         public AppleMusicPlayerHost(double contextWidth, double contextHeight)
         {
@@ -277,6 +280,17 @@ namespace Listener.Player.AppleMusic
                 return;
             }
 
+            ITPlayerState t = ITPlayerState.ITPlayerStateFastForward;
+            if (currentPlayState != this.app.PlayerState)
+            {
+                currentPlayState = this.app.PlayerState;
+                OnTrackPlayStateChanged?.Invoke(currentPlayState switch
+                {
+                    ITPlayerState.ITPlayerStatePlaying => PlayState.Play,
+                    _ => PlayState.Pause
+                });
+            }
+
             if (this.Track != currentTrack.Name || this.Album != currentTrack.Album)
             {
                 this.Track = currentTrack.Name;
@@ -306,6 +320,7 @@ namespace Listener.Player.AppleMusic
                 });
             }
             this.Position_ms = this.app.PlayerPosition;
+            this.IsPlaying = currentPlayState == ITPlayerState.ITPlayerStatePlaying;
         }
 
         public Task GetAsync()
