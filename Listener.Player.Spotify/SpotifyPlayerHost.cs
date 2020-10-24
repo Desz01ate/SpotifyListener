@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -244,6 +245,7 @@ namespace Listener.Player.Spotify
 
         public SpotifyPlayerHost(double width, double height)
         {
+            Process.Start("spotify");
             this.context_width = width;
             this.context_height = height;
             SpotifyWebAPI webApiClient = null;

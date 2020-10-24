@@ -2,14 +2,13 @@
 using Listener.Core.Framework.Players;
 using Listener.ImageProcessing;
 using Microsoft.Win32;
-using ListenerX.Classes;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace ListenerX
+namespace ListenerX.Classes
 {
     public class Wallpaper : IDisposable
     {
@@ -20,7 +19,7 @@ namespace ListenerX
             Stretched
         }
 
-        readonly string OriginalBackgroundImagePath;
+        string OriginalBackgroundImagePath { get; }
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern int SystemParametersInfo(UInt32 action, UInt32 uParam, String vParam, UInt32 winIni);
@@ -60,11 +59,6 @@ namespace ListenerX
         {
             try
             {
-                if (File.Exists(BAK_IMAGE))
-                {
-                    imagePath = null;
-                    return false;
-                }
                 byte[] SliceMe(byte[] source, int pos)
                 {
                     byte[] dest = new byte[source.Length - pos];
@@ -102,7 +96,7 @@ namespace ListenerX
         {
             DeleteTempFile();
             bool success = false;
-            string tempPath = CacheFileManager.GetTempPath();
+            string tempPath = CacheFileManager.GetTempPath().Replace("tmp", "jpg");
             RegistryKey desktopKey = default;
             temporaryWaitForDeleteFiles = tempPath;
             try
@@ -200,8 +194,8 @@ namespace ListenerX
             var artwork = Player.AlbumArtwork;
             using var background = ImageProcessing.CalculateBackgroundSource(
                 artwork,
-                width ?? System.Windows.SystemParameters.PrimaryScreenWidth,
-                height ?? System.Windows.SystemParameters.PrimaryScreenHeight,
+                System.Windows.SystemParameters.PrimaryScreenWidth,
+                System.Windows.SystemParameters.PrimaryScreenHeight,
                 10
             );
             using var highlight = artwork.Resize(highlightSize, highlightSize);
@@ -234,10 +228,6 @@ namespace ListenerX
             if (disposing)
             {
                 this.Disable();
-                if (File.Exists(BAK_IMAGE))
-                {
-                    File.Delete(BAK_IMAGE);
-                }
                 DeleteTempFile();
             }
         }

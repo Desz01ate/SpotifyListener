@@ -5,7 +5,7 @@ using SpotifyAPI.Web.Enums;
 
 namespace Listener.Player.Spotify
 {
-    public class SpotifyAuthentication
+    internal class SpotifyAuthentication
     {
         public delegate void SpotifyEventHandler(SpotifyAuthentication sender, SpotifyWebAPI client);
         public event SpotifyEventHandler OnClientReady;

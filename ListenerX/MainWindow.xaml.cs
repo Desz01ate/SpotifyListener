@@ -13,7 +13,6 @@ using System.Drawing.Imaging;
 using Listener.Core.Framework.Players;
 using Listener.Core.Framework.Events;
 using Listener.Core.Framework.Models;
-using Listener.Player.Spotify;
 using Listener.Core.Framework.Helpers;
 using Listener.ImageProcessing;
 using ListenerX.ChromaExtension;
@@ -51,14 +50,13 @@ namespace ListenerX
         {
             try
             {
-                Process.Start("spotify");
                 InitializeComponent();
                 InitWidth = this.Width;
                 InitHeight = this.Height;
                 ResizeMode = ResizeMode.CanMinimize;
                 Visibility = Visibility.Hidden;
 
-                Player = new SpotifyPlayerHost(this.InitWidth, this.InitHeight);
+                Player = this.LoadPlayerHost<Listener.Player.Spotify.SpotifyPlayerHost>();
 
                 VolumePath.Fill = playColor;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
@@ -99,6 +97,7 @@ namespace ListenerX
             catch (Exception ex)
             {
                 System.Windows.Forms.MessageBox.Show(ex.ToString());
+                Environment.Exit(1);
             }
 
             this.Visibility = Visibility.Visible;
