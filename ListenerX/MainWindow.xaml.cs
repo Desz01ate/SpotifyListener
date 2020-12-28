@@ -31,7 +31,7 @@ namespace ListenerX
         private AnimationController animation;
         private readonly MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
         private MMDevice defaultAudioEndpoint;
-        private static readonly ChromaWrapper chromaWrapper = ChromaWrapper.GetInstance;
+        private readonly ChromaWrapper chromaWrapper;
 
         private readonly SolidColorBrush playColor =
             (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
@@ -87,14 +87,19 @@ namespace ListenerX
                 btn_Close.Click += (s, e) => this.Close();
                 this.AlbumImage.MouseDown += AlbumImage_MouseDown;
 
-                if (!chromaWrapper.IsError)
+                if (Properties.Settings.Default.ChromaSDKEnable)
                 {
-                    chromaTimer.Interval =
-                        (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS),
-                            0);
-                    chromaTimer.Tick += ChromaTimer_Tick;
-                    chromaTimer.Start();
+                    var chroma = ChromaWrapper.Instance;
+                    if (!chroma.IsError)
+                    {
+                        chromaWrapper = chroma;
+                        chromaTimer.Interval =
+                            (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
+                        chromaTimer.Tick += ChromaTimer_Tick;
+                        chromaTimer.Start();
+                    }
                 }
+
             }
             catch (Exception ex)
             {
@@ -169,9 +174,9 @@ namespace ListenerX
             {
                 this.Title = $"Listening to {player.Track} by {player.Artist} on {player.ActiveDevice.Name}";
                 this.Icon = player.AlbumSource;
-                this.btn_lyrics.Visibility = string.IsNullOrWhiteSpace(playbackContext.Lyrics)
-                    ? Visibility.Hidden
-                    : Visibility.Visible;
+                //this.btn_lyrics.Visibility = string.IsNullOrWhiteSpace(playbackContext.Lyrics)
+                //    ? Visibility.Hidden
+                //    : Visibility.Visible;
                 wallpaper.Enable();
             });
         }
@@ -203,7 +208,7 @@ namespace ListenerX
         {
             try
             {
-                if (!Properties.Settings.Default.ChromaSDKEnable || defaultAudioEndpoint == null)
+                if (defaultAudioEndpoint == null)
                 {
                     chromaWrapper.SDKDisable();
                     return;
@@ -451,15 +456,23 @@ namespace ListenerX
 
         private void btn_lyrics_Click(object sender, RoutedEventArgs e)
         {
-            if (lyricsDisplay != null)
-            {
-                lyricsDisplay.BringToFront();
-            }
-            else
-            {
-                lyricsDisplay = new LyricsDisplay(player, this.Left + InitWidth, this.Top, () => lyricsDisplay = null);
-                lyricsDisplay.Show();
-            }
+            Process.Start($"https://www.google.com/search?q={this.player.Artist.Replace(" ", "+")}+{this.player.Album.Replace(" ", "+")}+{this.player.Track.Replace(" ", "+")}+lyrics");
+            //if (lyricsDisplay != null)
+            //{
+            //    lyricsDisplay.BringToFront();
+            //}
+            //else
+            //{        
+            //if (!string.IsNullOrWhiteSpace(this.player.Lyrics))
+            //{
+            //    lyricsDisplay = new LyricsDisplay(player, this.Left + InitWidth, this.Top, () => lyricsDisplay = null);
+            //    lyricsDisplay.Show();
+            //}
+            //else
+            //{
+            //Process.Start($"https://www.google.com/search?q={this.player.Artist.Replace(" ", "+")}+{this.player.Album.Replace(" ", "+")}+{this.player.Track.Replace(" ", "+")}+lyrics");
+            //}
+            //}
         }
 
         private void Btn_SaveImage_Click(object sender, RoutedEventArgs e)

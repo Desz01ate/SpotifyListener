@@ -16,11 +16,13 @@ namespace ListenerX
 {
     public partial class Settings : Form
     {
-        public static bool AlbumCoverRenderEnable = false;
-        public static bool RenderPeakVolumeEnable = false;
-        public static bool RenderPeakVolumeSymmetricEnable = false;
-        public static bool ChromaPeakEnable = false;
-        public static bool Adaptive = false;
+        private bool AlbumCoverRenderEnable = false;
+        private bool RenderPeakVolumeEnable = false;
+        private bool RenderPeakVolumeSymmetricEnable = false;
+        private bool ChromaPeakEnable = false;
+        private bool ChromaEnableChanged = false;
+        private bool Adaptive = false;
+
         public Settings()
         {
             InitializeComponent();
@@ -34,6 +36,7 @@ namespace ListenerX
             RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyleIndex;
             RenderModeCombobox.SelectedIndex = Adaptive ? 1 : 0;
             ChromaSDKEnable.Checked = Properties.Settings.Default.ChromaSDKEnable;
+            ChromaSDKEnable.CheckedChanged += ChromaSDKEnable_CheckedChanged;
             ReverseLEDRender.Checked = Properties.Settings.Default.ReverseLEDRender;
             ColorDensity.Value = Properties.Settings.Default.Density;
             RenderFPS.Text = Properties.Settings.Default.RenderFPS.ToString();
@@ -71,22 +74,30 @@ namespace ListenerX
                 Properties.Settings.Default.RenderFPS = safeConvertFps;
                 Properties.Settings.Default.Save();
             }
+            if (this.ChromaEnableChanged)
+            {
+                MessageBox.Show($"Razer Chroma SDK enable/disable required application to restart in order to take effect.", "ListenerX", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
             Dispose();
         }
 
         private int SafeConvertRenderFps(string text)
         {
-            int.TryParse(text, out int result);
-            if (result <= 0)
-                result = 60;
-            else if (result > 144)
-                result = 144;
-            return result;
+            if (int.TryParse(text, out int result))
+            {
+                if (result <= 0)
+                    result = 60;
+                else if (result > 144)
+                    result = 144;
+                return result;
+            }
+            throw new FormatException(nameof(text));
         }
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            new ColorSettings().Show();
+            using var colorSettings = new ColorSettings();
+            colorSettings.ShowDialog();
         }
 
         private void ResetButton_Click(object sender, EventArgs e)
@@ -100,6 +111,11 @@ namespace ListenerX
 
         private void ChromaSDKEnable_CheckedChanged(object sender, EventArgs e)
         {
+            if (sender != null)
+            {
+                ChromaEnableChanged = true;
+            }
+
             ColorSettingsButton.Enabled = ChromaSDKEnable.Checked;
             ReverseLEDRender.Enabled = ChromaSDKEnable.Checked;
             ColorDensity.Enabled = ChromaSDKEnable.Checked;

@@ -31,6 +31,5 @@ namespace ListenerX
               .Max();
             Panel.SetZIndex(element, maxZ + 1);
         }
-        public static T[] Slice<T>(this ReadOnlySpan<T> span, int startIndex, int length) => span.Slice(startIndex, length).ToArray();
     }
 }

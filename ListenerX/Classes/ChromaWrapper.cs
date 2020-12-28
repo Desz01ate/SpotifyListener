@@ -29,7 +29,7 @@ namespace ListenerX
             public CustomMousepadEffect MousepadGrid = CustomMousepadEffect.Create();
             public CustomHeadsetEffect HeadsetGrid = CustomHeadsetEffect.Create();
             private IChroma Chroma;
-            public static ChromaWrapper GetInstance { get; } = new ChromaWrapper();
+            public static ChromaWrapper Instance { get; } = new ChromaWrapper();
             public bool IsError { get; private set; }
 
             public void SetIndividualKeys()
