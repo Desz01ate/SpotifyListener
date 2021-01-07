@@ -22,7 +22,7 @@ namespace ListenerX
         private bool ChromaPeakEnable = false;
         private bool ChromaEnableChanged = false;
         private bool Adaptive = false;
-
+        private bool ArtworkWallpaperEnabled = false;
         public Settings()
         {
             InitializeComponent();
@@ -41,6 +41,7 @@ namespace ListenerX
             ColorDensity.Value = Properties.Settings.Default.Density;
             RenderFPS.Text = Properties.Settings.Default.RenderFPS.ToString();
             AlbumColorMode.SelectedIndex = Properties.Settings.Default.AlbumColorMode;
+            cb_EnableArtworkWallpaper.Checked = Properties.Settings.Default.ArtworkWallpaperEnable;
 
             ChromaSDKEnable_CheckedChanged(null, EventArgs.Empty);
             trackbar_VolumeScale.Value = Properties.Settings.Default.VolumeScale;
@@ -66,6 +67,8 @@ namespace ListenerX
 
             Properties.Settings.Default.AlbumColorMode = (byte)AlbumColorMode.SelectedIndex;
             Properties.Settings.Default.VolumeScale = trackbar_VolumeScale.Value;
+
+            Properties.Settings.Default.ArtworkWallpaperEnable = this.ArtworkWallpaperEnabled;
             Properties.Settings.Default.Save();
 
             var safeConvertFps = SafeConvertRenderFps(RenderFPS.Text);
@@ -212,6 +215,11 @@ namespace ListenerX
         private void groupBox3_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private void cb_EnableArtworkWallpaper_CheckedChanged(object sender, EventArgs e)
+        {
+            this.ArtworkWallpaperEnabled = cb_EnableArtworkWallpaper.Checked;
         }
     }
 }

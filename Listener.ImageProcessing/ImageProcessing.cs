@@ -25,34 +25,55 @@ namespace Listener.ImageProcessing
         {
             return Color.FromArgb((byte)alpha, (byte)(c.R * multiplier), (byte)(c.G * multiplier), (byte)(c.B * multiplier));
         }
-
-        public static Color AverageColor(this Image img)
+        public static Color DominantColor2(this Image img)
         {
-            using (var bitmap = (Bitmap)img)
-            {
-                var startX = 0;
-                var startY = 0;
-                int r = 0, g = 0, b = 0, total = 0;
-                for (int x = startX; x < bitmap.Size.Width; x++)
+            var bitmap = (Bitmap)img;
+            var colorIncidence = new Dictionary<int, int>();
+            for (var x = 0; x < bitmap.Size.Width; x++)
+                for (var y = 0; y < bitmap.Size.Height; y++)
                 {
-                    for (int y = startY; y < bitmap.Size.Height; y++)
-                    {
-                        Color clr = bitmap.GetPixel(x, y);
-                        r += clr.R;
-                        g += clr.G;
-                        b += clr.B;
-                        total++;
-                    }
+                    var pixelColor = bitmap.GetPixel(x, y).ToArgb();
+                    if (colorIncidence.Keys.Contains(pixelColor))
+                        colorIncidence[pixelColor]++;
+                    else
+                        colorIncidence.Add(pixelColor, 1);
                 }
-                //Calculate average
-                r /= total;
-                g /= total;
-                b /= total;
-                var result = Color.FromArgb(r, g, b);
-                return result;
-            }
+            return Color.FromArgb(colorIncidence.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value).First().Key);
 
         }
+
+        public static Color NearestColor(this Color c)
+        {
+            var inputRed = Convert.ToDouble(c.R);
+            var inputGreen = Convert.ToDouble(c.G);
+            var inputBlue = Convert.ToDouble(c.B);
+            var colors = new List<Color>();
+            foreach (var knownColor in Enum.GetValues(typeof(KnownColor)))
+            {
+                var color = Color.FromKnownColor((KnownColor)knownColor);
+                if (!color.IsSystemColor)
+                    colors.Add(color);
+            }
+            var nearestColor = Color.Empty;
+            var distance = 500.0;
+            foreach (var color in colors)
+            {
+                // Compute Euclidean distance between the two colors
+                var testRed = Math.Pow(Convert.ToDouble(color.R) - inputRed, 2.0);
+                var testGreen = Math.Pow(Convert.ToDouble(color.G) - inputGreen, 2.0);
+                var testBlue = Math.Pow(Convert.ToDouble(color.B) - inputBlue, 2.0);
+                var tempDistance = Math.Sqrt(testBlue + testGreen + testRed);
+                if (tempDistance == 0.0)
+                    return color;
+                if (tempDistance < distance)
+                {
+                    distance = tempDistance;
+                    nearestColor = color;
+                }
+            }
+            return nearestColor;
+        }
+
         public static byte[] ToByteArray(this Image image, ImageFormat imageFormat = null)
         {
             using (var memoryStream = new MemoryStream())
@@ -60,12 +81,6 @@ namespace Listener.ImageProcessing
                 image.Save(memoryStream, imageFormat ?? image.RawFormat);
                 return memoryStream.ToArray();
             }
-        }
-        public static Color DominantColor(this Image img, string path = "")
-        {
-            var colorThief = new ColorThiefDotNet.ColorThief();
-            var dominant = colorThief.GetColor((Bitmap)img);
-            return Color.FromArgb(dominant.Color.R, dominant.Color.G, dominant.Color.B);
         }
         public static Image SetOpacity(this Image image, double opacity, Color color)
         {
@@ -222,6 +237,10 @@ namespace Listener.ImageProcessing
             return $"#{c.R:X2}{c.G:X2}{c.B:X2}";
         }
 
+        public static uint ToUint(this Color c)
+        {
+            return (uint)(((c.A << 24) | (c.R << 16) | (c.G << 8) | c.B) & 0xffffffffL);
+        }
         public static Image CalculateBackgroundSource(Image AlbumArtwork, double width, double height, int blurRadial)
         {
             if (AlbumArtwork == null) return null;
@@ -230,6 +249,33 @@ namespace Listener.ImageProcessing
             var opacBg = cutBg.SetOpacity(0.6d, System.Drawing.Color.Black);
             var blurBg = opacBg.Blur(blurRadial);
             return blurBg;
+        }
+
+        public static IList<Color> GetDominantColors(this Image img, int k = 1)
+        {
+            const int maxResizedDimension = 200;
+            Size resizedSize;
+            if (img.Width > img.Height)
+            {
+                resizedSize = new Size(maxResizedDimension, (int)Math.Floor((img.Height / (img.Width * 1.0f)) * maxResizedDimension));
+            }
+            else
+            {
+                resizedSize = new Size((int)Math.Floor((img.Width / (img.Width * 1.0f)) * maxResizedDimension), maxResizedDimension);
+            }
+
+            using var resized = new Bitmap(img, resizedSize);
+            var colors = new List<Color>(resized.Width * resized.Height);
+            for (int x = 0; x < resized.Width; x++)
+            {
+                for (int y = 0; y < resized.Height; y++)
+                {
+                    colors.Add(resized.GetPixel(x, y));
+                }
+            }
+
+            var dominantColours = KMeansClusteringCalculator.Calculate(k, colors);
+            return dominantColours;
         }
     }
 }

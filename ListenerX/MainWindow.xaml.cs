@@ -18,6 +18,7 @@ using Listener.ImageProcessing;
 using ListenerX.ChromaExtension;
 using ListenerX.Classes;
 using ListenerX.Helpers;
+using ListenerX.Foundation.Struct;
 
 namespace ListenerX
 {
@@ -42,6 +43,7 @@ namespace ListenerX
         private Wallpaper wallpaper;
         private SearchPanel searchPanel;
         private LyricsDisplay lyricsDisplay;
+        private StandardColor standardRenderColor;
 
         private readonly IStreamablePlayerHost player;
 
@@ -113,7 +115,7 @@ namespace ListenerX
 
         private void DefaultAudioEndpointTimer_Tick(object sender, EventArgs e)
         {
-            var currentDefaultAudioEndpoint = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
+            var currentDefaultAudioEndpoint = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
             if (defaultAudioEndpoint == null || defaultAudioEndpoint.FriendlyName != currentDefaultAudioEndpoint.FriendlyName)
             {
                 defaultAudioEndpoint?.Dispose();
@@ -177,7 +179,20 @@ namespace ListenerX
                 //this.btn_lyrics.Visibility = string.IsNullOrWhiteSpace(playbackContext.Lyrics)
                 //    ? Visibility.Hidden
                 //    : Visibility.Visible;
-                wallpaper.Enable();
+                var colors = player.AlbumArtwork.GetDominantColors(2);
+                standardRenderColor = new StandardColor();
+                standardRenderColor.Standard = colors[0];
+                standardRenderColor.Complemented = colors[1];
+
+                if (Properties.Settings.Default.ArtworkWallpaperEnable)
+                {
+                    wallpaper.Enable();
+                }
+                else
+                {
+                    wallpaper.Disable();
+                }
+
             });
         }
 
@@ -220,7 +235,7 @@ namespace ListenerX
                 var density = Properties.Settings.Default.AdaptiveDensity && player.IsPlaying
                     ? volume * 0.7f
                     : (Properties.Settings.Default.Density / 10.0);
-                chromaWrapper.LoadColor(player, player.IsPlaying, density);
+                chromaWrapper.LoadColor(standardRenderColor, player.IsPlaying, density);
                 chromaWrapper.SetDevicesBackground();
                 if (Properties.Settings.Default.RenderPeakVolumeEnable)
                 {
@@ -236,8 +251,8 @@ namespace ListenerX
                     }
                     else
                     {
-                        chromaWrapper.MouseGrid.SetPeakVolume(chromaWrapper.VolumeColor, volume);
-                        chromaWrapper.KeyboardGrid.SetPeakVolume(chromaWrapper.VolumeColor, volume);
+                        chromaWrapper.MouseGrid.SetPeakVolume(chromaWrapper.VolumeColor, chromaWrapper.BackgroundColor, volume);
+                        chromaWrapper.KeyboardGrid.SetPeakVolume(chromaWrapper.VolumeColor, chromaWrapper.BackgroundColor, volume);
                         //Chroma.SetPeakVolume_Mouse(ActiveDevice.AudioMeterInformation.MasterPeakValue);
                         //Chroma.SetPeakVolume_Keyboard(ActiveDevice.AudioMeterInformation.MasterPeakValue);
                         //Chroma.SetPeakVolume_Headset_Mousepad();

@@ -3,8 +3,10 @@ using Listener.Core.Framework.Players;
 using Listener.ImageProcessing;
 using Microsoft.Win32;
 using System;
+using System.Collections;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -20,6 +22,9 @@ namespace ListenerX.Classes
         }
 
         string OriginalBackgroundImagePath { get; }
+
+        private uint? OriginalAccentColor, OriginalColorizationAfterglow, OriginalColorizationColor;
+
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern int SystemParametersInfo(UInt32 action, UInt32 uParam, String vParam, UInt32 winIni);
@@ -97,7 +102,7 @@ namespace ListenerX.Classes
             DeleteTempFile();
             bool success = false;
             string tempPath = CacheFileManager.GetTempPath().Replace("tmp", "jpg");
-            RegistryKey desktopKey = default;
+            using RegistryKey desktopKey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
             temporaryWaitForDeleteFiles = tempPath;
             try
             {
@@ -106,8 +111,6 @@ namespace ListenerX.Classes
                     File.Create(tempPath).Close();
                     image.Save(tempPath, image.RawFormat);
                 }
-
-                desktopKey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
                 switch (style)
                 {
                     case Style.Stretched:
@@ -136,20 +139,48 @@ namespace ListenerX.Classes
                     Task.Run(() => SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, tempPath,
                         SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE));
                 }
-
+                if (Environment.OSVersion.Version.Major >= 6 && Environment.OSVersion.Version.Minor >= 2)
+                {
+                    using var dwmKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\DWM", true);
+                    if (!OriginalAccentColor.HasValue)
+                    {
+                        this.OriginalAccentColor = DwordConversion((int)dwmKey.GetValue("AccentColor"));//4282927692
+                        this.OriginalColorizationAfterglow = DwordConversion((int)dwmKey.GetValue("ColorizationAfterglow")); //3293334088
+                        this.OriginalColorizationColor = DwordConversion((int)dwmKey.GetValue("ColorizationColor")); //3293334088
+                    }
+                    unchecked
+                    {
+                        if (image == null)
+                        {
+                            dwmKey.SetValue("AccentColor", (int)this.OriginalAccentColor, RegistryValueKind.DWord);
+                            dwmKey.SetValue("ColorizationAfterglow", (int)this.OriginalColorizationAfterglow, RegistryValueKind.DWord);
+                            dwmKey.SetValue("ColorizationColor", (int)this.OriginalColorizationColor, RegistryValueKind.DWord);
+                        }
+                        else
+                        {
+                            var color = this.Player.AlbumArtwork.GetDominantColors(1).First();
+                            //due to windows is weird shit, arrange ARGB as ABGR instead so we need to swap rgb position.
+                            var swappedColor = Color.FromArgb(color.A, color.B, color.G, color.R).ToUint();
+                            dwmKey.SetValue("AccentColor", (int)swappedColor, RegistryValueKind.DWord);
+                            dwmKey.SetValue("ColorizationAfterglow", (int)swappedColor, RegistryValueKind.DWord);
+                            dwmKey.SetValue("ColorizationColor", (int)swappedColor, RegistryValueKind.DWord);
+                        }
+                    }
+                }
                 success = true;
-            }
-            catch (Exception ex)
-            {
-                //ex.HandleException();
             }
             finally
             {
-                desktopKey?.Close();
-                image?.Dispose();
+                //pass
             }
 
             return success;
+            uint DwordConversion(int value)
+            {
+                var binary = Convert.ToString(value, 2);
+                var converted = Convert.ToUInt32(binary, 2);
+                return converted;
+            }
         }
 
         internal void SetPlayerBase(IPlayerHost music)

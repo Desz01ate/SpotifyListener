@@ -53,6 +53,7 @@
             this.ColorSettingsButton = new System.Windows.Forms.Label();
             this.ChromaSDKEnable = new System.Windows.Forms.CheckBox();
             this.lbl_Metadata = new System.Windows.Forms.Label();
+            this.cb_EnableArtworkWallpaper = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).BeginInit();
@@ -81,6 +82,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.cb_EnableArtworkWallpaper);
             this.groupBox3.Controls.Add(this.ClearCache);
             this.groupBox3.Controls.Add(this.CacheSize);
             this.groupBox3.Controls.Add(this.label1);
@@ -328,6 +330,17 @@
             this.lbl_Metadata.TabIndex = 7;
             this.lbl_Metadata.Text = "$";
             // 
+            // cb_EnableArtworkWallpaper
+            // 
+            this.cb_EnableArtworkWallpaper.AutoSize = true;
+            this.cb_EnableArtworkWallpaper.Location = new System.Drawing.Point(10, 55);
+            this.cb_EnableArtworkWallpaper.Name = "cb_EnableArtworkWallpaper";
+            this.cb_EnableArtworkWallpaper.Size = new System.Drawing.Size(145, 17);
+            this.cb_EnableArtworkWallpaper.TabIndex = 8;
+            this.cb_EnableArtworkWallpaper.Text = "Enable artwork wallpaper";
+            this.cb_EnableArtworkWallpaper.UseVisualStyleBackColor = true;
+            this.cb_EnableArtworkWallpaper.CheckedChanged += new System.EventHandler(this.cb_EnableArtworkWallpaper_CheckedChanged);
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -381,5 +394,6 @@
         private System.Windows.Forms.Label CacheSize;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lbl_Metadata;
+        private System.Windows.Forms.CheckBox cb_EnableArtworkWallpaper;
     }
 }

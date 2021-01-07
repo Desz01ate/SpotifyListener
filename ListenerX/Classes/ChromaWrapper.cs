@@ -107,21 +107,21 @@ namespace ListenerX
             /// </summary>
             /// <param name="player">player instance</param>
             /// <param name="density">density for adaptive color</param>
-            public virtual void LoadColor(IPlayerHost player, bool isPlaying, double density)
+            public virtual void LoadColor(StandardColor color, bool isPlaying, double density)
             {
                 if (Properties.Settings.Default.AlbumCoverRenderEnable)
                 {
-                    var standardColor = new StandardColor();
-                    standardColor.Standard = player.AlbumArtwork.DominantColor();
-                    standardColor.Complemented = standardColor.Standard.InverseColor();
+                    var standardColor = color;
                     var razerColor = new ChromaDevicesColor();
                     razerColor.Standard = standardColor.Standard.ToColoreColor();
                     razerColor.Complemented = standardColor.Complemented.ToColoreColor();
 
                     PositionColor_Background = razerColor.Standard;
                     PositionColor_Foreground = razerColor.Complemented;
-                    VolumeColor = razerColor.Complemented;
-                    BackgroundColor = razerColor.Standard;
+                    //VolumeColor = razerColor.Complemented;
+                    //BackgroundColor = razerColor.Standard;
+                    VolumeColor = razerColor.Standard;
+                    BackgroundColor = razerColor.Complemented;
                 }
                 else
                 {
@@ -256,16 +256,17 @@ new ColoreColor(255,0  ,32 )
 //new ColoreColor(224,0  ,32 ),
         };
             static CircularQueue<ColoreColor> colors = new CircularQueue<ColoreColor>(rotationColors);
-            public static void SetPeakVolume(this ref CustomMouseEffect MouseGrid, ColoreColor VolumeColor, float volume)
+            public static void SetPeakVolume(this ref CustomMouseEffect MouseGrid, ColoreColor VolumeColor, ColoreColor SecondaryColor, float volume)
             {
                 var absolutePosition = Math.Round((volume * Constant.LeftStrip.Length), 0);
+                MouseGrid.Set(ColoreColor.Black);
                 for (var i = 0; i < absolutePosition; i++)
                 {
                     var color = VolumeColor.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
                     if (i > 0)
-                        MouseGrid[GridLed.Logo] = color;
+                        MouseGrid[GridLed.Logo] = SecondaryColor.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
                     if (i == Constant.LeftStrip.Length - 1)
-                        MouseGrid[GridLed.ScrollWheel] = color;
+                        MouseGrid[GridLed.ScrollWheel] = SecondaryColor.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
                     MouseGrid[Constant.RightStrip_Reverse[i]] = color;
                     MouseGrid[Constant.LeftStrip_Reverse[i]] = color;
                 }
@@ -293,7 +294,7 @@ new ColoreColor(255,0  ,32 )
                     changeRate = 0;
                 }
             }
-            public static void SetPeakVolume(this ref CustomKeyboardEffect KeyboardGrid, ColoreColor VolumeColor, float volume)
+            public static void SetPeakVolume(this ref CustomKeyboardEffect KeyboardGrid, ColoreColor VolumeColor, ColoreColor SecondaryColor, float volume)
             {
                 //var absolutePosition = Math.Round((volume * Constant.FunctionKeys.Length), 0);
                 //for (var i = 0; i < absolutePosition; i++)
@@ -301,6 +302,7 @@ new ColoreColor(255,0  ,32 )
                 //    var color = VolumeColor.ChangeColorDensity((double)(i + 1) / (double)Constant.FunctionKeys.Length);
                 //    KeyboardGrid[Constant.FunctionKeys[i]] = color;// VolumeColor;
                 //}
+                KeyboardGrid.Set(ColoreColor.Black);
                 for (var outerIdx = 0; outerIdx < Constant.KeyboardKeysArray_Vertical.Length; outerIdx++)
                 {
                     var currentRow = Constant.KeyboardKeysArray_Vertical[outerIdx];
@@ -309,7 +311,7 @@ new ColoreColor(255,0  ,32 )
                     {
                         var color = VolumeColor.ChangeColorDensity((double)(i + 1) / (double)currentRow.Length);//.ChangeColorDensity((double)(i + 1) / (double)Constant.FunctionKeys.Length);
                         KeyboardGrid[currentRow[i]] = color;// VolumeColor;
-                        KeyboardGrid[Key.Logo] = ColoreColor.White.ChangeColorDensity((double)(i + 1) / (double)currentRow.Length);
+                        KeyboardGrid[Key.Logo] = SecondaryColor.ChangeColorDensity((double)(i + 1) / (double)Constant.LeftStrip.Length);
                     }
                 }
             }
