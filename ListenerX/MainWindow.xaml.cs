@@ -32,7 +32,7 @@ namespace ListenerX
         private AnimationController animation;
         private readonly MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
         private MMDevice defaultAudioEndpoint;
-        private readonly ChromaWrapper chromaWrapper;
+        private readonly ChromaWorker chroma;
 
         private readonly SolidColorBrush playColor =
             (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
@@ -43,7 +43,7 @@ namespace ListenerX
         private Wallpaper wallpaper;
         private SearchPanel searchPanel;
         private LyricsDisplay lyricsDisplay;
-        private StandardColor standardRenderColor;
+        //private StandardColor standardRenderColor;
 
         private readonly IStreamablePlayerHost player;
 
@@ -91,10 +91,10 @@ namespace ListenerX
 
                 if (Properties.Settings.Default.ChromaSDKEnable)
                 {
-                    var chroma = ChromaWrapper.Instance;
+                    var chroma = ChromaWorker.Instance;
                     if (!chroma.IsError)
                     {
-                        chromaWrapper = chroma;
+                        this.chroma = chroma;
                         chromaTimer.Interval =
                             (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
                         chromaTimer.Tick += ChromaTimer_Tick;
@@ -180,9 +180,12 @@ namespace ListenerX
                 //    ? Visibility.Hidden
                 //    : Visibility.Visible;
                 var colors = player.AlbumArtwork.GetDominantColors(2);
-                standardRenderColor = new StandardColor();
+                var standardRenderColor = new StandardColor();
                 standardRenderColor.Standard = colors[0];
                 standardRenderColor.Complemented = colors[1];
+
+                this.chroma?.LoadColor(standardRenderColor, false, 0);
+
 
                 if (Properties.Settings.Default.ArtworkWallpaperEnable)
                 {
@@ -225,62 +228,36 @@ namespace ListenerX
             {
                 if (defaultAudioEndpoint == null)
                 {
-                    chromaWrapper.SDKDisable();
+                    chroma.SDKDisable();
                     return;
                 }
 
-                var volume = defaultAudioEndpoint.AudioMeterInformation.MasterPeakValue *
-                             (Properties.Settings.Default.VolumeScale / 10.0f);
-                if (volume > 1) volume = 1;
-                var density = Properties.Settings.Default.AdaptiveDensity && player.IsPlaying
-                    ? volume * 0.7f
-                    : (Properties.Settings.Default.Density / 10.0);
-                chromaWrapper.LoadColor(standardRenderColor, player.IsPlaying, density);
-                chromaWrapper.SetDevicesBackground();
-                if (Properties.Settings.Default.RenderPeakVolumeEnable)
-                {
-                    if (Properties.Settings.Default.SymmetricRenderEnable)
-                    {
-                        chromaWrapper.MouseGrid.SetPeakVolumeSymmetric(chromaWrapper.VolumeColor, volume);
-                        chromaWrapper.KeyboardGrid.SetPeakVolumeSymmetric(chromaWrapper.VolumeColor, volume);
-                    }
-                    else if (Properties.Settings.Default.PeakChroma)
-                    {
-                        chromaWrapper.MouseGrid.SetChromaPeakVolume(volume);
-                        chromaWrapper.KeyboardGrid.SetChromaPeakVolume(volume);
-                    }
-                    else
-                    {
-                        chromaWrapper.MouseGrid.SetPeakVolume(chromaWrapper.VolumeColor, chromaWrapper.BackgroundColor, volume);
-                        chromaWrapper.KeyboardGrid.SetPeakVolume(chromaWrapper.VolumeColor, chromaWrapper.BackgroundColor, volume);
-                        //Chroma.SetPeakVolume_Mouse(ActiveDevice.AudioMeterInformation.MasterPeakValue);
-                        //Chroma.SetPeakVolume_Keyboard(ActiveDevice.AudioMeterInformation.MasterPeakValue);
-                        //Chroma.SetPeakVolume_Headset_Mousepad();
-                    }
+                float volume = defaultAudioEndpoint.AudioMeterInformation.MasterPeakValue * (Properties.Settings.Default.VolumeScale / 10.0f);
+                if (volume > 1 || volume < 0e-6 || !player.IsPlaying)
+                    volume = 1;
 
-                    chromaWrapper.HeadsetGrid.SetPeakVolume(chromaWrapper.VolumeColor);
-                    chromaWrapper.MousepadGrid.SetPeakVolume(chromaWrapper.VolumeColor);
+                if (Properties.Settings.Default.RenderPeakVolumeEnable && Properties.Settings.Default.PeakChroma)
+                {
+                    chroma.PeakVolumeChromaEffects(volume, Properties.Settings.Default.SymmetricRenderEnable);
+                }
+                else if (Properties.Settings.Default.RenderPeakVolumeEnable)
+                {
+                    chroma.PeakVolumeEffects(volume, Properties.Settings.Default.SymmetricRenderEnable);
                 }
                 else
                 {
-                    chromaWrapper.MouseGrid.SetPlayingPosition(chromaWrapper.PositionColor_Foreground,
-                        chromaWrapper.PositionColor_Background, player.CalculatedPosition,
-                        Properties.Settings.Default.ReverseLEDRender);
-                    chromaWrapper.KeyboardGrid.SetPlayingPosition(chromaWrapper.PositionColor_Foreground,
-                        chromaWrapper.PositionColor_Background, player.CalculatedPosition);
-                    chromaWrapper.MouseGrid.SetVolumeScale(chromaWrapper.VolumeColor, player.Volume,
-                        Properties.Settings.Default.ReverseLEDRender);
+                    chroma.PlayingPositionEffects(this.player, volume, Properties.Settings.Default.ReverseLEDRender);
                 }
 
-                chromaWrapper.KeyboardGrid.SetVolumeScale(Properties.Settings.Default.Volume.ToColoreColor(), player.Volume);
-                chromaWrapper.KeyboardGrid.SetPlayingTime(TimeSpan.FromMilliseconds(player.Position_ms));
-                chromaWrapper.MousepadGrid.SetPeakVolume(chromaWrapper.VolumeColor);
-                chromaWrapper.HeadsetGrid.SetPeakVolume(chromaWrapper.VolumeColor);
-                chromaWrapper.Apply();
+                //chroma.KeyboardGrid.SetVolumeScale(Properties.Settings.Default.Volume.ToColoreColor(), player.Volume);
+                //chroma.KeyboardGrid.SetPlayingTime(TimeSpan.FromMilliseconds(player.Position_ms));
+                //chroma.MousepadGrid.SetPeakVolume(chroma.PrimaryColor);
+                //chroma.HeadsetGrid.SetPeakVolume(chroma.PrimaryColor);
+                chroma.ApplyAsync().Wait();
             }
-            catch
+            catch (Exception ex)
             {
-                chromaWrapper.SDKDisable();
+                chroma.SDKDisable();
             }
         }
 
@@ -407,7 +384,7 @@ namespace ListenerX
             defaultAudioEndpointTimer?.Dispose();
             wallpaper?.Dispose();
             player?.Dispose();
-            chromaWrapper?.Dispose();
+            chroma?.Dispose();
             defaultAudioEndpoint?.Dispose();
             deviceEnumerator?.Dispose();
             base.OnClosing(e);

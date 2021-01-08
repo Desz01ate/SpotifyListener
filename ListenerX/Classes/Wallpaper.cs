@@ -24,7 +24,8 @@ namespace ListenerX.Classes
         string OriginalBackgroundImagePath { get; }
 
         private uint? OriginalAccentColor, OriginalColorizationAfterglow, OriginalColorizationColor;
-
+        private uint? OriginalStartColorMenu, OriginalAccentColorMenu;
+        private byte[] OriginalAccentPallete;
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern int SystemParametersInfo(UInt32 action, UInt32 uParam, String vParam, UInt32 winIni);
@@ -142,19 +143,25 @@ namespace ListenerX.Classes
                 if (Environment.OSVersion.Version.Major >= 6 && Environment.OSVersion.Version.Minor >= 2)
                 {
                     using var dwmKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\DWM", true);
+                    //using var explorerAccentKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Accent", true);
                     if (!OriginalAccentColor.HasValue)
                     {
                         this.OriginalAccentColor = DwordConversion((int)dwmKey.GetValue("AccentColor"));//4282927692
-                        this.OriginalColorizationAfterglow = DwordConversion((int)dwmKey.GetValue("ColorizationAfterglow")); //3293334088
-                        this.OriginalColorizationColor = DwordConversion((int)dwmKey.GetValue("ColorizationColor")); //3293334088
+                        //this.OriginalColorizationAfterglow = DwordConversion((int)dwmKey.GetValue("ColorizationAfterglow")); //3293334088
+                        //this.OriginalColorizationColor = DwordConversion((int)dwmKey.GetValue("ColorizationColor")); //3293334088
+                        //this.OriginalStartColorMenu = DwordConversion((int)explorerAccentKey.GetValue("StartColorMenu"));
+                        //this.OriginalAccentColorMenu = DwordConversion((int)explorerAccentKey.GetValue("AccentColorMenu"));
+                        //this.OriginalAccentPallete = (byte[])explorerAccentKey.GetValue("AccentPalette");
                     }
                     unchecked
                     {
                         if (image == null)
                         {
                             dwmKey.SetValue("AccentColor", (int)this.OriginalAccentColor, RegistryValueKind.DWord);
-                            dwmKey.SetValue("ColorizationAfterglow", (int)this.OriginalColorizationAfterglow, RegistryValueKind.DWord);
-                            dwmKey.SetValue("ColorizationColor", (int)this.OriginalColorizationColor, RegistryValueKind.DWord);
+                            //dwmKey.SetValue("ColorizationAfterglow", (int)this.OriginalColorizationAfterglow, RegistryValueKind.DWord);
+                            //dwmKey.SetValue("ColorizationColor", (int)this.OriginalColorizationColor, RegistryValueKind.DWord);
+                            //explorerAccentKey.SetValue("StartColorMenu", (int)this.OriginalStartColorMenu, RegistryValueKind.DWord);
+                            //explorerAccentKey.SetValue("AccentColorMenu", (int)this.OriginalAccentColorMenu, RegistryValueKind.DWord);
                         }
                         else
                         {
@@ -162,8 +169,10 @@ namespace ListenerX.Classes
                             //due to windows is weird shit, arrange ARGB as ABGR instead so we need to swap rgb position.
                             var swappedColor = Color.FromArgb(color.A, color.B, color.G, color.R).ToUint();
                             dwmKey.SetValue("AccentColor", (int)swappedColor, RegistryValueKind.DWord);
-                            dwmKey.SetValue("ColorizationAfterglow", (int)swappedColor, RegistryValueKind.DWord);
-                            dwmKey.SetValue("ColorizationColor", (int)swappedColor, RegistryValueKind.DWord);
+                            //dwmKey.SetValue("ColorizationAfterglow", (int)swappedColor, RegistryValueKind.DWord);
+                            //dwmKey.SetValue("ColorizationColor", (int)swappedColor, RegistryValueKind.DWord);
+                            //explorerAccentKey.SetValue("StartColorMenu", (int)swappedColor, RegistryValueKind.DWord);
+                            //explorerAccentKey.SetValue("AccentColorMenu", (int)swappedColor, RegistryValueKind.DWord);
                         }
                     }
                 }

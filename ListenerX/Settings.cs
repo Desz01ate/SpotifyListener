@@ -133,9 +133,6 @@ namespace ListenerX
             RenderFPS.Enabled = true;
             var selectedIndex = ((ComboBox)sender).SelectedIndex;
             /*
-               Custom - Progression + Volume
-               Custom - Peak Volume Meter
-               Custom - Symmetric Peak Volume Meter
                Album Cover - Progression + Volume
                Album Cover - Peak Volume Meter
                Album Cover - Symmetric Peak Volume Meter
@@ -144,35 +141,32 @@ namespace ListenerX
             switch (selectedIndex)
             {
                 case 0:
+                    AlbumCoverRenderEnable = true;
+                    ChromaPeakEnable = false;
                     break;
                 case 1:
+                    AlbumCoverRenderEnable = true;
                     RenderPeakVolumeEnable = true;
                     ChromaPeakEnable = false;
                     break;
                 case 2:
+                    AlbumCoverRenderEnable = true;
                     RenderPeakVolumeEnable = true;
                     RenderPeakVolumeSymmetricEnable = true;
                     ChromaPeakEnable = false;
                     break;
                 case 3:
-                    AlbumCoverRenderEnable = true;
-                    ChromaPeakEnable = false;
-                    break;
-                case 4:
-                    AlbumCoverRenderEnable = true;
-                    RenderPeakVolumeEnable = true;
-                    ChromaPeakEnable = false;
-                    break;
-                case 5:
-                    AlbumCoverRenderEnable = true;
-                    RenderPeakVolumeEnable = true;
-                    RenderPeakVolumeSymmetricEnable = true;
-                    ChromaPeakEnable = false;
-                    break;
-                case 6:
                     AlbumCoverRenderEnable = false;
                     RenderPeakVolumeEnable = true;
                     RenderPeakVolumeSymmetricEnable = false;
+                    ChromaPeakEnable = true;
+                    RenderFPS.Enabled = false;
+                    RenderFPS.Text = "60";
+                    break;
+                case 4:
+                    AlbumCoverRenderEnable = false;
+                    RenderPeakVolumeEnable = true;
+                    RenderPeakVolumeSymmetricEnable = true;
                     ChromaPeakEnable = true;
                     RenderFPS.Enabled = false;
                     RenderFPS.Text = "60";

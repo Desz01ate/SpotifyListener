@@ -31,6 +31,7 @@
             this.SaveButton = new System.Windows.Forms.Label();
             this.ResetButton = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.cb_EnableArtworkWallpaper = new System.Windows.Forms.CheckBox();
             this.ClearCache = new System.Windows.Forms.Label();
             this.CacheSize = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -53,7 +54,6 @@
             this.ColorSettingsButton = new System.Windows.Forms.Label();
             this.ChromaSDKEnable = new System.Windows.Forms.CheckBox();
             this.lbl_Metadata = new System.Windows.Forms.Label();
-            this.cb_EnableArtworkWallpaper = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).BeginInit();
@@ -93,6 +93,17 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Preferences";
             this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
+            // 
+            // cb_EnableArtworkWallpaper
+            // 
+            this.cb_EnableArtworkWallpaper.AutoSize = true;
+            this.cb_EnableArtworkWallpaper.Location = new System.Drawing.Point(10, 55);
+            this.cb_EnableArtworkWallpaper.Name = "cb_EnableArtworkWallpaper";
+            this.cb_EnableArtworkWallpaper.Size = new System.Drawing.Size(145, 17);
+            this.cb_EnableArtworkWallpaper.TabIndex = 8;
+            this.cb_EnableArtworkWallpaper.Text = "Enable artwork wallpaper";
+            this.cb_EnableArtworkWallpaper.UseVisualStyleBackColor = true;
+            this.cb_EnableArtworkWallpaper.CheckedChanged += new System.EventHandler(this.cb_EnableArtworkWallpaper_CheckedChanged);
             // 
             // ClearCache
             // 
@@ -234,13 +245,11 @@
             this.RenderStyleCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.RenderStyleCombobox.FormattingEnabled = true;
             this.RenderStyleCombobox.Items.AddRange(new object[] {
-            "Custom - Progression + Volume",
-            "Custom - Peak Volume Meter",
-            "Custom - Symmetric Peak Volume Meter",
             "Album Cover - Progression + Volume",
             "Album Cover - Peak Volume Meter",
             "Album Cover - Symmetric Peak Volume Meter",
-            "Chroma - Peak Volume Meter"});
+            "Chroma - Peak Volume Meter",
+            "Chroma - Symmetric Peak Volume Meter"});
             this.RenderStyleCombobox.Location = new System.Drawing.Point(114, 154);
             this.RenderStyleCombobox.Name = "RenderStyleCombobox";
             this.RenderStyleCombobox.Size = new System.Drawing.Size(232, 21);
@@ -329,17 +338,6 @@
             this.lbl_Metadata.Size = new System.Drawing.Size(13, 13);
             this.lbl_Metadata.TabIndex = 7;
             this.lbl_Metadata.Text = "$";
-            // 
-            // cb_EnableArtworkWallpaper
-            // 
-            this.cb_EnableArtworkWallpaper.AutoSize = true;
-            this.cb_EnableArtworkWallpaper.Location = new System.Drawing.Point(10, 55);
-            this.cb_EnableArtworkWallpaper.Name = "cb_EnableArtworkWallpaper";
-            this.cb_EnableArtworkWallpaper.Size = new System.Drawing.Size(145, 17);
-            this.cb_EnableArtworkWallpaper.TabIndex = 8;
-            this.cb_EnableArtworkWallpaper.Text = "Enable artwork wallpaper";
-            this.cb_EnableArtworkWallpaper.UseVisualStyleBackColor = true;
-            this.cb_EnableArtworkWallpaper.CheckedChanged += new System.EventHandler(this.cb_EnableArtworkWallpaper_CheckedChanged);
             // 
             // Settings
             // 
