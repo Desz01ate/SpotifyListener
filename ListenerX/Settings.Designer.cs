@@ -39,25 +39,17 @@
             this.txt_volScale = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.trackbar_VolumeScale = new System.Windows.Forms.TrackBar();
-            this.label13 = new System.Windows.Forms.Label();
-            this.AlbumColorMode = new System.Windows.Forms.ComboBox();
-            this.label12 = new System.Windows.Forms.Label();
-            this.RenderModeCombobox = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
             this.RenderStyleCombobox = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.RenderFPS = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.ColorDensity = new System.Windows.Forms.TrackBar();
             this.ReverseLEDRender = new System.Windows.Forms.CheckBox();
-            this.ColorSettingsButton = new System.Windows.Forms.Label();
             this.ChromaSDKEnable = new System.Windows.Forms.CheckBox();
             this.lbl_Metadata = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ColorDensity)).BeginInit();
             this.SuspendLayout();
             // 
             // SaveButton
@@ -138,19 +130,12 @@
             this.groupBox2.Controls.Add(this.txt_volScale);
             this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Controls.Add(this.trackbar_VolumeScale);
-            this.groupBox2.Controls.Add(this.label13);
-            this.groupBox2.Controls.Add(this.AlbumColorMode);
-            this.groupBox2.Controls.Add(this.label12);
-            this.groupBox2.Controls.Add(this.RenderModeCombobox);
             this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Controls.Add(this.RenderStyleCombobox);
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.RenderFPS);
             this.groupBox2.Controls.Add(this.label11);
-            this.groupBox2.Controls.Add(this.label10);
-            this.groupBox2.Controls.Add(this.ColorDensity);
             this.groupBox2.Controls.Add(this.ReverseLEDRender);
-            this.groupBox2.Controls.Add(this.ColorSettingsButton);
             this.groupBox2.Controls.Add(this.ChromaSDKEnable);
             this.groupBox2.Location = new System.Drawing.Point(390, 13);
             this.groupBox2.Name = "groupBox2";
@@ -162,7 +147,7 @@
             // txt_volScale
             // 
             this.txt_volScale.AutoSize = true;
-            this.txt_volScale.Location = new System.Drawing.Point(254, 304);
+            this.txt_volScale.Location = new System.Drawing.Point(254, 196);
             this.txt_volScale.Name = "txt_volScale";
             this.txt_volScale.Size = new System.Drawing.Size(37, 13);
             this.txt_volScale.TabIndex = 28;
@@ -171,7 +156,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(6, 304);
+            this.label15.Location = new System.Drawing.Point(6, 196);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(78, 13);
             this.label15.TabIndex = 27;
@@ -179,57 +164,14 @@
             // 
             // trackbar_VolumeScale
             // 
-            this.trackbar_VolumeScale.Location = new System.Drawing.Point(87, 304);
-            this.trackbar_VolumeScale.Maximum = 20;
+            this.trackbar_VolumeScale.Location = new System.Drawing.Point(87, 196);
+            this.trackbar_VolumeScale.Maximum = 30;
             this.trackbar_VolumeScale.Minimum = 1;
             this.trackbar_VolumeScale.Name = "trackbar_VolumeScale";
             this.trackbar_VolumeScale.Size = new System.Drawing.Size(164, 45);
             this.trackbar_VolumeScale.TabIndex = 26;
             this.trackbar_VolumeScale.Value = 1;
             this.trackbar_VolumeScale.Scroll += new System.EventHandler(this.trackbar_VolumeScale_Scroll);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 218);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(102, 13);
-            this.label13.TabIndex = 25;
-            this.label13.Text = "Album Color Mode : ";
-            // 
-            // AlbumColorMode
-            // 
-            this.AlbumColorMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.AlbumColorMode.FormattingEnabled = true;
-            this.AlbumColorMode.Items.AddRange(new object[] {
-            "Dominant",
-            "Average"});
-            this.AlbumColorMode.Location = new System.Drawing.Point(114, 214);
-            this.AlbumColorMode.Name = "AlbumColorMode";
-            this.AlbumColorMode.Size = new System.Drawing.Size(232, 21);
-            this.AlbumColorMode.TabIndex = 24;
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(6, 187);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(81, 13);
-            this.label12.TabIndex = 23;
-            this.label12.Text = "Render Mode : ";
-            // 
-            // RenderModeCombobox
-            // 
-            this.RenderModeCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.RenderModeCombobox.FormattingEnabled = true;
-            this.RenderModeCombobox.Items.AddRange(new object[] {
-            "Static",
-            "Adaptive"});
-            this.RenderModeCombobox.Location = new System.Drawing.Point(114, 184);
-            this.RenderModeCombobox.Name = "RenderModeCombobox";
-            this.RenderModeCombobox.Size = new System.Drawing.Size(232, 21);
-            this.RenderModeCombobox.TabIndex = 22;
-            this.RenderModeCombobox.SelectedIndexChanged += new System.EventHandler(this.RenderModeCombobox_SelectedIndexChanged);
             // 
             // label9
             // 
@@ -246,10 +188,8 @@
             this.RenderStyleCombobox.FormattingEnabled = true;
             this.RenderStyleCombobox.Items.AddRange(new object[] {
             "Album Cover - Progression + Volume",
-            "Album Cover - Peak Volume Meter",
-            "Album Cover - Symmetric Peak Volume Meter",
-            "Chroma - Peak Volume Meter",
-            "Chroma - Symmetric Peak Volume Meter"});
+            "Album Cover - Spectrum Visualizer",
+            "Chroma -Spectrum Vitualizer"});
             this.RenderStyleCombobox.Location = new System.Drawing.Point(114, 154);
             this.RenderStyleCombobox.Name = "RenderStyleCombobox";
             this.RenderStyleCombobox.Size = new System.Drawing.Size(232, 21);
@@ -282,24 +222,6 @@
             this.label11.TabIndex = 11;
             this.label11.Text = "Render Frame-Per-Second : ";
             // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 258);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(75, 13);
-            this.label10.TabIndex = 4;
-            this.label10.Text = "Color Density :";
-            // 
-            // ColorDensity
-            // 
-            this.ColorDensity.Location = new System.Drawing.Point(87, 253);
-            this.ColorDensity.Minimum = 1;
-            this.ColorDensity.Name = "ColorDensity";
-            this.ColorDensity.Size = new System.Drawing.Size(164, 45);
-            this.ColorDensity.TabIndex = 6;
-            this.ColorDensity.Value = 1;
-            // 
             // ReverseLEDRender
             // 
             this.ReverseLEDRender.AutoSize = true;
@@ -309,16 +231,6 @@
             this.ReverseLEDRender.TabIndex = 4;
             this.ReverseLEDRender.Text = "Reverse LED Strip Render (For Mouse)";
             this.ReverseLEDRender.UseVisualStyleBackColor = true;
-            // 
-            // ColorSettingsButton
-            // 
-            this.ColorSettingsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.ColorSettingsButton.Location = new System.Drawing.Point(257, 257);
-            this.ColorSettingsButton.Name = "ColorSettingsButton";
-            this.ColorSettingsButton.Size = new System.Drawing.Size(75, 23);
-            this.ColorSettingsButton.TabIndex = 1;
-            this.ColorSettingsButton.Text = "Colors...";
-            this.ColorSettingsButton.Click += new System.EventHandler(this.ColorSettingsButton_Click);
             // 
             // ChromaSDKEnable
             // 
@@ -360,7 +272,6 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ColorDensity)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -371,19 +282,12 @@
         private System.Windows.Forms.Label ResetButton;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.ComboBox AlbumColorMode;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.ComboBox RenderModeCombobox;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox RenderStyleCombobox;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox RenderFPS;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.TrackBar ColorDensity;
         private System.Windows.Forms.CheckBox ReverseLEDRender;
-        private System.Windows.Forms.Label ColorSettingsButton;
         private System.Windows.Forms.CheckBox ChromaSDKEnable;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TrackBar trackbar_VolumeScale;

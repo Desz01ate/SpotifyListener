@@ -13,6 +13,7 @@ using ListenerX.Foundation.Struct;
 using ColoreColor = Colore.Data.Color;
 using System.Threading.Tasks;
 using System.Threading;
+using Utilities.Shared;
 
 namespace ListenerX
 {
@@ -74,27 +75,15 @@ namespace ListenerX
             /// <param name="density">density for adaptive color</param>
             public void LoadColor(StandardColor color)
             {
-                if (Properties.Settings.Default.AlbumCoverRenderEnable)
-                {
-                    var standardColor = color;
-                    var razerColor = new ChromaDevicesColor();
-                    razerColor.Standard = standardColor.Standard.ToColoreColor();
-                    razerColor.Complemented = standardColor.Complemented.ToColoreColor();
+                var standardColor = color;
+                var razerColor = new ChromaDevicesColor();
+                razerColor.Standard = standardColor.Standard.ToColoreColor();
+                razerColor.Complemented = standardColor.Complemented.ToColoreColor();
 
-                    //VolumeColor = razerColor.Complemented;
-                    //BackgroundColor = razerColor.Standard;
-                    PrimaryColor = razerColor.Standard;
-                    SecondaryColor = razerColor.Complemented;
-                }
-                else
-                {
-                    PrimaryColor = Properties.Settings.Default.Volume.ToColoreColor();
-                    SecondaryColor = Properties.Settings.Default.Volume.InverseColor().ToColoreColor();
-                    //SecondaryColor = !isPlaying ? BackgroundColor_Pause : BackgroundColor_Playing;
-                }
-                //if (Properties.Settings.Default.PeakChroma) SecondaryColor = ColoreColor.Black;
-                //density = density < 0.1 ? 0.1 : density;
-                //SecondaryColor = SecondaryColor.ChangeColorDensity(density);
+                //VolumeColor = razerColor.Complemented;
+                //BackgroundColor = razerColor.Standard;
+                PrimaryColor = razerColor.Standard;
+                SecondaryColor = razerColor.Complemented;
             }
 
             public ChromaWorker PeakVolumeEffects(float volume, bool splitRender = false)
@@ -114,21 +103,23 @@ namespace ListenerX
                 return this;
             }
 
-            public ChromaWorker PeakVolumeChromaEffects(float volume, bool splitRender = false)
+            public ChromaWorker VisualizeVolumeEffects(double[] spectrumValues)
             {
-                this.MouseGrid.Set(ColoreColor.Black);
-                this.KeyboardGrid.Set(ColoreColor.Black);
-                if (splitRender)
-                {
-                    this.MouseGrid.SetChromaPeakVolumeSymmetric(volume);
-                    this.KeyboardGrid.SetChromaPeakVolumeSymmetric(volume);
-                }
-                else
-                {
-                    this.MouseGrid.SetChromaPeakVolume(volume);
-                    this.KeyboardGrid.SetChromaPeakVolume(volume);
-                }
+                var keyboardSpectrum = spectrumValues.Take(22).ToArray();
+                var mouseSpectrum = spectrumValues.TakeLast(3).ToArray();
+                this.KeyboardGrid.SetVisualizeSpectrum(this.PrimaryColor, this.SecondaryColor, keyboardSpectrum);
+                this.MouseGrid.SetVisualizeSpectrum(this.PrimaryColor, this.SecondaryColor, mouseSpectrum);
+                return this;
+            }
 
+            public ChromaWorker VisualizeVolumeChromaEffects(double[] spectrumValues)
+            {
+                //this.MouseGrid.Set(ColoreColor.Black);
+                //this.KeyboardGrid.Set(ColoreColor.Black);
+                var keyboardSpectrum = spectrumValues.Take(22).ToArray();
+                var mouseSpectrum = spectrumValues.TakeLast(3).ToArray();
+                this.KeyboardGrid.SetChromaVisualizeSpectrum(keyboardSpectrum);
+                this.MouseGrid.SetChromaVisualizeSpectrum(mouseSpectrum);
                 this.HeadsetGrid.SetPeakVolume(this.PrimaryColor);
                 this.MousepadGrid.SetPeakVolume(this.PrimaryColor);
                 return this;
@@ -184,7 +175,7 @@ namespace ListenerX
                 public static readonly GridLed[] RightStrip = new[] { GridLed.RightSide1, GridLed.RightSide2, GridLed.RightSide3, GridLed.RightSide4, GridLed.RightSide5, GridLed.RightSide6, GridLed.RightSide7 };
                 public static readonly GridLed[] LeftStrip_Reverse = new[] { GridLed.LeftSide7, GridLed.LeftSide6, GridLed.LeftSide5, GridLed.LeftSide4, GridLed.LeftSide3, GridLed.LeftSide2, GridLed.LeftSide1 };
                 public static readonly GridLed[] RightStrip_Reverse = new[] { GridLed.RightSide7, GridLed.RightSide6, GridLed.RightSide5, GridLed.RightSide4, GridLed.RightSide3, GridLed.RightSide2, GridLed.RightSide1 };
-                static Constant() 
+                static Constant()
                 {
                     var keyboardArrays = new Key[][]{
                        new Key[22] { Key.Invalid, Key.Escape, Key.Invalid, Key.F1,Key.F2,Key.F3, Key.F4,Key.F5, Key.F6, Key.F7, Key.F8, Key.F9, Key.F10, Key.F11, Key.F12,Key.PrintScreen,Key.Scroll,Key.Pause, Key.Invalid,Key.Invalid,Key.Logo,Key.Invalid },
@@ -209,6 +200,7 @@ namespace ListenerX
                     KeyboardKeys_Vertical = verticalKeyboardArrays;
                 }
             }
+            const float BACKGROUND_MULT = 0.05f;
             static readonly ColoreColor[] rotationColors = new ColoreColor[] {
 //RED->GREEN
 new ColoreColor(255,0  ,0),
@@ -507,6 +499,138 @@ new ColoreColor(255,0  ,32 )
 
                 }
             }
+
+            public static void SetVisualizeSpectrum(this ref CustomKeyboardEffect keyboardGrid, ColoreColor primaryColor, ColoreColor secondaryColor, double[] spectrumValues)
+            {
+                keyboardGrid.Set(secondaryColor.ChangeColorDensity(BACKGROUND_MULT));
+                //for (var i = 0; i < 22; i++)
+                //{
+                //    var absoluteSpectrum = (int)(6.0d * spectrumValues[i]);
+                //    for (var h = 6; h >= absoluteSpectrum; h--)
+                //    {
+                //        var row = Constant.KeyboardKeys[h];
+                //        var key = row[i];
+                //    }
+                //}
+                for (var i = 0; i < Constant.KeyboardKeys_Vertical.Length; i++)
+                {
+                    var col = Constant.KeyboardKeys_Vertical[i];
+                    var c = spectrumValues[i];
+                    var absSpectrum = 6 - (int)Math.Round((col.Length * (c / 100.0d)), 0);
+                    for (var row = 5; row >= absSpectrum; row--)
+                    {
+                        var key = col[row];
+                        if (key == Key.Invalid)
+                            continue;
+                        keyboardGrid[col[row]] = primaryColor;
+                    }
+                }
+            }
+
+            public static void SetVisualizeSpectrum(this ref CustomMouseEffect mouseGrid, ColoreColor primaryColor, ColoreColor secondaryColor, double[] spectrumValues)
+            {
+                mouseGrid.Set(secondaryColor.ChangeColorDensity(0.05));
+
+                var leftAbs = (int)Math.Round(Constant.LeftStrip.Length * (spectrumValues[0] / 100.0d), 2);
+                var middleAbs = (int)Math.Round(Constant.LeftStrip.Length * (spectrumValues[2] / 100.0d), 2);
+                var rightAbs = (int)Math.Round(Constant.RightStrip.Length * (spectrumValues[2] / 100.0d), 2);
+                if (leftAbs >= 1)
+                {
+                    var leftKey = Constant.LeftStrip_Reverse[leftAbs - 1];
+                    mouseGrid[led: leftKey] = primaryColor;
+                }
+                if (rightAbs >= 1)
+                {
+                    var rightKey = Constant.RightStrip_Reverse[rightAbs - 1];
+                    mouseGrid[led: rightKey] = primaryColor;
+                }
+                if (middleAbs >= 6)
+                {
+                    mouseGrid[GridLed.ScrollWheel] = primaryColor;
+                }
+                if (middleAbs > 0)
+                {
+
+                    mouseGrid[GridLed.Logo] = primaryColor;
+                }
+            }
+
+            public static void SetChromaVisualizeSpectrum(this ref CustomKeyboardEffect keyboardGrid, double[] spectrumValues)
+            {
+                for (var i = 0; i < Constant.KeyboardKeys_Vertical.Length; i++)
+                {
+                    var color = colors.ElementAt(i);
+                    var background = color.ChangeColorDensity(0.05);
+                    var col = Constant.KeyboardKeys_Vertical[i];
+
+                    foreach (var key in col)
+                    {
+                        if (key != Key.Invalid)
+                            keyboardGrid[key] = background;
+                    }
+                    var c = spectrumValues[i];
+                    var absSpectrum = 6 - (int)Math.Round((col.Length * (c / 100.0d)), 0);
+                    for (var row = 5; row >= absSpectrum; row--)
+                    {
+                        var key = col[row];
+                        if (key == Key.Invalid)
+                            continue;
+                        keyboardGrid[col[row]] = color;
+                    }
+                }
+            }
+
+
+            public static void SetChromaVisualizeSpectrum(this ref CustomMouseEffect mouseGrid, double[] spectrumValues)
+            {
+                var leftAbs = (int)Math.Round(Constant.LeftStrip.Length * (spectrumValues[0] / 100.0d), 2);
+                var middleAbs = (int)Math.Round(Constant.LeftStrip.Length * (spectrumValues[2] / 100.0d), 2);
+                var rightAbs = (int)Math.Round(Constant.RightStrip.Length * (spectrumValues[2] / 100.0d), 2);
+                var c1 = colors.ElementAt(22);
+                var bgC1 = c1.ChangeColorDensity(BACKGROUND_MULT);
+                foreach (var key in Constant.LeftStrip_Reverse)
+                {
+                    mouseGrid[key] = bgC1;
+                }
+                if (leftAbs >= 1)
+                {
+                    var leftKey = Constant.LeftStrip_Reverse[leftAbs - 1];
+                    mouseGrid[led: leftKey] = c1;
+                }
+                var c3 = colors.ElementAt(24);
+                var bgC3 = c3.ChangeColorDensity(BACKGROUND_MULT);
+                foreach (var key in Constant.RightStrip_Reverse)
+                {
+                    mouseGrid[key] = bgC3;
+                }
+                if (rightAbs >= 1)
+                {
+                    var rightKey = Constant.RightStrip_Reverse[rightAbs - 1];
+                    mouseGrid[led: rightKey] = c3;
+                }
+                var c2 = colors.ElementAt(23);
+                var bgC2 = c2.ChangeColorDensity(BACKGROUND_MULT);
+                mouseGrid[GridLed.Logo] = bgC2;
+                mouseGrid[GridLed.ScrollWheel] = bgC2;
+                if (middleAbs >= 6)
+                {
+                    mouseGrid[GridLed.ScrollWheel] = c2;
+                }
+                if (middleAbs > 0)
+                {
+
+                    mouseGrid[GridLed.Logo] = c2;
+                }
+
+                var speed = (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
+                changeRate += speed;
+                if (changeRate >= 44)
+                {
+                    colors.ShiftLeft();
+                    changeRate = 0;
+                }
+            }
+
         }
     }
 

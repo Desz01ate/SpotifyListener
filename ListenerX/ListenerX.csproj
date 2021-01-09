@@ -116,14 +116,14 @@
     <Reference Include="Colore, Version=6.0.0.14, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Colore.6.0.0-rc0014\lib\net452\Colore.dll</HintPath>
     </Reference>
+    <Reference Include="CSCore, Version=1.2.1.2, Culture=neutral, PublicKeyToken=5a08f2b6f4415dea, processorArchitecture=MSIL">
+      <HintPath>..\packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll</HintPath>
+    </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.11.24.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.11.24\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=2020.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2020.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio, Version=1.8.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.1.8.4\lib\net35\NAudio.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -187,6 +187,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Utilities.Lite, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Deszolate.Utilities.Lite.1.0.0.1\lib\netstandard2.0\Utilities.Lite.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -228,6 +231,10 @@
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\Wallpaper.cs" />
+    <Compile Include="Visualization\AudioSpectrumProviderContext.cs" />
+    <Compile Include="Visualization\BasicSpectrumProvider.cs" />
+    <Compile Include="Visualization\ISpectrumProvider.cs" />
+    <Compile Include="Visualization\LineSpectrum.cs" />
     <Compile Include="Visualization\ScalingStrategy.cs" />
     <Compile Include="Visualization\SpectrumBase.cs" />
     <Compile Include="Widget.xaml.cs">

@@ -1,5 +1,4 @@
-﻿using NAudio.CoreAudioApi;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +18,14 @@ using ListenerX.ChromaExtension;
 using ListenerX.Classes;
 using ListenerX.Helpers;
 using ListenerX.Foundation.Struct;
+using ListenerX.Visualization;
+using CSCore.DSP;
+using CSCore.SoundIn;
+using CSCore.Streams;
+using CSCore;
+using CSCore.Streams.Effects;
+using CSCore.CoreAudioAPI;
+using CSCore.SoundOut;
 
 namespace ListenerX
 {
@@ -31,7 +38,12 @@ namespace ListenerX
         //private readonly Timer defaultAudioEndpointTimer = new Timer();
         private AnimationController animation;
         private readonly MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
-        private MMDevice defaultAudioEndpoint;
+
+        private WasapiCapture _soundIn;
+        private ISoundOut _soundOut;
+        private IWaveSource _source;
+        private LineSpectrum _lineSpectrum;
+
         private readonly ChromaWorker chroma;
 
         private readonly SolidColorBrush playColor =
@@ -52,6 +64,9 @@ namespace ListenerX
             try
             {
                 InitializeComponent();
+
+                fromDefaultDeviceToolStripMenuItem_Click(null, null);
+
                 InitWidth = this.Width;
                 InitHeight = this.Height;
                 ResizeMode = ResizeMode.CanMinimize;
@@ -77,10 +92,6 @@ namespace ListenerX
                     });
                 };
 
-                //defaultAudioEndpointTimer.Interval = 1000;
-                //defaultAudioEndpointTimer.Tick += DefaultAudioEndpointTimer_Tick;
-                //defaultAudioEndpointTimer.Start();
-                defaultAudioEndpoint = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
                 KeyDown += MainWindowGrid_PreviewKeyDown;
                 Loaded += MainWindow_Loaded;
                 MouseDown += Window_MouseDown;
@@ -225,33 +236,21 @@ namespace ListenerX
         {
             try
             {
-                if (defaultAudioEndpoint == null)
-                {
-                    chroma.SDKDisable();
-                    return;
-                }
-
-                float volume = defaultAudioEndpoint.AudioMeterInformation.MasterPeakValue * (Properties.Settings.Default.VolumeScale / 10.0f);
-                if (volume > 1 || volume < 0e-6 || !player.IsPlaying)
-                    volume = 1;
-
                 if (Properties.Settings.Default.RenderPeakVolumeEnable && Properties.Settings.Default.PeakChroma)
                 {
-                    chroma.PeakVolumeChromaEffects(volume, Properties.Settings.Default.SymmetricRenderEnable);
+                    var spectrumData = this._lineSpectrum.CreateSpectrumData().Select(x => Math.Min(x * (Properties.Settings.Default.VolumeScale / 10.0f), 100)).ToArray();
+                    chroma.VisualizeVolumeChromaEffects(spectrumData);
                 }
                 else if (Properties.Settings.Default.RenderPeakVolumeEnable)
                 {
-                    chroma.PeakVolumeEffects(volume, Properties.Settings.Default.SymmetricRenderEnable);
+                    var spectrumData = this._lineSpectrum.CreateSpectrumData().Select(x => Math.Min(x * (Properties.Settings.Default.VolumeScale / 10.0f), 100)).ToArray();
+                    chroma.VisualizeVolumeEffects(spectrumData);
                 }
                 else
                 {
-                    chroma.PlayingPositionEffects(this.player, volume, Properties.Settings.Default.ReverseLEDRender);
+                    chroma.PlayingPositionEffects(this.player, 0, Properties.Settings.Default.ReverseLEDRender);
                 }
 
-                //chroma.KeyboardGrid.SetVolumeScale(Properties.Settings.Default.Volume.ToColoreColor(), player.Volume);
-                //chroma.KeyboardGrid.SetPlayingTime(TimeSpan.FromMilliseconds(player.Position_ms));
-                //chroma.MousepadGrid.SetPeakVolume(chroma.PrimaryColor);
-                //chroma.HeadsetGrid.SetPeakVolume(chroma.PrimaryColor);
                 chroma.ApplyAsync().Wait();
             }
             catch (Exception ex)
@@ -384,8 +383,8 @@ namespace ListenerX
             wallpaper?.Dispose();
             player?.Dispose();
             chroma?.Dispose();
-            defaultAudioEndpoint?.Dispose();
             deviceEnumerator?.Dispose();
+            Stop();
             base.OnClosing(e);
         }
 
@@ -469,6 +468,91 @@ namespace ListenerX
         private void Btn_SaveImage_Click(object sender, RoutedEventArgs e)
         {
             GenerateFormImage();
+        }
+
+
+        private void fromDefaultDeviceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Stop();
+
+            //open the default device 
+
+            _soundIn = new WasapiLoopbackCapture(100, new WaveFormat(48000, 24, 2));
+            //Our loopback capture opens the default render device by default so the following is not needed
+            //_soundIn.Device = MMDeviceEnumerator.DefaultAudioEndpoint(DataFlow.Render, Role.Console);
+            _soundIn.Initialize();
+
+            var soundInSource = new SoundInSource(_soundIn);
+            ISampleSource source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out _);
+
+            SetupSampleSource(source);
+
+            // We need to read from our source otherwise SingleBlockRead is never called and our spectrum provider is not populated
+            byte[] buffer = new byte[_source.WaveFormat.BytesPerSecond / 2];
+            soundInSource.DataAvailable += (s, aEvent) =>
+            {
+                int read;
+                while ((read = _source.Read(buffer, 0, buffer.Length)) > 0) ;
+            };
+
+
+            //play the audio
+            _soundIn.Start();
+        }
+
+        private void Stop()
+        {
+            if (_soundOut != null)
+            {
+                _soundOut.Stop();
+                _soundOut.Dispose();
+                _soundOut = null;
+            }
+            if (_soundIn != null)
+            {
+                _soundIn.Stop();
+                _soundIn.Dispose();
+                _soundIn = null;
+            }
+            if (_source != null)
+            {
+                _source.Dispose();
+                _source = null;
+            }
+        }
+
+        private void SetupSampleSource(ISampleSource aSampleSource)
+        {
+            const FftSize fftSize = FftSize.Fft4096;
+            //create a spectrum provider which provides fft data based on some input
+            var spectrumProvider = new BasicSpectrumProvider(aSampleSource.WaveFormat.Channels,
+                aSampleSource.WaveFormat.SampleRate, fftSize);
+
+            //linespectrum and voiceprint3dspectrum used for rendering some fft data
+            //in oder to get some fft data, set the previously created spectrumprovider 
+            _lineSpectrum = new LineSpectrum(fftSize)
+            {
+                SpectrumProvider = spectrumProvider,
+                //UseAverage = true,
+                //BarCount = 25,
+                //BarSpacing = 2,
+                //IsXLogScale = true,
+                //ScalingStrategy = ScalingStrategy.Decibel
+                UseAverage = false,
+                BarCount = 25,
+                BarSpacing = 2,
+                IsXLogScale = true,
+                ScalingStrategy = ScalingStrategy.Sqrt
+            };
+
+
+            //the SingleBlockNotificationStream is used to intercept the played samples
+            var notificationSource = new SingleBlockNotificationStream(aSampleSource);
+            //pass the intercepted samples as input data to the spectrumprovider (which will calculate a fft based on them)
+            notificationSource.SingleBlockRead += (s, a) => spectrumProvider.Add(a.Left, a.Right);
+
+            _source = notificationSource.ToWaveSource(16);
+
         }
     }
 }

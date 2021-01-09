@@ -17,30 +17,24 @@ namespace ListenerX
     public partial class Settings : Form
     {
         private bool AlbumCoverRenderEnable = false;
-        private bool RenderPeakVolumeEnable = false;
-        private bool RenderPeakVolumeSymmetricEnable = false;
-        private bool ChromaPeakEnable = false;
+        private bool RenderVisualizeSpectrumEnable = false;
+        private bool ChromaColorEnable = false;
         private bool ChromaEnableChanged = false;
-        private bool Adaptive = false;
         private bool ArtworkWallpaperEnabled = false;
+
         public Settings()
         {
             InitializeComponent();
             this.Icon = Properties.Resources.spotify;
             //Due to Facebook updated policy (https://developers.facebook.com/blog/post/2018/04/24/new-facebook-platform-product-changes-policy-updates/), now publish_actions is deprecated so this feature might be remove soon as well
-            Adaptive = Properties.Settings.Default.AdaptiveDensity;
             AlbumCoverRenderEnable = Properties.Settings.Default.AlbumCoverRenderEnable;
-            RenderPeakVolumeEnable = Properties.Settings.Default.RenderPeakVolumeEnable;
-            RenderPeakVolumeSymmetricEnable = Properties.Settings.Default.SymmetricRenderEnable;
-            ChromaPeakEnable = Properties.Settings.Default.PeakChroma;
+            RenderVisualizeSpectrumEnable = Properties.Settings.Default.RenderPeakVolumeEnable;
+            ChromaColorEnable = Properties.Settings.Default.PeakChroma;
             RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyleIndex;
-            RenderModeCombobox.SelectedIndex = Adaptive ? 1 : 0;
             ChromaSDKEnable.Checked = Properties.Settings.Default.ChromaSDKEnable;
             ChromaSDKEnable.CheckedChanged += ChromaSDKEnable_CheckedChanged;
             ReverseLEDRender.Checked = Properties.Settings.Default.ReverseLEDRender;
-            ColorDensity.Value = Properties.Settings.Default.Density;
             RenderFPS.Text = Properties.Settings.Default.RenderFPS.ToString();
-            AlbumColorMode.SelectedIndex = Properties.Settings.Default.AlbumColorMode;
             cb_EnableArtworkWallpaper.Checked = Properties.Settings.Default.ArtworkWallpaperEnable;
 
             ChromaSDKEnable_CheckedChanged(null, EventArgs.Empty);
@@ -54,18 +48,14 @@ namespace ListenerX
         private void SaveButton_Click(object sender, EventArgs e)
         {
 
-            Properties.Settings.Default.AdaptiveDensity = Adaptive;
-            Properties.Settings.Default.RenderPeakVolumeEnable = RenderPeakVolumeEnable;
+            Properties.Settings.Default.RenderPeakVolumeEnable = RenderVisualizeSpectrumEnable;
             Properties.Settings.Default.AlbumCoverRenderEnable = AlbumCoverRenderEnable;
-            Properties.Settings.Default.SymmetricRenderEnable = RenderPeakVolumeSymmetricEnable;
-            Properties.Settings.Default.PeakChroma = ChromaPeakEnable;
+            Properties.Settings.Default.PeakChroma = ChromaColorEnable;
             Properties.Settings.Default.RenderStyleIndex = (byte)RenderStyleCombobox.SelectedIndex;
 
             Properties.Settings.Default.ChromaSDKEnable = ChromaSDKEnable.Checked;
             Properties.Settings.Default.ReverseLEDRender = ReverseLEDRender.Checked;
-            Properties.Settings.Default.Density = ColorDensity.Value;
 
-            Properties.Settings.Default.AlbumColorMode = (byte)AlbumColorMode.SelectedIndex;
             Properties.Settings.Default.VolumeScale = trackbar_VolumeScale.Value;
 
             Properties.Settings.Default.ArtworkWallpaperEnable = this.ArtworkWallpaperEnabled;
@@ -119,17 +109,14 @@ namespace ListenerX
                 ChromaEnableChanged = true;
             }
 
-            ColorSettingsButton.Enabled = ChromaSDKEnable.Checked;
             ReverseLEDRender.Enabled = ChromaSDKEnable.Checked;
-            ColorDensity.Enabled = ChromaSDKEnable.Checked;
         }
 
         private void RenderStyleCombobox_SelectedIndexChanged(object sender, EventArgs e)
         {
             AlbumCoverRenderEnable = false;
-            RenderPeakVolumeEnable = false;
-            ChromaPeakEnable = false;
-            RenderPeakVolumeSymmetricEnable = false;
+            RenderVisualizeSpectrumEnable = false;
+            ChromaColorEnable = false;
             RenderFPS.Enabled = true;
             var selectedIndex = ((ComboBox)sender).SelectedIndex;
             /*
@@ -142,32 +129,17 @@ namespace ListenerX
             {
                 case 0:
                     AlbumCoverRenderEnable = true;
-                    ChromaPeakEnable = false;
+                    ChromaColorEnable = false;
                     break;
                 case 1:
                     AlbumCoverRenderEnable = true;
-                    RenderPeakVolumeEnable = true;
-                    ChromaPeakEnable = false;
+                    RenderVisualizeSpectrumEnable = true;
+                    ChromaColorEnable = false;
                     break;
                 case 2:
-                    AlbumCoverRenderEnable = true;
-                    RenderPeakVolumeEnable = true;
-                    RenderPeakVolumeSymmetricEnable = true;
-                    ChromaPeakEnable = false;
-                    break;
-                case 3:
                     AlbumCoverRenderEnable = false;
-                    RenderPeakVolumeEnable = true;
-                    RenderPeakVolumeSymmetricEnable = false;
-                    ChromaPeakEnable = true;
-                    RenderFPS.Enabled = false;
-                    RenderFPS.Text = "60";
-                    break;
-                case 4:
-                    AlbumCoverRenderEnable = false;
-                    RenderPeakVolumeEnable = true;
-                    RenderPeakVolumeSymmetricEnable = true;
-                    ChromaPeakEnable = true;
+                    RenderVisualizeSpectrumEnable = true;
+                    ChromaColorEnable = true;
                     RenderFPS.Enabled = false;
                     RenderFPS.Text = "60";
                     break;
@@ -176,7 +148,6 @@ namespace ListenerX
 
         private void RenderModeCombobox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Adaptive = ((ComboBox)sender).SelectedIndex == 0 ? false : true;
         }
 
         private void Settings_Load(object sender, EventArgs e)

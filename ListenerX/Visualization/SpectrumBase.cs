@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CSCore;
+using CSCore.DSP;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -277,7 +279,7 @@ namespace ListenerX.Visualization
         }
 
         [DebuggerDisplay("{Value}")]
-        protected struct SpectrumPointData
+        public struct SpectrumPointData
         {
             public int SpectrumPointIndex;
             public double Value;
