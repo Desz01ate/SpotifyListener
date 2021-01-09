@@ -228,6 +228,8 @@
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\Wallpaper.cs" />
+    <Compile Include="Visualization\ScalingStrategy.cs" />
+    <Compile Include="Visualization\SpectrumBase.cs" />
     <Compile Include="Widget.xaml.cs">
       <DependentUpon>Widget.xaml</DependentUpon>
     </Compile>

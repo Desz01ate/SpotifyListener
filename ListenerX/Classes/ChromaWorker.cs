@@ -72,7 +72,7 @@ namespace ListenerX
             /// </summary>
             /// <param name="player">player instance</param>
             /// <param name="density">density for adaptive color</param>
-            public void LoadColor(StandardColor color, bool isPlaying, double density)
+            public void LoadColor(StandardColor color)
             {
                 if (Properties.Settings.Default.AlbumCoverRenderEnable)
                 {
@@ -138,14 +138,15 @@ namespace ListenerX
             {
                 if (double.IsNaN(player.CalculatedPosition) || double.IsInfinity(player.CalculatedPosition))
                     return this;
-                var backgroundColor = this.PrimaryColor.ChangeColorDensity(0.05);
+                var backgroundColor = this.PrimaryColor.ChangeColorDensity(0.2);
                 this.KeyboardGrid.Set(backgroundColor);
-                this.MouseGrid.SetPlayingPosition(this.PrimaryColor, backgroundColor, player.CalculatedPosition, swapLedRender);
-                this.MouseGrid.SetVolumeScale(this.PrimaryColor.ComplementColor(), (int)volume, swapLedRender);
-                this.KeyboardGrid.SetPlayingPosition(this.PrimaryColor, backgroundColor, player.CalculatedPosition);
+                this.MouseGrid.Set(backgroundColor);
+                this.MouseGrid.SetPlayingPosition(this.SecondaryColor, player.CalculatedPosition, swapLedRender);
+                this.MouseGrid.SetVolumeScale(this.SecondaryColor, volume, swapLedRender);
+                this.KeyboardGrid.SetPlayingPosition(this.PrimaryColor, this.SecondaryColor, player.CalculatedPosition);
 
-                this.KeyboardGrid.SetVolumeScale(this.SecondaryColor, player.Volume);
-                this.KeyboardGrid.SetPlayingTime(TimeSpan.FromMilliseconds(player.Position_ms));
+                //this.KeyboardGrid.SetVolumeScale(this.SecondaryColor, player.Volume);
+                //this.KeyboardGrid.SetPlayingTime(TimeSpan.FromMilliseconds(player.Position_ms));
                 this.MousepadGrid.SetPeakVolume(this.PrimaryColor);
                 this.HeadsetGrid.SetPeakVolume(this.PrimaryColor);
                 return this;
@@ -183,7 +184,7 @@ namespace ListenerX
                 public static readonly GridLed[] RightStrip = new[] { GridLed.RightSide1, GridLed.RightSide2, GridLed.RightSide3, GridLed.RightSide4, GridLed.RightSide5, GridLed.RightSide6, GridLed.RightSide7 };
                 public static readonly GridLed[] LeftStrip_Reverse = new[] { GridLed.LeftSide7, GridLed.LeftSide6, GridLed.LeftSide5, GridLed.LeftSide4, GridLed.LeftSide3, GridLed.LeftSide2, GridLed.LeftSide1 };
                 public static readonly GridLed[] RightStrip_Reverse = new[] { GridLed.RightSide7, GridLed.RightSide6, GridLed.RightSide5, GridLed.RightSide4, GridLed.RightSide3, GridLed.RightSide2, GridLed.RightSide1 };
-                static Constant()
+                static Constant() 
                 {
                     var keyboardArrays = new Key[][]{
                        new Key[22] { Key.Invalid, Key.Escape, Key.Invalid, Key.F1,Key.F2,Key.F3, Key.F4,Key.F5, Key.F6, Key.F7, Key.F8, Key.F9, Key.F10, Key.F11, Key.F12,Key.PrintScreen,Key.Scroll,Key.Pause, Key.Invalid,Key.Invalid,Key.Logo,Key.Invalid },
@@ -191,7 +192,8 @@ namespace ListenerX
                        new Key[22]{ Key.Macro2,Key.Tab,Key.Q,Key.W,Key.E,Key.R,Key.T,Key.Y,Key.U,Key.I,Key.O,Key.P,Key.OemLeftBracket,Key.OemRightBracket,Key.OemBackslash, Key.Delete,Key.End,Key.PageDown,Key.Num7,Key.Num8,Key.Num9,Key.NumAdd},
                        new Key[22]{ Key.Macro3,Key.CapsLock,Key.A,Key.S,Key.D,Key.F,Key.G,Key.H,Key.J,Key.K,Key.L,Key.OemSemicolon,Key.OemApostrophe, Key.Invalid,Key.Enter,Key.Invalid,Key.Invalid,Key.Invalid,Key.Num4,Key.Num5,Key.Num6,Key.Invalid},
                        new Key[22]{ Key.Macro4,Key.LeftShift,Key.Invalid, Key.Z,Key.X,Key.C,Key.V,Key.B,Key.N,Key.M,Key.OemComma,Key.OemPeriod,Key.OemSlash,Key.Invalid, Key.RightShift, Key.Invalid,Key.Up,Key.Invalid,Key.Num1,Key.Num2,Key.Num3,Key.NumEnter},
-                       new Key[22] {Key.Macro5, Key.LeftControl,Key.LeftWindows,Key.LeftAlt,Key.Invalid, Key.Invalid, Key.Invalid,Key.Space,Key.Invalid,Key.Invalid,Key.Invalid, Key.RightAlt,Key.Function,Key.RightMenu,Key.RightControl,Key.Left,Key.Down,Key.Right,Key.Invalid,Key.Num0,Key.NumDecimal,Key.Invalid}
+                       new Key[22] {Key.Macro5, Key.LeftControl,Key.LeftWindows,Key.LeftAlt,Key.Invalid, Key.Invalid, Key.Invalid,Key.Space,Key.Invalid,Key.Invalid,Key.Invalid, Key.RightAlt,Key.Function,Key.RightMenu,Key.RightControl,Key.Left,Key.Down,Key.Right,Key.Invalid,Key.Num0,Key.NumDecimal,Key.Invalid},
+                       //new Key[22] { Key.Invalid, Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid, Key.Invalid, Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid, Key.Logo, Key.Invalid, Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid, Key.Invalid, Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid }, // ghost row to compensate old model logo lightning
                     };
                     KeyboardKeys = keyboardArrays;
                     var verticalKeyboardArrays = new Key[22][];
@@ -350,10 +352,10 @@ new ColoreColor(255,0  ,32 )
             {
                 HeadsetGrid.Set(VolumeColor);
             }
-            public static void SetVolumeScale(this ref CustomMouseEffect MouseGrid, ColoreColor VolumeColor, int volume, bool switchStripSide = false)
+            public static void SetVolumeScale(this ref CustomMouseEffect MouseGrid, ColoreColor VolumeColor, float volume, bool switchStripSide = false)
             {
                 var mouseStrip = !switchStripSide ? Constant.RightStrip_Reverse : Constant.LeftStrip_Reverse;
-                for (var i = 0; i < (volume * mouseStrip.Length) / 100; i++)
+                for (var i = 0; i < (volume * mouseStrip.Length); i++)
                 {
                     MouseGrid[mouseStrip[i]] = VolumeColor;
                 }
@@ -466,41 +468,43 @@ new ColoreColor(255,0  ,32 )
                 KeyboardGrid[Constant.NumpadKeys[time.Seconds / 10]] = ColoreColor.Green;
                 KeyboardGrid[Constant.NumpadKeys[time.Seconds % 10]] = ColoreColor.Blue;
             }
-            public static void SetPlayingPosition(this ref CustomMouseEffect MouseGrid, ColoreColor ForegroundColor, ColoreColor BackgroundColor, double position, bool switchStripSide = false)
+            public static void SetPlayingPosition(this ref CustomMouseEffect mouseGrid, ColoreColor primaryColor, double position, bool switchStripSide = false)
             {
                 var mouseStrip = !switchStripSide ? Constant.LeftStrip : Constant.RightStrip;
                 var currentPlayPosition = (int)Math.Round(position * ((double)(mouseStrip.Length - 1) / 10), 0);
-                for (var i = 0; i < mouseStrip.Length; i++)
-                {
-                    MouseGrid[mouseStrip[i]] = BackgroundColor;
-                }
-                MouseGrid[mouseStrip[currentPlayPosition]] = ForegroundColor;
+                //var background = secondaryColor.ChangeColorDensity(0.5);
+                //for (var i = 0; i < mouseStrip.Length; i++)
+                //{
+                //    mouseGrid[mouseStrip[i]] = background;
+                //}
+                mouseGrid[mouseStrip[currentPlayPosition]] = primaryColor;
             }
-            public static void SetPlayingPosition(this ref CustomKeyboardEffect KeyboardGrid, ColoreColor ForegroundColor, ColoreColor BackgroundColor, double position)
+            public static void SetPlayingPosition(this ref CustomKeyboardEffect keyboardGrid, ColoreColor primaryColor, ColoreColor secondaryColor, double position)
             {
+                //secondaryColor = ColoreColor.Red;
                 foreach (var row in Constant.KeyboardKeys)
                 {
                     var pos = (int)Math.Round(position * ((double)(row.Length - 1) / 10), 0);
                     var key = row[pos];
-
-
-                    if (key == Key.Invalid)
-                        continue;
+                    if (key != Key.Invalid)
+                    {
+                        keyboardGrid[key] = primaryColor;
+                    }
                     if (0 < pos - 1 && pos + 1 < row.Length)
                     {
                         var leftKey = row[pos - 1];
                         var rightKey = row[pos + 1];
-                        var gradientColor = ForegroundColor.ChangeColorDensity(0.3);
+
                         if (leftKey != Key.Invalid) //left gradient
                         {
-                            KeyboardGrid[leftKey] = gradientColor;
+                            keyboardGrid[leftKey] = secondaryColor;
                         }
                         if (rightKey != Key.Invalid)
                         {
-                            KeyboardGrid[rightKey] = gradientColor;
+                            keyboardGrid[rightKey] = secondaryColor;
                         }
                     }
-                    KeyboardGrid[key] = ForegroundColor;
+
                 }
             }
         }

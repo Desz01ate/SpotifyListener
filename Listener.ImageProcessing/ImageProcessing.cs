@@ -111,7 +111,7 @@ namespace Listener.ImageProcessing
         }
         public static Image Blur(this Image image, int radial)
         {
-            if (image.Width == 1 && image.Height == 1)
+            if (image.Width == 1 && image.Height == 1 || radial == 0)
                 return image;
             var result = GaussianBlur.Blur(image as Bitmap, radial);
             return result;
@@ -123,6 +123,7 @@ namespace Listener.ImageProcessing
             Bitmap outputImage;
             Graphics graphics;
             outputImage = new Bitmap(outputWidth, outputHeight, PixelFormat.Format32bppArgb);
+            //outputImage.SetResolution(300, 300);
             graphics = Graphics.FromImage(outputImage);
             graphics.DrawImage(img, new Rectangle(0, 0, outputWidth, outputHeight), new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
             return outputImage;
@@ -247,7 +248,7 @@ namespace Listener.ImageProcessing
             using var background = new Bitmap(AlbumArtwork);
             using var cutBg = background.Cut(width, height);
             var opacBg = cutBg.SetOpacity(0.6d, System.Drawing.Color.Black);
-            var blurBg = opacBg.Blur(blurRadial);
+            var blurBg = opacBg.Blur(10);
             return blurBg;
         }
 

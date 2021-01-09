@@ -34,23 +34,20 @@ namespace ListenerX.Classes
         public static readonly uint SPIF_UPDATEINIFILE = 0x01;
         public static readonly uint SPIF_SENDWININICHANGE = 0x02;
         private static readonly string BAK_IMAGE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "IMGBAK.bak");
-        private readonly float FontSize;
         private readonly string FontFamily;
         private IPlayerHost Player;
         private string temporaryWaitForDeleteFiles = "";
 
-        public Wallpaper(float fontSize, string fontFamily)
+        public Wallpaper(string fontFamily)
         {
             OriginalBackgroundImagePath = BAK_IMAGE;
-            FontSize = fontSize;
             FontFamily = fontFamily;
             Disable();
         }
 
-        public Wallpaper(string backgroundImagePath, float fontSize, string fontFamily)
+        public Wallpaper(string backgroundImagePath, string fontFamily)
         {
             OriginalBackgroundImagePath = backgroundImagePath;
-            FontSize = fontSize;
             FontFamily = fontFamily;
             try
             {
@@ -89,7 +86,7 @@ namespace ListenerX.Classes
 
         public void Enable()
         {
-            using var image = CalculateBackgroundImage();
+            using var image = CalculateBackgroundImage((float)System.Windows.SystemParameters.PrimaryScreenWidth, (float)System.Windows.SystemParameters.PrimaryScreenHeight);
             Set(image, Wallpaper.Style.Stretched);
         }
 
@@ -198,10 +195,10 @@ namespace ListenerX.Classes
         }
 
         private Image CalculateBackgroundImage(Image highlightImg, Image backgroundImg, string track, string album,
-            string artist, double? width = null, double? height = null)
+            string artist, float width, float height)
         {
-            var screenWidth = width ?? System.Windows.SystemParameters.PrimaryScreenWidth;
-            var screenHeight = height ?? System.Windows.SystemParameters.PrimaryScreenHeight;
+            var screenWidth = width;
+            var screenHeight = height;
 
             backgroundImg = backgroundImg.Resize((int)screenWidth, (int)screenHeight);
             using var g = Graphics.FromImage(backgroundImg);
@@ -210,13 +207,15 @@ namespace ListenerX.Classes
             var highlightY = (int)((screenHeight - highlightImg.Height) / 2) - (int)(screenHeight * 0.12);
             g.DrawImage(highlightImg, highlightX, highlightY);
 
-            using var font = new Font(FontFamily, FontSize, FontStyle.Regular);
-            using var trackFont = new Font(FontFamily, FontSize * 1.3f, FontStyle.Bold);
+            var fontSize = width * 0.0052592592592593f;//0.0185185185185185f;
+            using var font = new Font(FontFamily, fontSize, FontStyle.Regular);
+            using var trackFont = new Font(FontFamily, fontSize * 1.3f, FontStyle.Bold);
 
             var trackMeasure = g.MeasureString(track, trackFont);
             var albumMeasure = g.MeasureString(album, font);
             var artistMeasure = g.MeasureString(artist, font);
 
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
             g.DrawString(track, trackFont, Brushes.White, (int)((screenWidth - trackMeasure.Width) / 2),
                 highlightY + highlightImg.Height + (int)(screenHeight * 0.07));
             g.DrawString(album, font, Brushes.White, (int)((screenWidth - albumMeasure.Width) / 2),
@@ -227,34 +226,51 @@ namespace ListenerX.Classes
             return backgroundImg;
         }
 
-        private Image CalculateBackgroundImage(double? width = null, double? height = null)
+        private Image CalculateBackgroundImage(float width, float height)
         {
-            var highlightSize = (int)Math.Round(System.Windows.SystemParameters.PrimaryScreenHeight * 0.555);
+
+            var highlightSize = (int)Math.Round(height * 0.555);
 
             var artwork = Player.AlbumArtwork;
             using var background = ImageProcessing.CalculateBackgroundSource(
                 artwork,
-                System.Windows.SystemParameters.PrimaryScreenWidth,
-                System.Windows.SystemParameters.PrimaryScreenHeight,
+                width,
+                height,
                 10
             );
-            using var highlight = artwork.Resize(highlightSize, highlightSize);
-            var image = CalculateBackgroundImage(
-                highlight,
-                background,
-                Player.Track,
-                Player.Album,
-                Player.Artist,
-                width,
-                height);
+            Image highlight;
+            if (artwork.Width == artwork.Height)
+            {
+                highlight = artwork.Resize(highlightSize, highlightSize);
+            }
+            else
+            {
+                if (artwork.Width < artwork.Height)
+                {
+                    var factor = (float)highlightSize / artwork.Height;
+                    highlight = artwork.Resize((int)(artwork.Width * factor), highlightSize);
+                }
+                else
+                {
+                    var factor = (float)highlightSize / artwork.Width;
+                    highlight = artwork.Resize(highlightSize, (int)(artwork.Height * factor));
+                }
 
-            return image;
-        }
+            }
+            using (highlight)
+            {
+                var image = CalculateBackgroundImage(
+                    highlight,
+                    background,
+                    Player.Track,
+                    Player.Album,
+                    Player.Artist,
+                    width,
+                    height);
+                return image;
 
-        public void SaveWallpaperToFile(string filePath)
-        {
-            using var image = GetWallpaperImage(2560, 1440);
-            image.Save(filePath);
+            }
+
         }
 
         public Image GetWallpaperImage(int width, int height)

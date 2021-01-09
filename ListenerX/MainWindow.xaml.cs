@@ -28,7 +28,7 @@ namespace ListenerX
     public partial class MainWindow : Window
     {
         private readonly Timer chromaTimer = new Timer();
-        private readonly Timer defaultAudioEndpointTimer = new Timer();
+        //private readonly Timer defaultAudioEndpointTimer = new Timer();
         private AnimationController animation;
         private readonly MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
         private MMDevice defaultAudioEndpoint;
@@ -42,8 +42,6 @@ namespace ListenerX
 
         private Wallpaper wallpaper;
         private SearchPanel searchPanel;
-        private LyricsDisplay lyricsDisplay;
-        //private StandardColor standardRenderColor;
 
         private readonly IStreamablePlayerHost player;
 
@@ -79,9 +77,10 @@ namespace ListenerX
                     });
                 };
 
-                defaultAudioEndpointTimer.Interval = 1000;
-                defaultAudioEndpointTimer.Tick += DefaultAudioEndpointTimer_Tick;
-                defaultAudioEndpointTimer.Start();
+                //defaultAudioEndpointTimer.Interval = 1000;
+                //defaultAudioEndpointTimer.Tick += DefaultAudioEndpointTimer_Tick;
+                //defaultAudioEndpointTimer.Start();
+                defaultAudioEndpoint = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
                 KeyDown += MainWindowGrid_PreviewKeyDown;
                 Loaded += MainWindow_Loaded;
                 MouseDown += Window_MouseDown;
@@ -113,15 +112,15 @@ namespace ListenerX
             this.DataContext = player;
         }
 
-        private void DefaultAudioEndpointTimer_Tick(object sender, EventArgs e)
-        {
-            var currentDefaultAudioEndpoint = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-            if (defaultAudioEndpoint == null || defaultAudioEndpoint.FriendlyName != currentDefaultAudioEndpoint.FriendlyName)
-            {
-                defaultAudioEndpoint?.Dispose();
-                defaultAudioEndpoint = currentDefaultAudioEndpoint;
-            }
-        }
+        //private void DefaultAudioEndpointTimer_Tick(object sender, EventArgs e)
+        //{
+        //    var currentDefaultAudioEndpoint = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        //    if (defaultAudioEndpoint == null || defaultAudioEndpoint.FriendlyName != currentDefaultAudioEndpoint.FriendlyName)
+        //    {
+        //        defaultAudioEndpoint?.Dispose();
+        //        defaultAudioEndpoint = currentDefaultAudioEndpoint;
+        //    }
+        //}
 
         private void Player_OnDeviceChanged(Device device)
         {
@@ -142,11 +141,11 @@ namespace ListenerX
 
             if (Wallpaper.TryGetWallpaper(out var filePath))
             {
-                wallpaper = new Wallpaper(filePath, 20f, this.FontFamily.ToString());
+                wallpaper = new Wallpaper(filePath, this.FontFamily.ToString());
             }
             else
             {
-                wallpaper = new Wallpaper(20f, this.FontFamily.ToString());
+                wallpaper = new Wallpaper(this.FontFamily.ToString());
                 System.Windows.Forms.Application.Exit();
             }
 
@@ -184,7 +183,7 @@ namespace ListenerX
                 standardRenderColor.Standard = colors[0];
                 standardRenderColor.Complemented = colors[1];
 
-                this.chroma?.LoadColor(standardRenderColor, false, 0);
+                this.chroma?.LoadColor(standardRenderColor);
 
 
                 if (Properties.Settings.Default.ArtworkWallpaperEnable)
@@ -381,7 +380,7 @@ namespace ListenerX
             this.Hide();
             searchPanel?.Close();
             chromaTimer?.Dispose();
-            defaultAudioEndpointTimer?.Dispose();
+            //defaultAudioEndpointTimer?.Dispose();
             wallpaper?.Dispose();
             player?.Dispose();
             chroma?.Dispose();
@@ -400,7 +399,7 @@ namespace ListenerX
             }
             else
             {
-                using var image = wallpaper.GetWallpaperImage(2560, 1440);
+                using var image = wallpaper.GetWallpaperImage(3840, 2160);
                 path = CacheFileManager.SaveCache(fileName, image.ToByteArray(ImageFormat.Jpeg));
             }
             Process.Start(path);
