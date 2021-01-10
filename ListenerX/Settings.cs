@@ -1,5 +1,6 @@
 ﻿using Listener.Core.Framework.Helpers;
 using ListenerX.Classes;
+using ListenerX.Components;
 using ListenerX.Helpers;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace ListenerX
         private bool ChromaColorEnable = false;
         private bool ChromaEnableChanged = false;
         private bool ArtworkWallpaperEnabled = false;
-
+        private readonly VirtualKeyboardComponent virtualKeyboard;
         public Settings()
         {
             InitializeComponent();
@@ -46,6 +47,14 @@ namespace ListenerX
 
             this.lbl_Metadata.Text = $"Active module : {ActivatorHelpers.Metadata.ModuleName} {ActivatorHelpers.Metadata.VersionName}";
 
+            this.virtualKeyboard = new VirtualKeyboardComponent(12);
+            this.virtualKeyboard.OnImageChanged += VirtualKeyboard_OnImageChanged;
+            this.virtualKeyboard.Start();
+        }
+
+        private void VirtualKeyboard_OnImageChanged(object sender, EventArgs e)
+        {
+            this.visualizer.Image = this.virtualKeyboard.Image;
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -76,7 +85,7 @@ namespace ListenerX
             {
                 MessageBox.Show($"Razer Chroma SDK enable/disable required application to restart in order to take effect.", "ListenerX", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            Dispose();
+            //Dispose();
         }
 
         private int SafeConvertRenderFps(string text)
@@ -185,15 +194,23 @@ namespace ListenerX
             this.ArtworkWallpaperEnabled = cb_EnableArtworkWallpaper.Checked;
         }
 
-        private void label2_Click(object sender, EventArgs e)
-        {
-            var debug = new DebugForm();
-            debug.Show();
-        }
-
         private void trackbar_BgBrightness_Scroll(object sender, EventArgs e)
         {
             txt_BgBrightness.Text = trackbar_BgBrightness.Value + "%";
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            this.virtualKeyboard?.Dispose();
+            base.OnClosing(e);
+        }
+
+        private void visualizer_Click(object sender, EventArgs e)
+        {
+            this.virtualKeyboard.Stop();
+            using var debug = new VirtualKeyboard();
+            debug.ShowDialog();
+            this.virtualKeyboard.Start();
         }
     }
 }

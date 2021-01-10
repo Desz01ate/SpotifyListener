@@ -1,4 +1,6 @@
-﻿namespace ListenerX
+﻿using ListenerX.Components;
+
+namespace ListenerX
 {
     partial class Settings
     {
@@ -36,6 +38,9 @@
             this.CacheSize = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.txt_BgBrightness = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.trackbar_BgBrightness = new System.Windows.Forms.TrackBar();
             this.txt_volScale = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.trackbar_VolumeScale = new System.Windows.Forms.TrackBar();
@@ -47,30 +52,29 @@
             this.ReverseLEDRender = new System.Windows.Forms.CheckBox();
             this.ChromaSDKEnable = new System.Windows.Forms.CheckBox();
             this.lbl_Metadata = new System.Windows.Forms.Label();
+            this.visualizer = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.trackbar_BgBrightness = new System.Windows.Forms.TrackBar();
-            this.label3 = new System.Windows.Forms.Label();
-            this.txt_BgBrightness = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_BgBrightness)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.visualizer)).BeginInit();
             this.SuspendLayout();
             // 
             // SaveButton
             // 
             this.SaveButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.SaveButton.Location = new System.Drawing.Point(605, 380);
+            this.SaveButton.Location = new System.Drawing.Point(605, 428);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(76, 37);
             this.SaveButton.TabIndex = 1;
-            this.SaveButton.Text = "Save";
+            this.SaveButton.Text = "Apply";
             this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
             // ResetButton
             // 
             this.ResetButton.ForeColor = System.Drawing.Color.Red;
-            this.ResetButton.Location = new System.Drawing.Point(699, 380);
+            this.ResetButton.Location = new System.Drawing.Point(699, 428);
             this.ResetButton.Name = "ResetButton";
             this.ResetButton.Size = new System.Drawing.Size(76, 37);
             this.ResetButton.TabIndex = 4;
@@ -85,7 +89,7 @@
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Location = new System.Drawing.Point(12, 13);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(372, 361);
+            this.groupBox3.Size = new System.Drawing.Size(372, 412);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Preferences";
@@ -132,7 +136,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.txt_BgBrightness);
+            this.groupBox2.Controls.Add(this.visualizer);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.trackbar_BgBrightness);
             this.groupBox2.Controls.Add(this.txt_volScale);
@@ -147,10 +153,37 @@
             this.groupBox2.Controls.Add(this.ChromaSDKEnable);
             this.groupBox2.Location = new System.Drawing.Point(390, 13);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(366, 361);
+            this.groupBox2.Size = new System.Drawing.Size(369, 412);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Razer Chroma SDK";
+            // 
+            // txt_BgBrightness
+            // 
+            this.txt_BgBrightness.AutoSize = true;
+            this.txt_BgBrightness.Location = new System.Drawing.Point(297, 247);
+            this.txt_BgBrightness.Name = "txt_BgBrightness";
+            this.txt_BgBrightness.Size = new System.Drawing.Size(37, 13);
+            this.txt_BgBrightness.TabIndex = 31;
+            this.txt_BgBrightness.Text = "NaN%";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(9, 247);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(123, 13);
+            this.label3.TabIndex = 30;
+            this.label3.Text = "Background Brightness :";
+            // 
+            // trackbar_BgBrightness
+            // 
+            this.trackbar_BgBrightness.Location = new System.Drawing.Point(127, 247);
+            this.trackbar_BgBrightness.Maximum = 100;
+            this.trackbar_BgBrightness.Name = "trackbar_BgBrightness";
+            this.trackbar_BgBrightness.Size = new System.Drawing.Size(164, 45);
+            this.trackbar_BgBrightness.TabIndex = 29;
+            this.trackbar_BgBrightness.Scroll += new System.EventHandler(this.trackbar_BgBrightness_Scroll);
             // 
             // txt_volScale
             // 
@@ -253,55 +286,35 @@
             // lbl_Metadata
             // 
             this.lbl_Metadata.AutoSize = true;
-            this.lbl_Metadata.Location = new System.Drawing.Point(12, 380);
+            this.lbl_Metadata.Location = new System.Drawing.Point(12, 428);
             this.lbl_Metadata.Name = "lbl_Metadata";
             this.lbl_Metadata.Size = new System.Drawing.Size(13, 13);
             this.lbl_Metadata.TabIndex = 7;
             this.lbl_Metadata.Text = "$";
             // 
+            // visualizer
+            // 
+            this.visualizer.Location = new System.Drawing.Point(5, 312);
+            this.visualizer.Name = "visualizer";
+            this.visualizer.Size = new System.Drawing.Size(360, 95);
+            this.visualizer.TabIndex = 9;
+            this.visualizer.TabStop = false;
+            this.visualizer.Click += new System.EventHandler(this.visualizer_Click);
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(345, 380);
+            this.label2.Location = new System.Drawing.Point(9, 294);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(39, 13);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Debug";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
-            // 
-            // trackbar_BgBrightness
-            // 
-            this.trackbar_BgBrightness.Location = new System.Drawing.Point(127, 247);
-            this.trackbar_BgBrightness.Maximum = 100;
-            this.trackbar_BgBrightness.Name = "trackbar_BgBrightness";
-            this.trackbar_BgBrightness.Size = new System.Drawing.Size(164, 45);
-            this.trackbar_BgBrightness.TabIndex = 29;
-            this.trackbar_BgBrightness.Scroll += new System.EventHandler(this.trackbar_BgBrightness_Scroll);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 247);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(123, 13);
-            this.label3.TabIndex = 30;
-            this.label3.Text = "Background Brightness :";
-            // 
-            // txt_BgBrightness
-            // 
-            this.txt_BgBrightness.AutoSize = true;
-            this.txt_BgBrightness.Location = new System.Drawing.Point(297, 247);
-            this.txt_BgBrightness.Name = "txt_BgBrightness";
-            this.txt_BgBrightness.Size = new System.Drawing.Size(37, 13);
-            this.txt_BgBrightness.TabIndex = 31;
-            this.txt_BgBrightness.Text = "NaN%";
+            this.label2.Size = new System.Drawing.Size(81, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Effect preview :";
             // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(771, 405);
-            this.Controls.Add(this.label2);
+            this.ClientSize = new System.Drawing.Size(771, 458);
             this.Controls.Add(this.lbl_Metadata);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox3);
@@ -317,8 +330,9 @@
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackbar_BgBrightness)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackbar_VolumeScale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.visualizer)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -344,9 +358,10 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lbl_Metadata;
         private System.Windows.Forms.CheckBox cb_EnableArtworkWallpaper;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label txt_BgBrightness;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TrackBar trackbar_BgBrightness;
+        private System.Windows.Forms.PictureBox visualizer;
+        private System.Windows.Forms.Label label2;
     }
 }

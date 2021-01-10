@@ -239,10 +239,8 @@ namespace ListenerX.Classes
                 g.DrawImage(block, 0, y * boxHeight);
             }
 
-
             foreach (var key in this)
             {
-                //continue;
                 using var block = new System.Drawing.Bitmap(boxWidth, boxHeight);
                 using var _g = System.Drawing.Graphics.FromImage(block);
                 using System.Drawing.Brush color = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(key.Color.R, key.Color.G, key.Color.B));

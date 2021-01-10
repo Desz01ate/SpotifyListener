@@ -1,7 +1,7 @@
 ﻿
 namespace ListenerX
 {
-    partial class DebugForm
+    partial class VirtualKeyboard
     {
         /// <summary>
         /// Required designer variable.
@@ -40,8 +40,9 @@ namespace ListenerX
             this.pictureBox1.Size = new System.Drawing.Size(1425, 583);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
-            // DebugForm
+            // VirtualKeyboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -49,8 +50,8 @@ namespace ListenerX
             this.Controls.Add(this.pictureBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.Name = "DebugForm";
-            this.Text = "DebugForm";
+            this.Name = "VirtualKeyboard";
+            this.Text = "Virtual Keyboard Visualizer";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
