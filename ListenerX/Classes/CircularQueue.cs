@@ -12,7 +12,7 @@ namespace ListenerX.Classes
     /// Fixed-size queue which automatically dequeue when elements are going to exceed the limit.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public sealed class CircularQueue<T> : IEnumerable<T>
+    public class CircularQueue<T> : IEnumerable<T>
     {
         private readonly ConcurrentQueue<T> q;
         private readonly int limit;

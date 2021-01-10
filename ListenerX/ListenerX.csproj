@@ -199,7 +199,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\AbstractKeyGrid.cs" />
     <Compile Include="Classes\AnimationController.cs" />
+    <Compile Include="Classes\AutoshiftCirculaQueue.cs" />
+    <Compile Include="Classes\IAbstractKey.cs" />
     <Compile Include="Classes\LyricsHelpers.cs" />
     <Compile Include="Classes\CircularQueue.cs" />
     <Compile Include="ColorSettings.cs">

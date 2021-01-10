@@ -236,19 +236,18 @@ namespace ListenerX
         {
             try
             {
+                var spectrumData = this._lineSpectrum.CreateSpectrumData().Select(x => Math.Min(x * (Properties.Settings.Default.VolumeScale / 10.0f), 100)).ToArray();
                 if (Properties.Settings.Default.RenderPeakVolumeEnable && Properties.Settings.Default.PeakChroma)
                 {
-                    var spectrumData = this._lineSpectrum.CreateSpectrumData().Select(x => Math.Min(x * (Properties.Settings.Default.VolumeScale / 10.0f), 100)).ToArray();
                     chroma.VisualizeVolumeChromaEffects(spectrumData);
                 }
                 else if (Properties.Settings.Default.RenderPeakVolumeEnable)
                 {
-                    var spectrumData = this._lineSpectrum.CreateSpectrumData().Select(x => Math.Min(x * (Properties.Settings.Default.VolumeScale / 10.0f), 100)).ToArray();
                     chroma.VisualizeVolumeEffects(spectrumData);
                 }
                 else
                 {
-                    chroma.PlayingPositionEffects(this.player, 0, Properties.Settings.Default.ReverseLEDRender);
+                    chroma.PlayingPositionEffects(spectrumData.Average(), this.player.CalculatedPosition);
                 }
 
                 chroma.ApplyAsync().Wait();
@@ -539,7 +538,7 @@ namespace ListenerX
                 //IsXLogScale = true,
                 //ScalingStrategy = ScalingStrategy.Decibel
                 UseAverage = false,
-                BarCount = 25,
+                BarCount = 29,
                 BarSpacing = 2,
                 IsXLogScale = true,
                 ScalingStrategy = ScalingStrategy.Sqrt
