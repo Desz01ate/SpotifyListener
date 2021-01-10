@@ -20,7 +20,7 @@ namespace ListenerX
         {
             InitializeComponent();
             this.Width = 1520;
-            this.Height = 400;
+            this.Height = 450;
             this.pictureBox1.Width = this.Width;
             this.pictureBox1.Height = this.Height;
             this.virtualKeyboard = new VirtualKeyboardComponent(50);
