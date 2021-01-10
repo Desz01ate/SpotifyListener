@@ -32,6 +32,10 @@ namespace ListenerX.Classes
                 this.Color = color;
                 this.internalKeyCode = internalKeyCode;
             }
+            public override string ToString()
+            {
+                return this.FriendlyName + $"({Index.X},{Index.Y})";
+            }
         }
 
         private readonly IAbstractKey[,] grid;
@@ -117,29 +121,50 @@ namespace ListenerX.Classes
                 key.Color = color;
             }
         }
-        public void Clear()
-        {
-            foreach (var key in this.grid)
-            {
-                key.Color = Color.Black;
-            }
-        }
 
         public void VisualizeGrid()
         {
             var boxWidth = 100;
             var boxHeight = 100;
 
-            var totalWidth = this.ColumnCount * boxWidth;
-            var totalHeight = this.RowCount * boxHeight;
+            var totalWidth = (this.ColumnCount + 1) * boxWidth;
+            var totalHeight = (this.RowCount + 1) * boxHeight;
+
 
             using var bitmap = new System.Drawing.Bitmap(totalWidth, totalHeight);
             using var g = System.Drawing.Graphics.FromImage(bitmap);
-            using var font = new System.Drawing.Font("Microsoft Sans Serif", 10, System.Drawing.FontStyle.Regular);
+            using var font = new System.Drawing.Font("Microsoft Sans Serif", 13, System.Drawing.FontStyle.Regular);
 
-            var test = this.ToArray();
+            for (var x = 0; x < totalWidth; x++)
+            {
+                using var block = new System.Drawing.Bitmap(boxWidth, boxHeight);
+                using var _g = System.Drawing.Graphics.FromImage(block);
+                _g.FillRectangle(System.Drawing.Brushes.Black, new System.Drawing.RectangleF(0, 0, boxWidth, boxHeight));
+                var text = (x - 1).ToString();
+                if (text == "-1")
+                    text = "";
+                var textMeasure = _g.MeasureString(text, font);
+                _g.DrawString(text, font, System.Drawing.Brushes.Green, (int)((boxWidth - textMeasure.Width) / 2), (int)((boxHeight - textMeasure.Height) / 2));
+                g.DrawImage(block, x * boxWidth, 0);
+            }
+
+            for (var y = 0; y < totalHeight; y++)
+            {
+                using var block = new System.Drawing.Bitmap(boxWidth, boxHeight);
+                using var _g = System.Drawing.Graphics.FromImage(block);
+                _g.FillRectangle(System.Drawing.Brushes.Black, new System.Drawing.RectangleF(0, 0, boxWidth, boxHeight));
+                var text = (y - 1).ToString();
+                if (text == "-1")
+                    text = "";
+                var textMeasure = _g.MeasureString(text, font);
+                _g.DrawString(text, font, System.Drawing.Brushes.Green, (int)((boxWidth - textMeasure.Width) / 2), (int)((boxHeight - textMeasure.Height) / 2));
+                g.DrawImage(block, 0, y * boxHeight);
+            }
+
+
             foreach (var key in this)
             {
+                //continue;
                 using var block = new System.Drawing.Bitmap(boxWidth, boxHeight);
                 using var _g = System.Drawing.Graphics.FromImage(block);
                 System.Drawing.Brush color;
@@ -167,8 +192,8 @@ namespace ListenerX.Classes
 
                     var textMeasure = g.MeasureString(text, font);
                     _g.DrawString(text, font, System.Drawing.Brushes.Black, (int)((boxWidth - textMeasure.Width) / 2), (int)((boxHeight - textMeasure.Height) / 2));
-                    g.DrawImage(block, key.Index.X * boxWidth, key.Index.Y * boxHeight);
-                }       
+                    g.DrawImage(block, (key.Index.X + 1) * boxWidth, (key.Index.Y + 1) * boxHeight);
+                }
             }
 
             var tempPath = System.IO.Path.GetTempFileName().Replace(".tmp", ".jpg");
@@ -176,11 +201,86 @@ namespace ListenerX.Classes
             System.Diagnostics.Process.Start(tempPath);
         }
 
+        public System.Drawing.Image VisualizeRenderingGrid(int boxWidth = 50, int boxHeight = 50)
+        {
+            var fontSize = 13 * (boxWidth / 100.0f);
 
+            var totalWidth = (this.ColumnCount + 1) * boxWidth;
+            var totalHeight = (this.RowCount + 1) * boxHeight;
+
+
+            var bitmap = new System.Drawing.Bitmap(totalWidth, totalHeight);
+            using var g = System.Drawing.Graphics.FromImage(bitmap);
+            using var font = new System.Drawing.Font("Microsoft Sans Serif", fontSize, System.Drawing.FontStyle.Regular);
+
+            for (var x = 0; x < totalWidth; x++)
+            {
+                using var block = new System.Drawing.Bitmap(boxWidth, boxHeight);
+                using var _g = System.Drawing.Graphics.FromImage(block);
+                _g.FillRectangle(System.Drawing.Brushes.Black, new System.Drawing.RectangleF(0, 0, boxWidth, boxHeight));
+                var text = (x - 1).ToString();
+                if (text == "-1")
+                    text = "";
+                var textMeasure = _g.MeasureString(text, font);
+                _g.DrawString(text, font, System.Drawing.Brushes.Green, (int)((boxWidth - textMeasure.Width) / 2), (int)((boxHeight - textMeasure.Height) / 2));
+                g.DrawImage(block, x * boxWidth, 0);
+            }
+
+            for (var y = 0; y < totalHeight; y++)
+            {
+                using var block = new System.Drawing.Bitmap(boxWidth, boxHeight);
+                using var _g = System.Drawing.Graphics.FromImage(block);
+                _g.FillRectangle(System.Drawing.Brushes.Black, new System.Drawing.RectangleF(0, 0, boxWidth, boxHeight));
+                var text = (y - 1).ToString();
+                if (text == "-1")
+                    text = "";
+                var textMeasure = _g.MeasureString(text, font);
+                _g.DrawString(text, font, System.Drawing.Brushes.Green, (int)((boxWidth - textMeasure.Width) / 2), (int)((boxHeight - textMeasure.Height) / 2));
+                g.DrawImage(block, 0, y * boxHeight);
+            }
+
+
+            foreach (var key in this)
+            {
+                //continue;
+                using var block = new System.Drawing.Bitmap(boxWidth, boxHeight);
+                using var _g = System.Drawing.Graphics.FromImage(block);
+                using System.Drawing.Brush color = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(key.Color.R, key.Color.G, key.Color.B));
+                string text;
+                switch (key.Type)
+                {
+                    case KeyType.Invalid:
+                        text = "";
+                        break;
+                    case KeyType.Keyboard:
+                    case KeyType.Mouse:
+                        text = key.FriendlyName;
+                        break;
+                    default:
+                        throw new NotSupportedException(key.Type.ToString());
+                }
+                _g.FillRectangle(color, new System.Drawing.RectangleF(0, 0, boxWidth, boxHeight));
+
+                var textMeasure = g.MeasureString(text, font);
+                _g.DrawString(text, font, System.Drawing.Brushes.White, (int)((boxWidth - textMeasure.Width) / 2), (int)((boxHeight - textMeasure.Height) / 2));
+                g.DrawImage(block, (key.Index.X + 1) * boxWidth, (key.Index.Y + 1) * boxHeight);
+
+            }
+
+            //var tempPath = System.IO.Path.GetTempFileName().Replace(".tmp", ".jpg");
+            //bitmap.Save(tempPath);
+            //System.Diagnostics.Process.Start(tempPath);
+
+            return bitmap;
+        }
+
+        static AbstractKeyGrid defaultGrid, keyboardGrid, mouseGrid;
         public static AbstractKeyGrid GetDefaultGrid()
         {
+            if (defaultGrid == null)
+            {
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-            var defaultGrid = new object[,]{
+                var grid = new object[,]{
                             { Key.Invalid, Key.Escape, Key.Invalid, Key.F1,Key.F2,Key.F3, Key.F4,Key.F5, Key.F6, Key.F7, Key.F8, Key.F9, Key.F10, Key.F11, Key.F12,Key.PrintScreen,Key.Scroll,Key.Pause, Key.Invalid,Key.Invalid,Key.Logo,Key.Invalid, GridLed.LeftSide1, Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid, GridLed.RightSide1 },
                             { Key.Macro1, Key.OemTilde, Key.D1, Key.D2, Key.D3, Key.D4, Key.D5, Key.D6, Key.D7, Key.D8, Key.D9, Key.D0,Key.OemMinus, Key.OemEquals, Key.Backspace,Key.Insert,Key.Home,Key.PageUp,Key.NumLock,Key.NumDivide,Key.NumMultiply,Key.NumSubtract, GridLed.LeftSide2, Key.Invalid,Key.Invalid,GridLed.ScrollWheel,Key.Invalid,Key.Invalid,GridLed.RightSide2},
                             { Key.Macro2,Key.Tab,Key.Q,Key.W,Key.E,Key.R,Key.T,Key.Y,Key.U,Key.I,Key.O,Key.P,Key.OemLeftBracket,Key.OemRightBracket,Key.OemBackslash, Key.Delete,Key.End,Key.PageDown,Key.Num7,Key.Num8,Key.Num9,Key.NumAdd, GridLed.LeftSide3, Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid,GridLed.RightSide3},
@@ -190,13 +290,18 @@ namespace ListenerX.Classes
                             {Key.Macro5, Key.LeftControl,Key.LeftWindows,Key.LeftAlt,Key.Invalid, Key.Invalid, Key.Invalid,Key.Space,Key.Invalid,Key.Invalid,Key.Invalid, Key.RightAlt,Key.Function,Key.RightMenu,Key.RightControl,Key.Left,Key.Down,Key.Right,Key.Invalid,Key.Num0,Key.NumDecimal,Key.Invalid,GridLed.LeftSide7, Key.Invalid,Key.Invalid,GridLed.Logo,Key.Invalid,Key.Invalid,GridLed.RightSide7 }, //ghost row
                         };
 #pragma warning restore CA1814 // Prefer jagged arrays over multidimensional
-            return new AbstractKeyGrid(defaultGrid);
+                defaultGrid = new AbstractKeyGrid(grid);
+            }
+            return defaultGrid;
         }
+
 
         public static AbstractKeyGrid GetKeyboardGrid()
         {
+            if (keyboardGrid == null)
+            {
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-            var keyboardGrid = new object[,]{
+                var grid = new object[,]{
                             { Key.Invalid, Key.Escape, Key.Invalid, Key.F1,Key.F2,Key.F3, Key.F4,Key.F5, Key.F6, Key.F7, Key.F8, Key.F9, Key.F10, Key.F11, Key.F12,Key.PrintScreen,Key.Scroll,Key.Pause, Key.Invalid,Key.Invalid,Key.Logo,Key.Invalid, },
                             { Key.Macro1, Key.OemTilde, Key.D1, Key.D2, Key.D3, Key.D4, Key.D5, Key.D6, Key.D7, Key.D8, Key.D9, Key.D0,Key.OemMinus, Key.OemEquals, Key.Backspace,Key.Insert,Key.Home,Key.PageUp,Key.NumLock,Key.NumDivide,Key.NumMultiply,Key.NumSubtract,},
                             { Key.Macro2,Key.Tab,Key.Q,Key.W,Key.E,Key.R,Key.T,Key.Y,Key.U,Key.I,Key.O,Key.P,Key.OemLeftBracket,Key.OemRightBracket,Key.OemBackslash, Key.Delete,Key.End,Key.PageDown,Key.Num7,Key.Num8,Key.Num9,Key.NumAdd,},
@@ -205,13 +310,17 @@ namespace ListenerX.Classes
                             {Key.Macro5, Key.LeftControl,Key.LeftWindows,Key.LeftAlt,Key.Invalid, Key.Invalid, Key.Invalid,Key.Space,Key.Invalid,Key.Invalid,Key.Invalid, Key.RightAlt,Key.Function,Key.RightMenu,Key.RightControl,Key.Left,Key.Down,Key.Right,Key.Invalid,Key.Num0,Key.NumDecimal,Key.Invalid }
                         };
 #pragma warning restore CA1814 // Prefer jagged arrays over multidimensional
-            return new AbstractKeyGrid(keyboardGrid);
+                keyboardGrid = new AbstractKeyGrid(grid);
+            }
+            return keyboardGrid;
         }
 
         public static AbstractKeyGrid GetMouseGrid()
         {
+            if (mouseGrid == null)
+            {
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-            var mouseGrid = new object[,]{
+                var grid = new object[,]{
                             { GridLed.LeftSide1, Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid, GridLed.RightSide1  },
                             { GridLed.LeftSide2, Key.Invalid,Key.Invalid,GridLed.ScrollWheel,Key.Invalid,Key.Invalid,GridLed.RightSide2 },
                             { GridLed.LeftSide3, Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid,Key.Invalid,GridLed.RightSide3},
@@ -222,7 +331,9 @@ namespace ListenerX.Classes
                             { Key.Invalid , GridLed.Bottom1, GridLed.Bottom2,GridLed.Bottom3,GridLed.Bottom4,GridLed.Bottom5,Key.Invalid }
             };
 #pragma warning restore CA1814 // Prefer jagged arrays over multidimensional
-            return new AbstractKeyGrid(mouseGrid);
+                mouseGrid = new AbstractKeyGrid(grid);
+            }
+            return mouseGrid;
         }
     }
 }

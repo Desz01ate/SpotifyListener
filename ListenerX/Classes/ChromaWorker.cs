@@ -38,7 +38,6 @@ namespace ListenerX
                 {
                     this.Chroma = ColoreProvider.CreateNativeAsync().Result;
                     this.FullGridArray = AbstractKeyGrid.GetDefaultGrid();
-                    this.FullGridArray.VisualizeGrid();
                 }
                 catch (Exception ex)
                 {
@@ -68,9 +67,7 @@ namespace ListenerX
                 MouseGrid.Clear();
                 HeadsetGrid.Clear();
                 MousepadGrid.Clear();
-                this.FullGridArray.Clear();
             }
-            public delegate void CustomApplyEffects(ref CustomMouseEffect mouse, ref CustomKeyboardEffect keyboard, ref CustomMousepadEffect mousepad, ref CustomHeadsetEffect headset);
 
             public void SDKDisable()
             {
@@ -118,7 +115,7 @@ namespace ListenerX
             {
                 if (double.IsNaN(position) || double.IsInfinity(position))
                     return this;
-                var backgroundColor = this.PrimaryColor.ChangeColorDensity(0.2);
+                var backgroundColor = this.PrimaryColor.ChangeBrightnessLevel(0.2);
                 this.KeyboardGrid.Set(backgroundColor);
                 this.MouseGrid.Set(backgroundColor);
                 this.SetPlayingPosition(volume, position);
@@ -143,8 +140,7 @@ namespace ListenerX
 
         public sealed partial class ChromaWorker
         {
-            const float BACKGROUND_MULT = 0.05f;
-            private static readonly AutoshiftCirculaQueue<ColoreColor> colors = new AutoshiftCirculaQueue<ColoreColor>(ChromaEffectsExtension.rotationColors, 500);
+            private static readonly AutoshiftCirculaQueue<ColoreColor> colors = new AutoshiftCirculaQueue<ColoreColor>(RGBCollection.HIGH_RESOLUTION_RGB, 500);
             private void SetChromaVisualizeSpectrum(
                 double[] spectrumValues)
             {
@@ -152,7 +148,7 @@ namespace ListenerX
                 {
 
                     var color = colors.ElementAt(x);
-                    var background = color.ChangeColorDensity(BACKGROUND_MULT);
+                    var background = color.ChangeBrightnessLevel(Properties.Settings.Default.BackgroundBrightness);
 
                     foreach (var key in this.FullGridArray.Where(e => e.Index.X == x))
                     {
@@ -176,7 +172,7 @@ namespace ListenerX
                 {
 
                     var color = this.PrimaryColor;
-                    var background = this.SecondaryColor.ChangeColorDensity(BACKGROUND_MULT);
+                    var background = this.SecondaryColor.ChangeBrightnessLevel(Properties.Settings.Default.BackgroundBrightness);
 
                     foreach (var key in this.FullGridArray.Where(e => e.Index.X == x))
                     {
@@ -195,7 +191,7 @@ namespace ListenerX
 
             private void SetPlayingPosition(double volume, double position)
             {
-                this.FullGridArray.SetAll(PrimaryColor.ChangeColorDensity(BACKGROUND_MULT));
+                this.FullGridArray.SetAll(PrimaryColor.ChangeBrightnessLevel(Properties.Settings.Default.BackgroundBrightness));
                 var keyboardGrid = this.FullGridArray.EnumerateKeyboardKeys(true);
                 var keyboardRowCount = keyboardGrid.Max(e => e.Index.Y) + 1;
                 for (var rowIdx = 0; rowIdx < keyboardRowCount; rowIdx++)
@@ -230,9 +226,117 @@ namespace ListenerX
 
 
     }
-    static class ChromaEffectsExtension
+    static class RGBCollection
     {
-        public static readonly ColoreColor[] rotationColors = new ColoreColor[] {
+        public static readonly ColoreColor[] VERY_HIGH_RESOLUTION_RGB = new ColoreColor[] {
+//RED->GREEN
+new ColoreColor(255,0  ,0),
+new ColoreColor(255,16 ,0),
+new ColoreColor(255,32 ,0),
+new ColoreColor(255,48, 0),
+new ColoreColor(255,64 ,0),
+new ColoreColor(255,80 ,0),
+new ColoreColor(255,96 ,0),
+new ColoreColor(255,112,0),
+new ColoreColor(255,128,0),
+new ColoreColor(255,144,0),
+new ColoreColor(255,160,0),
+new ColoreColor(255,176,0),
+new ColoreColor(255,192,0),
+new ColoreColor(255,208,0),
+new ColoreColor(255,224,0),
+new ColoreColor(255,240,0),
+new ColoreColor(255,255,0),
+new ColoreColor(240,255,0),
+new ColoreColor(224,255,0),
+new ColoreColor(208,255,0),
+new ColoreColor(192,255,0),
+new ColoreColor(176,255,0),
+new ColoreColor(160,255,0),
+new ColoreColor(144,255,0),
+new ColoreColor(128,255,0),
+new ColoreColor(112,255,0),
+new ColoreColor(96 ,255,0),
+new ColoreColor(80 ,255,0),
+new ColoreColor(64 ,255,0),
+new ColoreColor(48 ,255,0),
+new ColoreColor(32 ,255,0),
+new ColoreColor(16 ,255,0),
+//GREEN->BLUE
+new ColoreColor(0  ,255, 0),
+new ColoreColor(0  ,255,16),
+new ColoreColor(0  ,255,32),
+new ColoreColor(0  ,255,48),
+new ColoreColor(0  ,255,64),
+new ColoreColor(0  ,255,80),
+new ColoreColor(0,255,96 ),
+new ColoreColor(0,255,112),
+new ColoreColor(0,255,128),
+new ColoreColor(0,255,144),
+new ColoreColor(0,255,160),
+new ColoreColor(0,255,176),
+new ColoreColor(0,255,192),
+new ColoreColor(0,255,208),
+new ColoreColor(0,255,224),
+new ColoreColor(0,255,240),
+new ColoreColor(0,255,255),
+new ColoreColor(0,240,255),
+new ColoreColor(0,224,255),
+new ColoreColor(0,208,255),
+new ColoreColor(0,192,255),
+new ColoreColor(0,176,255),
+new ColoreColor(0,160,255),
+new ColoreColor(0,144,255),
+new ColoreColor(0,128,255),
+new ColoreColor(0,112,255),
+new ColoreColor(0,96 ,255),
+new ColoreColor(0,80,255),
+new ColoreColor(0,64 ,255),
+new ColoreColor(0,48,255),
+new ColoreColor(0,32 ,255),
+new ColoreColor(0,16,255),
+//BLUE->RED
+new ColoreColor(0  ,0  ,255),
+new ColoreColor(16,0,255),
+new ColoreColor(32 ,0  ,255),
+new ColoreColor(48,0,255),
+new ColoreColor(64 ,0  ,255),
+new ColoreColor(80,0,255),
+new ColoreColor(96 ,0  ,255),
+new ColoreColor(112,0,255),
+new ColoreColor(128,0  ,255),
+new ColoreColor(144,0,255),
+new ColoreColor(160,0  ,255),
+new ColoreColor(176,0,255),
+new ColoreColor(192,0  ,255),
+new ColoreColor(208,0,255),
+new ColoreColor(224,0  ,255),
+new ColoreColor(240,0,255),
+new ColoreColor(255,0  ,255),
+new ColoreColor(255,0,240),
+new ColoreColor(255,0  ,224),
+new ColoreColor(255,0,208),
+new ColoreColor(255,0  ,192),
+new ColoreColor(255,0,176),
+new ColoreColor(255,0  ,160),
+new ColoreColor(255,0,144),
+new ColoreColor(255,0  ,128),
+new ColoreColor(255,0,112),
+new ColoreColor(255,0  ,96 ),
+new ColoreColor(255,0,80),
+new ColoreColor(255,0  ,64 ),
+new ColoreColor(255,0,48),
+new ColoreColor(255,0  ,32 ),
+new ColoreColor(255,0,16)
+//new ColoreColor(32 ,0  ,224),
+//new ColoreColor(64 ,0  ,192),
+//new ColoreColor(96 ,0  ,160),
+//new ColoreColor(128,0  ,128),
+//new ColoreColor(160,0  ,96 ),
+//new ColoreColor(192,0  ,64 ),
+//new ColoreColor(224,0  ,32 ),
+        };
+        public static readonly ColoreColor[] HIGH_RESOLUTION_RGB = new ColoreColor[] {
 //RED->GREEN
 new ColoreColor(255,0  ,0),
 new ColoreColor(255,32 ,0),
@@ -283,7 +387,12 @@ new ColoreColor(255,0  ,160),
 new ColoreColor(255,0  ,128),
 new ColoreColor(255,0  ,96 ),
 new ColoreColor(255,0  ,64 ),
-new ColoreColor(255,0  ,32 )
+new ColoreColor(255,0  ,32 ),
+new ColoreColor(255,0,0)
+//END LOOP SET
+
+
+
 //new ColoreColor(32 ,0  ,224),
 //new ColoreColor(64 ,0  ,192),
 //new ColoreColor(96 ,0  ,160),

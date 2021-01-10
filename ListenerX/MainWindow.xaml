@@ -149,7 +149,7 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
         <KeyBinding Key="S" Modifiers="Alt"  Command="SaveAs"></KeyBinding>
     </Window.InputBindings>
     <Grid Margin="1,1,1,1" Name="MainWindowGrid" Background="Transparent">
-        <Border x:Name="border_Form" Opacity="0.97" Background="{Binding AlbumBackgroundSource}" Margin="5" Padding="5" BorderThickness="0.7" BorderBrush="#d9d9d9" CornerRadius="0"/>
+        <Border x:Name="border_Form" Opacity="1" Background="{Binding AlbumBackgroundSource}" Margin="5" Padding="5" BorderThickness="0.7" BorderBrush="#d9d9d9" CornerRadius="0"/>
         <local:PathButton x:Name="btn_lyrics"   Opacity="0" Data="{StaticResource lyricsSvgPath}" Margin="0,0,140,20" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_lyrics_Click" />
         <local:PathButton x:Name="btn_search"   Opacity="0" Data="{StaticResource magnifyingPath}" Margin="0,0,100,20" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_search_Click" />
         <local:PathButton x:Name="btn_device"   Opacity="0" Data="{StaticResource phonePath}" Margin="0,0,60,17" Width="27" Height="27" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_device_Click" />

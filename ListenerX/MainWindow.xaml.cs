@@ -364,13 +364,6 @@ namespace ListenerX
             player.SetVolume(value);
         }
 
-        private void Settings_Click(object sender, MouseButtonEventArgs e)
-        {
-            using (var setting = new Settings())
-            {
-                setting.ShowDialog();
-            }
-        }
 
         protected override void OnClosing(CancelEventArgs e)
         {
@@ -474,12 +467,19 @@ namespace ListenerX
         {
             Stop();
 
-            //open the default device 
-
-            _soundIn = new WasapiLoopbackCapture(100, new WaveFormat(48000, 24, 2));
+            try
+            {
+                _soundIn = new WasapiLoopbackCapture();
+                _soundIn.Initialize();
+            }
+            catch
+            {
+                _soundIn = new WasapiLoopbackCapture(100, new WaveFormat(48000, 24, 2));
+                _soundIn.Initialize();
+            }
             //Our loopback capture opens the default render device by default so the following is not needed
             //_soundIn.Device = MMDeviceEnumerator.DefaultAudioEndpoint(DataFlow.Render, Role.Console);
-            _soundIn.Initialize();
+           
 
             var soundInSource = new SoundInSource(_soundIn);
             ISampleSource source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out _);

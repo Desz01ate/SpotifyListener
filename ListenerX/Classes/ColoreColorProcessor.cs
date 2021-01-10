@@ -14,7 +14,7 @@ namespace ListenerX
         {
             return Color.FromArgb((byte)alpha, (byte)(c.R * multiplier), (byte)(c.G * multiplier), (byte)(c.B * multiplier));
         }
-        public static ColoreColor ChangeColorDensity(this ColoreColor c, double multiplier)
+        public static ColoreColor ChangeBrightnessLevel(this ColoreColor c, double multiplier)
         {
             var R = (byte)(c.R * multiplier);
             var G = (byte)(c.G * multiplier);

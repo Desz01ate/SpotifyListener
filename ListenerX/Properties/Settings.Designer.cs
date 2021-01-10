@@ -286,5 +286,17 @@ namespace ListenerX.Properties {
                 this["ArtworkWallpaperEnable"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.05")]
+        public double BackgroundBrightness {
+            get {
+                return ((double)(this["BackgroundBrightness"]));
+            }
+            set {
+                this["BackgroundBrightness"] = value;
+            }
+        }
     }
 }

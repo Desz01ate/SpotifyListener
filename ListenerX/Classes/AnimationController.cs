@@ -160,7 +160,7 @@ namespace ListenerX.Classes
             SearchButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             MinimizeButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
             CloseButton.BeginAnimation(UIElement.OpacityProperty, FadeIn);
-            Border.BeginAnimation(UIElement.OpacityProperty, BorderIn);
+            //Border.BeginAnimation(UIElement.OpacityProperty, BorderIn);
         }
         public void TransitionDisable()
         {
@@ -191,7 +191,7 @@ namespace ListenerX.Classes
             SearchButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             MinimizeButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
             CloseButton.BeginAnimation(UIElement.OpacityProperty, FadeOut);
-            Border.BeginAnimation(UIElement.OpacityProperty, BorderOut);
+            //Border.BeginAnimation(UIElement.OpacityProperty, BorderOut);
 
         }
     }

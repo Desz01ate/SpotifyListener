@@ -41,6 +41,9 @@ namespace ListenerX
             trackbar_VolumeScale.Value = Properties.Settings.Default.VolumeScale;
             trackbar_VolumeScale_Scroll(trackbar_VolumeScale, null);
 
+            trackbar_BgBrightness.Value = (int)(Properties.Settings.Default.BackgroundBrightness * 100);
+            trackbar_BgBrightness_Scroll(trackbar_BgBrightness, null);
+
             this.lbl_Metadata.Text = $"Active module : {ActivatorHelpers.Metadata.ModuleName} {ActivatorHelpers.Metadata.VersionName}";
 
         }
@@ -60,6 +63,8 @@ namespace ListenerX
 
             Properties.Settings.Default.ArtworkWallpaperEnable = this.ArtworkWallpaperEnabled;
             Properties.Settings.Default.Save();
+
+            Properties.Settings.Default.BackgroundBrightness = this.trackbar_BgBrightness.Value / 100.0d;
 
             var safeConvertFps = SafeConvertRenderFps(RenderFPS.Text);
             if (Properties.Settings.Default.RenderFPS != safeConvertFps)
@@ -140,8 +145,6 @@ namespace ListenerX
                     AlbumCoverRenderEnable = false;
                     RenderVisualizeSpectrumEnable = true;
                     ChromaColorEnable = true;
-                    RenderFPS.Enabled = false;
-                    RenderFPS.Text = "60";
                     break;
             }
         }
@@ -155,11 +158,6 @@ namespace ListenerX
 
         }
 
-
-        private void ColorSettingsButton_Click(object sender, EventArgs e)
-        {
-            new ColorSettings().ShowDialog();
-        }
 
         private void trackbar_VolumeScale_Scroll(object sender, EventArgs e)
         {
@@ -185,6 +183,17 @@ namespace ListenerX
         private void cb_EnableArtworkWallpaper_CheckedChanged(object sender, EventArgs e)
         {
             this.ArtworkWallpaperEnabled = cb_EnableArtworkWallpaper.Checked;
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+            var debug = new DebugForm();
+            debug.Show();
+        }
+
+        private void trackbar_BgBrightness_Scroll(object sender, EventArgs e)
+        {
+            txt_BgBrightness.Text = trackbar_BgBrightness.Value + "%";
         }
     }
 }

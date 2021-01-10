@@ -203,7 +203,7 @@ namespace Listener.ImageProcessing
         }
         public static BitmapImage ToBitmapImage(this Image src, ImageFormat format)
         {
-            using var bitmap = new Bitmap(src);
+            using Bitmap bitmap = new Bitmap(src);
             var result = ToBitmapImage(bitmap, format);
             return result;
         }
