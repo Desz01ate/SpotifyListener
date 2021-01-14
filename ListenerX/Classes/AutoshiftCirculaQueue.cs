@@ -7,9 +7,13 @@ using System.Timers;
 
 namespace ListenerX.Classes
 {
-    class AutoshiftCirculaQueue<T> : CircularQueue<T>
+    class AutoshiftCirculaQueue<T> : CircularQueue<T>, IDisposable
     {
-        readonly Timer shiftTimer;
+        public static AutoshiftCirculaQueue<T> Empty => new AutoshiftCirculaQueue<T>();
+
+        private readonly Timer shiftTimer;
+        private bool disposed;
+
         public AutoshiftCirculaQueue(int limitSize, int shiftInMs) : base(limitSize)
         {
             this.shiftTimer = new Timer();
@@ -26,9 +30,29 @@ namespace ListenerX.Classes
             this.shiftTimer.Start();
         }
 
+        private AutoshiftCirculaQueue() : base(1)
+        {
+        }
+
         private void ShiftTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             this.ShiftLeft();
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && !this.disposed)
+            {
+                this.shiftTimer?.Dispose();
+            }
+            this.disposed = true;
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
     }
 }

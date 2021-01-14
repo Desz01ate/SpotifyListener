@@ -10,12 +10,14 @@ namespace ListenerX
         {
             return Color.FromArgb((int)(Color.FromArgb(c.R, c.G, c.B).ToArgb() ^ 0xFFFFFFFu)).ToColoreColor();
         }
-        public static Color ChangeColorDensity(this Color c, double multiplier, double alpha = 255)
+        public static Color ChangeBrightnessLevel(this Color c, double multiplier, double alpha = 255)
         {
             return Color.FromArgb((byte)alpha, (byte)(c.R * multiplier), (byte)(c.G * multiplier), (byte)(c.B * multiplier));
         }
         public static ColoreColor ChangeBrightnessLevel(this ColoreColor c, double multiplier)
         {
+            if (multiplier <= 0)
+                return ColoreColor.Black;
             var R = (byte)(c.R * multiplier);
             var G = (byte)(c.G * multiplier);
             var B = (byte)(c.B * multiplier);
@@ -24,6 +26,11 @@ namespace ListenerX
         public static ColoreColor ToColoreColor(this Color c)
         {
             return new ColoreColor(c.R, c.G, c.B);
+        }
+
+        public static ColoreColor[][] ToColoreColors(this Color[][] colors)
+        {
+            return colors.Select(row => row.Select(key => key.ToColoreColor()).ToArray()).ToArray();
         }
 
         public static ColoreColor ContrastColor(this ColoreColor c)

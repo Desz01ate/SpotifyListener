@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using ListenerX;
 namespace ListenerX.Classes
 {
     public sealed class AbstractKeyGrid : IEnumerable<IAbstractKey>
@@ -114,11 +114,24 @@ namespace ListenerX.Classes
             return this.GetEnumerator();
         }
 
-        public void SetAll(Color color)
+        public void Set(Color color)
         {
             foreach (var key in this.grid)
             {
                 key.Color = color;
+            }
+        }
+
+        public void Set(Color[][] colors, double brightness)
+        {
+            for (var y = 0; y < colors.GetLength(0); y++)
+            {
+                var row = colors[y];
+                for (var x = 0; x < row.Length; x++)
+                {
+                    var key = this[x, y];
+                    key.Color = row[x].ChangeBrightnessLevel(brightness);
+                }
             }
         }
 

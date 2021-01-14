@@ -82,7 +82,7 @@
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>player.ico</ApplicationIcon>
+    <ApplicationIcon>listenerx.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -205,16 +205,11 @@
     <Compile Include="Classes\IAbstractKey.cs" />
     <Compile Include="Classes\LyricsHelpers.cs" />
     <Compile Include="Classes\CircularQueue.cs" />
-    <Compile Include="ColorSettings.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ColorSettings.Designer.cs">
-      <DependentUpon>ColorSettings.cs</DependentUpon>
-    </Compile>
     <Compile Include="Components\CustomProgresBar.cs" />
     <Compile Include="Components\VirtualKeyboardComponent.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DSP\BiQuadFilterSource.cs" />
     <Compile Include="VirtualKeyboard.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -298,9 +293,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="ColorSettings.resx">
-      <DependentUpon>ColorSettings.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="VirtualKeyboard.resx">
       <DependentUpon>VirtualKeyboard.cs</DependentUpon>
     </EmbeddedResource>
@@ -387,6 +379,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="player.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Untitled.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="listenerx.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

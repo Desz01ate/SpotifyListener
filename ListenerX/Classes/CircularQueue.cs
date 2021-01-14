@@ -12,10 +12,14 @@ namespace ListenerX.Classes
     /// Fixed-size queue which automatically dequeue when elements are going to exceed the limit.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class CircularQueue<T> : IEnumerable<T>
+    public class CircularQueue<T> : ICollection<T>
     {
         private readonly ConcurrentQueue<T> q;
-        private readonly int limit;
+        protected readonly int limit;
+        public int Count => this.limit;
+
+        public bool IsReadOnly => true;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -127,6 +131,31 @@ namespace ListenerX.Classes
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public void Add(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Contains(T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Remove(T item)
+        {
+            throw new NotImplementedException();
         }
     }
 }

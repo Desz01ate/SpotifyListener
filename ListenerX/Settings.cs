@@ -2,6 +2,7 @@
 using ListenerX.Classes;
 using ListenerX.Components;
 using ListenerX.Helpers;
+using ListenerX.Visualization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,39 +18,40 @@ namespace ListenerX
 {
     public partial class Settings : Form
     {
-        private bool AlbumCoverRenderEnable = false;
-        private bool RenderVisualizeSpectrumEnable = false;
-        private bool ChromaColorEnable = false;
-        private bool ChromaEnableChanged = false;
-        private bool ArtworkWallpaperEnabled = false;
         private readonly VirtualKeyboardComponent virtualKeyboard;
+        private bool firstLaunch = true;
         public Settings()
         {
             InitializeComponent();
             this.Icon = Properties.Resources.spotify;
             //Due to Facebook updated policy (https://developers.facebook.com/blog/post/2018/04/24/new-facebook-platform-product-changes-policy-updates/), now publish_actions is deprecated so this feature might be remove soon as well
-            AlbumCoverRenderEnable = Properties.Settings.Default.AlbumCoverRenderEnable;
-            RenderVisualizeSpectrumEnable = Properties.Settings.Default.RenderPeakVolumeEnable;
-            ChromaColorEnable = Properties.Settings.Default.PeakChroma;
-            RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyleIndex;
+            RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyle;
             ChromaSDKEnable.Checked = Properties.Settings.Default.ChromaSDKEnable;
-            ChromaSDKEnable.CheckedChanged += ChromaSDKEnable_CheckedChanged;
-            ReverseLEDRender.Checked = Properties.Settings.Default.ReverseLEDRender;
             RenderFPS.Text = Properties.Settings.Default.RenderFPS.ToString();
             cb_EnableArtworkWallpaper.Checked = Properties.Settings.Default.ArtworkWallpaperEnable;
 
-            ChromaSDKEnable_CheckedChanged(null, EventArgs.Empty);
-            trackbar_VolumeScale.Value = Properties.Settings.Default.VolumeScale;
-            trackbar_VolumeScale_Scroll(trackbar_VolumeScale, null);
+            trackbar_Amplitude.Value = Math.Min(trackbar_Amplitude.Maximum, (int)(Properties.Settings.Default.Amplitude * 10));
+            trackbar_VolumeScale_Scroll(trackbar_Amplitude, null);
 
-            trackbar_BgBrightness.Value = (int)(Properties.Settings.Default.BackgroundBrightness * 100);
+            trackbar_BgBrightness.Value = Math.Min(trackbar_BgBrightness.Maximum, (int)(Properties.Settings.Default.BackgroundBrightness * 10));
             trackbar_BgBrightness_Scroll(trackbar_BgBrightness, null);
 
+            var strategies = Enum.GetValues(typeof(ScalingStrategy));
+            foreach (var s in strategies)
+            {
+                ScalingStrategy.Items.Add(s);
+            }
+            ScalingStrategy.SelectedIndex = Properties.Settings.Default.ScalingStrategy;
+
             this.lbl_Metadata.Text = $"Active module : {ActivatorHelpers.Metadata.ModuleName} {ActivatorHelpers.Metadata.VersionName}";
+
+
 
             this.virtualKeyboard = new VirtualKeyboardComponent(12);
             this.virtualKeyboard.OnImageChanged += VirtualKeyboard_OnImageChanged;
             this.virtualKeyboard.Start();
+
+            firstLaunch = false;
         }
 
         private void VirtualKeyboard_OnImageChanged(object sender, EventArgs e)
@@ -59,33 +61,6 @@ namespace ListenerX
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-
-            Properties.Settings.Default.RenderPeakVolumeEnable = RenderVisualizeSpectrumEnable;
-            Properties.Settings.Default.AlbumCoverRenderEnable = AlbumCoverRenderEnable;
-            Properties.Settings.Default.PeakChroma = ChromaColorEnable;
-            Properties.Settings.Default.RenderStyleIndex = (byte)RenderStyleCombobox.SelectedIndex;
-
-            Properties.Settings.Default.ChromaSDKEnable = ChromaSDKEnable.Checked;
-            Properties.Settings.Default.ReverseLEDRender = ReverseLEDRender.Checked;
-
-            Properties.Settings.Default.VolumeScale = trackbar_VolumeScale.Value;
-
-            Properties.Settings.Default.ArtworkWallpaperEnable = this.ArtworkWallpaperEnabled;
-            Properties.Settings.Default.Save();
-
-            Properties.Settings.Default.BackgroundBrightness = this.trackbar_BgBrightness.Value / 100.0d;
-
-            var safeConvertFps = SafeConvertRenderFps(RenderFPS.Text);
-            if (Properties.Settings.Default.RenderFPS != safeConvertFps)
-            {
-                Properties.Settings.Default.RenderFPS = safeConvertFps;
-                Properties.Settings.Default.Save();
-            }
-            if (this.ChromaEnableChanged)
-            {
-                MessageBox.Show($"Razer Chroma SDK enable/disable required application to restart in order to take effect.", "ListenerX", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            //Dispose();
         }
 
         private int SafeConvertRenderFps(string text)
@@ -101,12 +76,6 @@ namespace ListenerX
             throw new FormatException(nameof(text));
         }
 
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            using var colorSettings = new ColorSettings();
-            colorSettings.ShowDialog();
-        }
-
         private void ResetButton_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("Do you want to reset all settings?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
@@ -118,44 +87,13 @@ namespace ListenerX
 
         private void ChromaSDKEnable_CheckedChanged(object sender, EventArgs e)
         {
-            if (sender != null)
-            {
-                ChromaEnableChanged = true;
-            }
 
-            ReverseLEDRender.Enabled = ChromaSDKEnable.Checked;
         }
 
         private void RenderStyleCombobox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            AlbumCoverRenderEnable = false;
-            RenderVisualizeSpectrumEnable = false;
-            ChromaColorEnable = false;
-            RenderFPS.Enabled = true;
-            var selectedIndex = ((ComboBox)sender).SelectedIndex;
-            /*
-               Album Cover - Progression + Volume
-               Album Cover - Peak Volume Meter
-               Album Cover - Symmetric Peak Volume Meter
-               Fixed - Chroma Peak Meter
-            */
-            switch (selectedIndex)
-            {
-                case 0:
-                    AlbumCoverRenderEnable = true;
-                    ChromaColorEnable = false;
-                    break;
-                case 1:
-                    AlbumCoverRenderEnable = true;
-                    RenderVisualizeSpectrumEnable = true;
-                    ChromaColorEnable = false;
-                    break;
-                case 2:
-                    AlbumCoverRenderEnable = false;
-                    RenderVisualizeSpectrumEnable = true;
-                    ChromaColorEnable = true;
-                    break;
-            }
+            Properties.Settings.Default.RenderStyle = RenderStyleCombobox.SelectedIndex;
+            Properties.Settings.Default.Save();
         }
 
         private void RenderModeCombobox_SelectedIndexChanged(object sender, EventArgs e)
@@ -165,12 +103,6 @@ namespace ListenerX
         private void Settings_Load(object sender, EventArgs e)
         {
 
-        }
-
-
-        private void trackbar_VolumeScale_Scroll(object sender, EventArgs e)
-        {
-            txt_volScale.Text = trackbar_VolumeScale.Value * 10 + "%";
         }
 
         private void ClearCache_Click(object sender, EventArgs e)
@@ -191,12 +123,22 @@ namespace ListenerX
 
         private void cb_EnableArtworkWallpaper_CheckedChanged(object sender, EventArgs e)
         {
-            this.ArtworkWallpaperEnabled = cb_EnableArtworkWallpaper.Checked;
+            Properties.Settings.Default.ArtworkWallpaperEnable = cb_EnableArtworkWallpaper.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void trackbar_VolumeScale_Scroll(object sender, EventArgs e)
+        {
+            txt_volScale.Text = trackbar_Amplitude.Value * 10 + "%";
+            Properties.Settings.Default.Amplitude = trackbar_Amplitude.Value / 10.0d;
+            Properties.Settings.Default.Save();
         }
 
         private void trackbar_BgBrightness_Scroll(object sender, EventArgs e)
         {
-            txt_BgBrightness.Text = trackbar_BgBrightness.Value + "%";
+            txt_BgBrightness.Text = trackbar_BgBrightness.Value * 10 + "%";
+            Properties.Settings.Default.BackgroundBrightness = trackbar_BgBrightness.Value / 10.0d;
+            Properties.Settings.Default.Save();
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -211,6 +153,35 @@ namespace ListenerX
             using var debug = new VirtualKeyboard();
             debug.ShowDialog();
             this.virtualKeyboard.Start();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.UseAverage = this.checkBox1.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.ScalingStrategy = this.ScalingStrategy.SelectedIndex;
+            Properties.Settings.Default.Save();
+        }
+
+        private void ChromaSDKEnable_CheckedChanged_1(object sender, EventArgs e)
+        {
+            if (!firstLaunch)
+            {
+                MessageBox.Show($"Razer Chroma SDK enable/disable required application to restart in order to take effect.", "ListenerX", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            Properties.Settings.Default.ChromaSDKEnable = ChromaSDKEnable.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void RenderFPS_TextChanged(object sender, EventArgs e)
+        {
+            var fps = SafeConvertRenderFps(this.RenderFPS.Text);
+            Properties.Settings.Default.RenderFPS = fps;
+            Properties.Settings.Default.Save();
         }
     }
 }

@@ -9,6 +9,6 @@ namespace ListenerX.Helpers
 {
     public static class RegularExpressionHelpers
     {
-        public static Func<string, string> AlphabetCleaner = (input) => Regex.Replace(input, @"[^0-9a-zA-Z:_%]+", "", RegexOptions.Compiled);
+        public static Func<string, string> AlphabetCleaner = (input) => Regex.Replace(input, @"[^0-9a-zA-Z]+", "", RegexOptions.Compiled);
     }
 }

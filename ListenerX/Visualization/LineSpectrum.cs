@@ -116,9 +116,9 @@ namespace ListenerX.Visualization
         public double[] CreateSpectrumData()
         {
             var fftBuffer = new float[(int)FftSize];
-            if (SpectrumProvider.GetFftData(fftBuffer, null))
+            if (SpectrumProvider.GetFftData(fftBuffer, this))
             {
-                return GetSpectrumPointData(fftBuffer, 100, 25).Select(x => x.Value).ToArray();
+                return GetSpectrumPointData(fftBuffer, 100).Select(x => x.Value).ToArray();
             }
             return new double[50];
         }
@@ -142,9 +142,9 @@ namespace ListenerX.Visualization
             }
         }
 
-        private SpectrumPointData[] GetSpectrumPointData(float[] fftBuffer, int height, int barsCount)
+        private SpectrumPointData[] GetSpectrumPointData(float[] fftBuffer, int height)
         {
-            SpectrumPointData[] spectrumPoints = CalculateSpectrumPoints(height, barsCount, fftBuffer);
+            SpectrumPointData[] spectrumPoints = CalculateSpectrumPoints(height, fftBuffer);
             return spectrumPoints;
         }
         protected override void UpdateFrequencyMapping()

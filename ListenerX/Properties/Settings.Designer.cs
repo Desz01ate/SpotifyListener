@@ -37,90 +37,6 @@ namespace ListenerX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("White")]
-        public global::System.Drawing.Color Background_Playing {
-            get {
-                return ((global::System.Drawing.Color)(this["Background_Playing"]));
-            }
-            set {
-                this["Background_Playing"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Red")]
-        public global::System.Drawing.Color Background_Pause {
-            get {
-                return ((global::System.Drawing.Color)(this["Background_Pause"]));
-            }
-            set {
-                this["Background_Pause"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Red")]
-        public global::System.Drawing.Color Position_Foreground {
-            get {
-                return ((global::System.Drawing.Color)(this["Position_Foreground"]));
-            }
-            set {
-                this["Position_Foreground"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("White")]
-        public global::System.Drawing.Color Position_Background {
-            get {
-                return ((global::System.Drawing.Color)(this["Position_Background"]));
-            }
-            set {
-                this["Position_Background"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("255, 40, 0")]
-        public global::System.Drawing.Color Volume {
-            get {
-                return ((global::System.Drawing.Color)(this["Volume"]));
-            }
-            set {
-                this["Volume"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ReverseLEDRender {
-            get {
-                return ((bool)(this["ReverseLEDRender"]));
-            }
-            set {
-                this["ReverseLEDRender"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AlbumCoverRenderEnable {
-            get {
-                return ((bool)(this["AlbumCoverRenderEnable"]));
-            }
-            set {
-                this["AlbumCoverRenderEnable"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public int RefreshRate {
             get {
@@ -128,42 +44,6 @@ namespace ListenerX.Properties {
             }
             set {
                 this["RefreshRate"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AdaptiveDensity {
-            get {
-                return ((bool)(this["AdaptiveDensity"]));
-            }
-            set {
-                this["AdaptiveDensity"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int Density {
-            get {
-                return ((int)(this["Density"]));
-            }
-            set {
-                this["Density"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool RenderPeakVolumeEnable {
-            get {
-                return ((bool)(this["RenderPeakVolumeEnable"]));
-            }
-            set {
-                this["RenderPeakVolumeEnable"] = value;
             }
         }
         
@@ -181,97 +61,13 @@ namespace ListenerX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool NetworkEnable {
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public double Amplitude {
             get {
-                return ((bool)(this["NetworkEnable"]));
+                return ((double)(this["Amplitude"]));
             }
             set {
-                this["NetworkEnable"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool SymmetricRenderEnable {
-            get {
-                return ((bool)(this["SymmetricRenderEnable"]));
-            }
-            set {
-                this["SymmetricRenderEnable"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public byte RenderStyleIndex {
-            get {
-                return ((byte)(this["RenderStyleIndex"]));
-            }
-            set {
-                this["RenderStyleIndex"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("d2e83cf6ff54792771cc94ea496e2fac")]
-        public string LastFMApiKey {
-            get {
-                return ((string)(this["LastFMApiKey"]));
-            }
-            set {
-                this["LastFMApiKey"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("7bdd7b2585682fe3e12fd8ae7b88d688")]
-        public string LastFMApiSecret {
-            get {
-                return ((string)(this["LastFMApiSecret"]));
-            }
-            set {
-                this["LastFMApiSecret"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public byte AlbumColorMode {
-            get {
-                return ((byte)(this["AlbumColorMode"]));
-            }
-            set {
-                this["AlbumColorMode"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool PeakChroma {
-            get {
-                return ((bool)(this["PeakChroma"]));
-            }
-            set {
-                this["PeakChroma"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int VolumeScale {
-            get {
-                return ((int)(this["VolumeScale"]));
-            }
-            set {
-                this["VolumeScale"] = value;
+                this["Amplitude"] = value;
             }
         }
         
@@ -296,6 +92,42 @@ namespace ListenerX.Properties {
             }
             set {
                 this["BackgroundBrightness"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int RenderStyle {
+            get {
+                return ((int)(this["RenderStyle"]));
+            }
+            set {
+                this["RenderStyle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseAverage {
+            get {
+                return ((bool)(this["UseAverage"]));
+            }
+            set {
+                this["UseAverage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int ScalingStrategy {
+            get {
+                return ((int)(this["ScalingStrategy"]));
+            }
+            set {
+                this["ScalingStrategy"] = value;
             }
         }
     }

@@ -26,6 +26,7 @@ using CSCore;
 using CSCore.Streams.Effects;
 using CSCore.CoreAudioAPI;
 using CSCore.SoundOut;
+using ListenerX.DSP;
 
 namespace ListenerX
 {
@@ -35,7 +36,6 @@ namespace ListenerX
     public partial class MainWindow : Window
     {
         private readonly Timer chromaTimer = new Timer();
-        //private readonly Timer defaultAudioEndpointTimer = new Timer();
         private AnimationController animation;
         private readonly MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
 
@@ -102,14 +102,11 @@ namespace ListenerX
                 if (Properties.Settings.Default.ChromaSDKEnable)
                 {
                     var chroma = ChromaWorker.Instance;
-                    if (!chroma.IsError)
-                    {
-                        this.chroma = chroma;
-                        chromaTimer.Interval =
-                            (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
-                        chromaTimer.Tick += ChromaTimer_Tick;
-                        chromaTimer.Start();
-                    }
+                    this.chroma = chroma;
+                    chromaTimer.Interval =
+                        (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
+                    chromaTimer.Tick += ChromaTimer_Tick;
+                    chromaTimer.Start();
                 }
 
             }
@@ -122,16 +119,6 @@ namespace ListenerX
             this.Visibility = Visibility.Visible;
             this.DataContext = player;
         }
-
-        //private void DefaultAudioEndpointTimer_Tick(object sender, EventArgs e)
-        //{
-        //    var currentDefaultAudioEndpoint = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-        //    if (defaultAudioEndpoint == null || defaultAudioEndpoint.FriendlyName != currentDefaultAudioEndpoint.FriendlyName)
-        //    {
-        //        defaultAudioEndpoint?.Dispose();
-        //        defaultAudioEndpoint = currentDefaultAudioEndpoint;
-        //    }
-        //}
 
         private void Player_OnDeviceChanged(Device device)
         {
@@ -186,15 +173,13 @@ namespace ListenerX
             {
                 this.Title = $"Listening to {player.Track} by {player.Artist} on {player.ActiveDevice.Name}";
                 this.Icon = player.AlbumSource;
-                //this.btn_lyrics.Visibility = string.IsNullOrWhiteSpace(playbackContext.Lyrics)
-                //    ? Visibility.Hidden
-                //    : Visibility.Visible;
-                var colors = player.AlbumArtwork.GetDominantColors(2);
-                var standardRenderColor = new StandardColor();
-                standardRenderColor.Standard = colors[0];
-                standardRenderColor.Complemented = colors[1];
+                //var colors = player.AlbumArtwork.GetDominantColors(2);
+                //var standardRenderColor = new StandardColor();
+                //standardRenderColor.Standard = colors[0];
+                //standardRenderColor.Complemented = colors[1];
 
-                this.chroma?.LoadColor(standardRenderColor);
+                //this.chroma?.LoadColor(standardRenderColor);
+                this.chroma?.LoadColor(this.player.AlbumArtwork);
 
 
                 if (Properties.Settings.Default.ArtworkWallpaperEnable)
@@ -236,18 +221,23 @@ namespace ListenerX
         {
             try
             {
-                var spectrumData = this._lineSpectrum.CreateSpectrumData().Select(x => Math.Min(x * (Properties.Settings.Default.VolumeScale / 10.0f), 100)).ToArray();
-                if (Properties.Settings.Default.RenderPeakVolumeEnable && Properties.Settings.Default.PeakChroma)
+                var spectrumData = this._lineSpectrum.CreateSpectrumData().Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
+                switch (Properties.Settings.Default.RenderStyle)
                 {
-                    chroma.VisualizeVolumeChromaEffects(spectrumData);
-                }
-                else if (Properties.Settings.Default.RenderPeakVolumeEnable)
-                {
-                    chroma.VisualizeVolumeEffects(spectrumData);
-                }
-                else
-                {
-                    chroma.PlayingPositionEffects(spectrumData.Average(), this.player.CalculatedPosition);
+                    case 0:
+                        chroma.PlayingPositionEffects(spectrumData.Average(), this.player.CalculatedPosition);
+                        break;
+                    case 1:
+                        chroma.VisualizeVolumeEffects(spectrumData);
+                        break;
+                    case 2:
+                        chroma.VisualizeVolumeChromaEffects(spectrumData);
+                        break;
+                    case 3:
+                        chroma.VisualizeAlbumArtwork(spectrumData);
+                        break;
+                    default:
+                        break;
                 }
 
                 chroma.ApplyAsync().Wait();
@@ -439,22 +429,6 @@ namespace ListenerX
         private void btn_lyrics_Click(object sender, RoutedEventArgs e)
         {
             Process.Start($"https://www.google.com/search?q={this.player.Artist.Replace(" ", "+")}+{this.player.Album.Replace(" ", "+")}+{this.player.Track.Replace(" ", "+")}+lyrics");
-            //if (lyricsDisplay != null)
-            //{
-            //    lyricsDisplay.BringToFront();
-            //}
-            //else
-            //{        
-            //if (!string.IsNullOrWhiteSpace(this.player.Lyrics))
-            //{
-            //    lyricsDisplay = new LyricsDisplay(player, this.Left + InitWidth, this.Top, () => lyricsDisplay = null);
-            //    lyricsDisplay.Show();
-            //}
-            //else
-            //{
-            //Process.Start($"https://www.google.com/search?q={this.player.Artist.Replace(" ", "+")}+{this.player.Album.Replace(" ", "+")}+{this.player.Track.Replace(" ", "+")}+lyrics");
-            //}
-            //}
         }
 
         private void Btn_SaveImage_Click(object sender, RoutedEventArgs e)
@@ -479,13 +453,13 @@ namespace ListenerX
             }
             //Our loopback capture opens the default render device by default so the following is not needed
             //_soundIn.Device = MMDeviceEnumerator.DefaultAudioEndpoint(DataFlow.Render, Role.Console);
-           
+
 
             var soundInSource = new SoundInSource(_soundIn);
-            ISampleSource source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out _);
-
+            var source = soundInSource.ToSampleSource().AppendSource(x => new BiQuadFilterSource(x));//.AppendSource(x => new PitchShifter(x), out _);
+            //source.Filter = new LowpassFilter(source.WaveFormat.SampleRate, 4000);
+            //source.Filter = new HighpassFilter(source.WaveFormat.SampleRate, 1000);
             SetupSampleSource(source);
-
             // We need to read from our source otherwise SingleBlockRead is never called and our spectrum provider is not populated
             byte[] buffer = new byte[_source.WaveFormat.BytesPerSecond / 2];
             soundInSource.DataAvailable += (s, aEvent) =>
@@ -532,16 +506,10 @@ namespace ListenerX
             _lineSpectrum = new LineSpectrum(fftSize)
             {
                 SpectrumProvider = spectrumProvider,
-                //UseAverage = true,
-                //BarCount = 25,
-                //BarSpacing = 2,
-                //IsXLogScale = true,
-                //ScalingStrategy = ScalingStrategy.Decibel
-                UseAverage = false,
-                BarCount = 29,
+                BarCount = AbstractKeyGrid.GetDefaultGrid().ColumnCount,
                 BarSpacing = 2,
                 IsXLogScale = true,
-                ScalingStrategy = ScalingStrategy.Sqrt
+                ScalingStrategy = ScalingStrategy.Decibel
             };
 
 
@@ -553,5 +521,6 @@ namespace ListenerX
             _source = notificationSource.ToWaveSource(16);
 
         }
+
     }
 }

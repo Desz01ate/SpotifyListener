@@ -31,7 +31,7 @@ namespace ListenerX.Visualization
         private ISpectrumProvider _spectrumProvider;
 
         protected int SpectrumResolution;
-        private bool _useAverage;
+        private bool _useAverage => Properties.Settings.Default.UseAverage;
 
         public int MaximumFrequency
         {
@@ -99,15 +99,15 @@ namespace ListenerX.Visualization
             }
         }
 
-        public bool UseAverage
-        {
-            get { return _useAverage; }
-            set
-            {
-                _useAverage = value;
-                RaisePropertyChanged("UseAverage");
-            }
-        }
+        //public bool UseAverage
+        //{
+        //    get { return _useAverage; }
+        //    set
+        //    {
+        //        _useAverage = value;
+        //        RaisePropertyChanged("UseAverage");
+        //    }
+        //}
 
         [BrowsableAttribute(false)]
         public FftSize FftSize
@@ -169,7 +169,7 @@ namespace ListenerX.Visualization
 
             for (int i = _minimumFrequencyIndex; i <= _maximumFrequencyIndex; i++)
             {
-                switch (ScalingStrategy)
+                switch ((ScalingStrategy)Properties.Settings.Default.ScalingStrategy)
                 {
                     case ScalingStrategy.Decibel:
                         value0 = (((20 * Math.Log10(fftBuffer[i])) - MinDbValue) / DbScale) * actualMaxValue;
@@ -186,11 +186,9 @@ namespace ListenerX.Visualization
 
                 value = Math.Max(0, Math.Max(value0, value));
 
+                var spectrumSample = IsXLogScale ? _spectrumLogScaleIndexMax : _spectrumIndexMax;
                 while (spectrumPointIndex <= _spectrumIndexMax.Length - 1 &&
-                       i ==
-                       (IsXLogScale
-                           ? _spectrumLogScaleIndexMax[spectrumPointIndex]
-                           : _spectrumIndexMax[spectrumPointIndex]))
+                       i == spectrumSample[spectrumPointIndex])
                 {
                     if (!recalc)
                         value = lastValue;
@@ -215,62 +213,6 @@ namespace ListenerX.Visualization
             return dataPoints.ToArray();
         }
 
-        protected virtual SpectrumPointData[] CalculateSpectrumPoints(double maxValue, double barsCount, float[] fftBuffer)
-        {
-            var dataPoints = new List<SpectrumPointData>();
-
-            double value0 = 0, value = 0;
-            double lastValue = 0;
-            double actualMaxValue = maxValue;
-            int spectrumPointIndex = 0;
-
-            for (int i = _minimumFrequencyIndex; i <= _maximumFrequencyIndex; i++)
-            {
-                switch (ScalingStrategy)
-                {
-                    case ScalingStrategy.Decibel:
-                        value0 = (((20 * Math.Log10(fftBuffer[i])) - MinDbValue) / DbScale) * actualMaxValue;
-                        break;
-                    case ScalingStrategy.Linear:
-                        value0 = (fftBuffer[i] * ScaleFactorLinear) * actualMaxValue;
-                        break;
-                    case ScalingStrategy.Sqrt:
-                        value0 = ((Math.Sqrt(fftBuffer[i])) * ScaleFactorSqr) * actualMaxValue;
-                        break;
-                }
-
-                bool recalc = true;
-
-                value = Math.Max(0, Math.Max(value0, value));
-
-                while (spectrumPointIndex <= _spectrumIndexMax.Length - 1 &&
-                       i ==
-                       (IsXLogScale
-                           ? _spectrumLogScaleIndexMax[spectrumPointIndex]
-                           : _spectrumIndexMax[spectrumPointIndex]))
-                {
-                    if (!recalc)
-                        value = lastValue;
-
-                    if (value > maxValue)
-                        value = maxValue;
-
-                    if (_useAverage && spectrumPointIndex > 0)
-                        value = (lastValue + value) / 2.0;
-
-                    dataPoints.Add(new SpectrumPointData { SpectrumPointIndex = spectrumPointIndex, Value = value });
-
-                    lastValue = value;
-                    value = 0.0;
-                    spectrumPointIndex++;
-                    recalc = false;
-                }
-
-                //value = 0;
-            }
-
-            return dataPoints.ToArray();
-        }
 
         protected void RaisePropertyChanged(string propertyName)
         {
