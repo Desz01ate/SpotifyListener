@@ -11,7 +11,7 @@ namespace ListenerX.Components
 {
     public class VirtualKeyboardComponent : PictureBox
     {
-        private readonly System.Windows.Forms.Timer timer;
+        private readonly System.Timers.Timer timer;
 
         private readonly int boxSize;
 
@@ -19,9 +19,9 @@ namespace ListenerX.Components
         public VirtualKeyboardComponent(int boxSize, bool autoStart = true)
         {
             this.boxSize = boxSize;
-            this.timer = new Timer();
+            this.timer = new System.Timers.Timer();
             this.timer.Interval = 40;
-            this.timer.Tick += Timer_Tick;
+            this.timer.Elapsed += Timer_Tick;
             if (autoStart)
             {
                 this.timer.Start();
@@ -32,13 +32,11 @@ namespace ListenerX.Components
         {
             Task.Run(() =>
             {
-                Image image = this.Image;
-                var newImage = AbstractKeyGrid.GetDefaultGrid().VisualizeRenderingGrid(this.boxSize, this.boxSize);
-                if (newImage != null)
+                var nextFrame = AbstractKeyGrid.ActiveGrid.VisualizeRenderingGrid(this.boxSize, this.boxSize);
+                if (nextFrame != null)
                 {
-                    this.Image = newImage;
-                    if (image != null)
-                        image.Dispose();
+                    this.Image?.Dispose();
+                    this.Image = nextFrame;
                 }
                 this.OnImageChanged?.Invoke(this, null);
             });

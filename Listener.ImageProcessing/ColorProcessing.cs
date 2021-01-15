@@ -95,6 +95,10 @@ namespace Listener.ImageProcessing
 
         public static Color ChangeBrightnessLevel(this Color c, double multiplier, double alpha = 255)
         {
+            if (multiplier == 1 && alpha == 255)
+                return c;
+            if (multiplier <= 0)
+                return Color.Black;
             return Color.FromArgb((byte)alpha, (byte)(c.R * multiplier), (byte)(c.G * multiplier), (byte)(c.B * multiplier));
         }
 

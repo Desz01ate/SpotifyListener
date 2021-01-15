@@ -48,8 +48,8 @@ namespace Listener.ImageProcessing
         {
             if (image == null)
                 throw new ArgumentNullException(nameof(image));
-            if (radial == 0)
-                return image;
+            //if (radial == 0)
+            //    return image;
             var gb = new GaussianBlur(image);
             return gb.Process(radial);
         }

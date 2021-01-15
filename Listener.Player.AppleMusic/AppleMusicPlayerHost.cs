@@ -236,7 +236,7 @@ namespace Listener.Player.AppleMusic
 
         private ITPlayerState currentPlayState;
 
-        private readonly double context_width, context_height;
+        private readonly int context_width, context_height;
 
         private readonly iTunesApp app;
 
@@ -245,7 +245,7 @@ namespace Listener.Player.AppleMusic
         private System.Windows.Forms.Timer _trackFetcherTimer = new System.Windows.Forms.Timer();
 
         delegate void Router(object arg);
-        public AppleMusicPlayerHost(double contextWidth, double contextHeight)
+        public AppleMusicPlayerHost(int contextWidth, int contextHeight)
         {
             this.app = new iTunesApp();
             this.context_width = contextWidth;

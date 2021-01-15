@@ -228,13 +228,16 @@ namespace ListenerX
                         chroma.PlayingPositionEffects(spectrumData.Average(), this.player.CalculatedPosition);
                         break;
                     case 1:
-                        chroma.VisualizeVolumeEffects(spectrumData);
+                        chroma.PlayingPositionBackgroundEffects(spectrumData.Average(), this.player.CalculatedPosition);
                         break;
                     case 2:
-                        chroma.VisualizeVolumeChromaEffects(spectrumData);
+                        chroma.VisualizeVolumeEffects(spectrumData);
                         break;
                     case 3:
-                        chroma.VisualizeAlbumArtwork(spectrumData);
+                        chroma.VisualizeVolumeBackgroundEffects(spectrumData);
+                        break;
+                    case 4:
+                        chroma.VisualizeVolumeChromaEffects(spectrumData);
                         break;
                     default:
                         break;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -39,37 +40,62 @@ namespace Listener.ImageProcessing
             }
             return image;
         }
-        public static Image Cut(this Bitmap image, double width, double height)
+        public static Image Cut(this Bitmap image, int width, int height)
         {
-            var diffOffset = height / width;
-            if (!(0 < diffOffset && diffOffset < 1))
-                throw new ArgumentException("width and height offset is out of range (height divide by width must be inside of range 0~1).");
+            var diffOffset = (float)height / width;
+            //if (!(0 < diffOffset && diffOffset < 1))
+            //    throw new ArgumentException("width and height offset is out of range (height divide by width must be inside of range 0~1).");
 
-            var newImage = new Bitmap(image.Width, (int)(image.Width * diffOffset), PixelFormat.Format32bppArgb);
-            var drawer = Graphics.FromImage(newImage);
+            var actualHeight = (int)(image.Width * diffOffset);
+            var newImage = new Bitmap(image.Width, actualHeight, PixelFormat.Format32bppArgb);
+            //var newImage = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            newImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+            using var g = Graphics.FromImage(newImage);
             var offsetX = 0;
             var offsetY = (int)(image.Width * (1 - diffOffset) / 2);
-            drawer.DrawImage(image, 0, 0, new Rectangle(offsetX, offsetY, image.Width, image.Width), GraphicsUnit.Pixel);
+            var rect = new Rectangle(offsetX, offsetY, image.Width, actualHeight);
+            g.DrawImage(image, 0, 0, rect, GraphicsUnit.Pixel);
             return newImage;
         }
         public static Image Blur(this Image image, int radial)
         {
-            if (image.Width == 1 && image.Height == 1 || radial == 0)
+            if (image.Width == 1 && image.Height == 1)
                 return image;
             var result = GaussianBlur.Blur(image as Bitmap, radial);
             return result;
         }
-        public static Image Resize(this Image img, int outputWidth, int outputHeight)
+        public static Image Resize(this Image image, int width, int height)
         {
+            if (image == null)
+                throw new ArgumentNullException(nameof(image));
+            if (image.Width == width && image.Height == height)
+                return image;
 
-            if (img == null || (img.Width == outputWidth && img.Height == outputHeight)) return img;
-            Bitmap outputImage;
-            Graphics graphics;
-            outputImage = new Bitmap(outputWidth, outputHeight, PixelFormat.Format32bppArgb);
-            //outputImage.SetResolution(300, 300);
-            graphics = Graphics.FromImage(outputImage);
-            graphics.DrawImage(img, new Rectangle(0, 0, outputWidth, outputHeight), new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
-            return outputImage;
+            //var outputImage = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            //using var graphics = Graphics.FromImage(outputImage);
+            //graphics.DrawImage(image, new Rectangle(0, 0, outputWidth, outputHeight), new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
+            //return outputImage;
+
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+
+            //destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+            //destImage.SetResolution(299, 299);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using var wrapMode = new ImageAttributes();
+                wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+            }
+
+            return destImage;
         }
 
         public static BitmapImage ToBitmapImage(this Bitmap src, ImageFormat format)
@@ -104,13 +130,13 @@ namespace Listener.ImageProcessing
             return b;
         }
 
-        public static Image CalculateBackgroundSource(Image AlbumArtwork, double width, double height, int blurRadial)
+        public static Image CalculateBackgroundSource(Image AlbumArtwork, int width, int height, int blurRadial = 10, double opacity = 0.6d)
         {
             if (AlbumArtwork == null) return null;
-            using var background = new Bitmap(AlbumArtwork);
-            using var cutBg = background.Cut(width, height);
-            var opacBg = cutBg.SetOpacity(0.6d, System.Drawing.Color.Black);
-            var blurBg = opacBg.Blur(10);
+
+            using var cutBg = ((Bitmap)AlbumArtwork).Cut(width, height);
+            using var opacBg = cutBg.SetOpacity(opacity, System.Drawing.Color.Black);
+            var blurBg = opacBg.Blur(blurRadial);
             return blurBg;
         }
 

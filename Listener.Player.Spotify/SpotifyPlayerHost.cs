@@ -241,9 +241,9 @@ namespace Listener.Player.Spotify
 
         private readonly Mapper _deiceMapper;
 
-        private readonly double context_width, context_height;
+        private readonly int context_width, context_height;
 
-        public SpotifyPlayerHost(double width, double height)
+        public SpotifyPlayerHost(int width, int height)
         {
             Process.Start("spotify");
             this.context_width = width;

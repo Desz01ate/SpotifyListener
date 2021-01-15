@@ -16,6 +16,8 @@ namespace ListenerX
         }
         public static ColoreColor ChangeBrightnessLevel(this ColoreColor c, double multiplier)
         {
+            if (multiplier == 1)
+                return c;
             if (multiplier <= 0)
                 return ColoreColor.Black;
             var R = (byte)(c.R * multiplier);

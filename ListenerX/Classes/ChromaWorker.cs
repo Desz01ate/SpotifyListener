@@ -16,6 +16,7 @@ using System.Threading;
 using Utilities.Shared;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Reflection;
 
 namespace ListenerX
 {
@@ -61,6 +62,7 @@ namespace ListenerX
                     Debug.WriteLine(ex);
                 }
             }
+
             /// <summary>
             /// Apply effects to devices
             /// </summary>
@@ -123,7 +125,13 @@ namespace ListenerX
                 standardRenderColor.Standard = colors[0];
                 standardRenderColor.Complemented = colors[1];
 
-                using var resizedImage = (Bitmap)image.Resize(this.FullGridArray.ColumnCount, this.FullGridArray.RowCount);
+                //using var resizedImage = (Bitmap)image.Resize(this.FullGridArray.ColumnCount, this.FullGridArray.RowCount);
+
+                var width = this.FullGridArray.ColumnCount;
+                var height = this.FullGridArray.RowCount;
+
+                using var source = (Bitmap)ImageProcessing.Cut((Bitmap)image, width, height);
+                using var resizedImage = (Bitmap)source.Resize(width, height);
                 this.albumBackgroundSource = resizedImage.GetPixels().ToColoreColors();
                 LoadColor(standardRenderColor);
             }
@@ -139,7 +147,7 @@ namespace ListenerX
                 return this;
             }
 
-            public ChromaWorker VisualizeAlbumArtwork(double[] spectrumValues)
+            public ChromaWorker VisualizeVolumeBackgroundEffects(double[] spectrumValues)
             {
                 this.SetVisualizeAlbumBackground(this.albumColors, spectrumValues);
                 return this;
@@ -152,6 +160,14 @@ namespace ListenerX
                 this.keyboardGrid.Set(backgroundColor);
                 this.mouseGrid.Set(backgroundColor);
                 this.SetPlayingPosition(this.albumColors, volume, position);
+                return this;
+            }
+
+            public ChromaWorker PlayingPositionBackgroundEffects(double volume, double position)
+            {
+                if (double.IsNaN(position) || double.IsInfinity(position))
+                    return this;
+                this.SetPlayingPosition(volume, position);
                 return this;
             }
 
@@ -217,6 +233,7 @@ namespace ListenerX
                     }
                 }
             }
+
             private void SetPlayingPosition(ICollection<ColoreColor> colors, double volume, double position)
             {
                 for (var x = 0; x < this.FullGridArray.ColumnCount; x++)
@@ -241,8 +258,46 @@ namespace ListenerX
                         var leftKey = row[pos - 1];
                         var rightKey = row[pos + 1];
 
-                        this.FullGridArray[leftKey.Index.X, leftKey.Index.Y].Color = secondaryColor;
-                        this.FullGridArray[rightKey.Index.X, rightKey.Index.Y].Color = secondaryColor;
+                        var adjacentColor = primaryColor.ChangeBrightnessLevel(0.5);
+                        this.FullGridArray[leftKey.Index.X, leftKey.Index.Y].Color = adjacentColor;
+                        this.FullGridArray[rightKey.Index.X, rightKey.Index.Y].Color = adjacentColor;
+                    }
+                }
+
+                var mouseGrid = this.FullGridArray.EnumerateMouseKeys(true).ToArray();
+                var maxMouseY = mouseGrid.Max(e => e.Index.Y) + 1;
+                var currentPlayPosition = (int)Math.Round(position * ((double)(maxMouseY - 1) / 10), 0);
+                this.FullGridArray[22, currentPlayPosition].Color = primaryColor;
+
+                var volumeScale = maxMouseY - (int)Math.Round((volume / 100d) * maxMouseY, 0);
+                for (var y = maxMouseY - 1; y >= volumeScale; y--)
+                {
+                    this.FullGridArray[28, y].Color = primaryColor;
+                }
+            }
+
+            private void SetPlayingPosition(double volume, double position)
+            {
+                if (this.albumBackgroundSource == null)
+                    return;
+                this.FullGridArray.Set(this.albumBackgroundSource, Properties.Settings.Default.BackgroundBrightness);
+
+                var keyboardGrid = this.FullGridArray.EnumerateKeyboardKeys(true);
+                var keyboardRowCount = keyboardGrid.Max(e => e.Index.Y) + 1;
+                for (var rowIdx = 0; rowIdx < keyboardRowCount; rowIdx++)
+                {
+                    var row = keyboardGrid.Where(e => e.Index.Y == rowIdx && e.Index.X < 22).ToArray();
+                    var pos = (int)Math.Round(position * ((double)(row.Length - 1) / 10), 0);
+                    var key = row[pos];
+                    this.FullGridArray[key.Index.X, key.Index.Y].Color = primaryColor;
+                    if (0 < pos - 1 && pos + 1 < row.Length)
+                    {
+                        var leftKey = row[pos - 1];
+                        var rightKey = row[pos + 1];
+
+                        var adjacentColor = primaryColor.ChangeBrightnessLevel(0.5);
+                        this.FullGridArray[leftKey.Index.X, leftKey.Index.Y].Color = adjacentColor;
+                        this.FullGridArray[rightKey.Index.X, rightKey.Index.Y].Color = adjacentColor;
                     }
                 }
 

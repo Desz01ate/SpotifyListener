@@ -18,7 +18,7 @@ namespace ListenerX.Helpers
             var type = typeof(T);
             var moduleLocation = type.Assembly.Location;
             Metadata = AssemblyHelpers.LoadInstance<IPlayerMetadata>(moduleLocation);
-            var instance = Activator.CreateInstance(type, new object[] { mainWindow.Width, mainWindow.Height }) as IStreamablePlayerHost;
+            var instance = Activator.CreateInstance(type, new object[] { (int)mainWindow.Width, (int)mainWindow.Height }) as IStreamablePlayerHost;
             return instance;
         }
     }

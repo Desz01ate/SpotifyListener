@@ -86,7 +86,7 @@ namespace ListenerX.Classes
 
         public void Enable()
         {
-            using var image = CalculateBackgroundImage((float)System.Windows.SystemParameters.PrimaryScreenWidth, (float)System.Windows.SystemParameters.PrimaryScreenHeight);
+            using var image = CalculateBackgroundImage((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
             Set(image, Wallpaper.Style.Stretched);
         }
 
@@ -226,7 +226,7 @@ namespace ListenerX.Classes
             return backgroundImg;
         }
 
-        private Image CalculateBackgroundImage(float width, float height)
+        private Image CalculateBackgroundImage(int width, int height)
         {
 
             var highlightSize = (int)Math.Round(height * 0.555);

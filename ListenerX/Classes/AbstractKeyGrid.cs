@@ -286,6 +286,7 @@ namespace ListenerX.Classes
         }
 
         static AbstractKeyGrid defaultGrid, keyboardGrid, mouseGrid;
+        public static AbstractKeyGrid ActiveGrid;
         public static AbstractKeyGrid GetDefaultGrid()
         {
             if (defaultGrid == null)
@@ -303,9 +304,9 @@ namespace ListenerX.Classes
 #pragma warning restore CA1814 // Prefer jagged arrays over multidimensional
                 defaultGrid = new AbstractKeyGrid(grid);
             }
+            ActiveGrid = defaultGrid;
             return defaultGrid;
         }
-
 
         public static AbstractKeyGrid GetKeyboardGrid()
         {
@@ -323,6 +324,7 @@ namespace ListenerX.Classes
 #pragma warning restore CA1814 // Prefer jagged arrays over multidimensional
                 keyboardGrid = new AbstractKeyGrid(grid);
             }
+            ActiveGrid = keyboardGrid;
             return keyboardGrid;
         }
 
@@ -344,6 +346,7 @@ namespace ListenerX.Classes
 #pragma warning restore CA1814 // Prefer jagged arrays over multidimensional
                 mouseGrid = new AbstractKeyGrid(grid);
             }
+            ActiveGrid = mouseGrid;
             return mouseGrid;
         }
     }
