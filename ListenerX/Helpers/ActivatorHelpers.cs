@@ -16,8 +16,8 @@ namespace ListenerX.Helpers
             if (mainWindow == null)
                 throw new ArgumentNullException(nameof(mainWindow));
             var type = typeof(T);
-            var moduleLocation = type.Assembly.Location;
-            Metadata = AssemblyHelpers.LoadInstance<IPlayerMetadata>(moduleLocation);
+            var assembly = type.Assembly;
+            Metadata = AssemblyHelpers.LoadInstance<IPlayerMetadata>(assembly);
             var instance = Activator.CreateInstance(type, new object[] { (int)mainWindow.Width, (int)mainWindow.Height }) as IStreamablePlayerHost;
             return instance;
         }

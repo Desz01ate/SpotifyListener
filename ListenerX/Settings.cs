@@ -1,17 +1,11 @@
 ﻿using Listener.Core.Framework.Helpers;
-using ListenerX.Classes;
 using ListenerX.Components;
+using ListenerX.Cscore;
 using ListenerX.Helpers;
 using ListenerX.Visualization;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ListenerX
@@ -50,6 +44,17 @@ namespace ListenerX
             this.virtualKeyboard = new VirtualKeyboardComponent(12);
             this.virtualKeyboard.OnImageChanged += VirtualKeyboard_OnImageChanged;
             this.virtualKeyboard.Start();
+
+            var devices = OutputDevice.GetDevices().ToArray();
+            var activeIndex = Array.FindIndex(devices, x => x.Item1 == OutputDevice.ActiveDevice.DeviceId);
+            this.cb_OutputDevice.Items.AddRange(devices.Select(x => x.Item2).ToArray());
+            this.cb_OutputDevice.SelectedIndex = activeIndex;
+            this.cb_OutputDevice.SelectedIndexChanged += (s, e) =>
+            {
+                var index = (s as ComboBox).SelectedIndex;
+                OutputDevice.ChangeActiveDevice(devices[index].Item1);
+            };
+
 
             firstLaunch = false;
         }

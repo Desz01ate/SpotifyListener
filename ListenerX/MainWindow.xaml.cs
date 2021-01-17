@@ -17,16 +17,7 @@ using Listener.ImageProcessing;
 using ListenerX.ChromaExtension;
 using ListenerX.Classes;
 using ListenerX.Helpers;
-using ListenerX.Foundation.Struct;
-using ListenerX.Visualization;
-using CSCore.DSP;
-using CSCore.SoundIn;
-using CSCore.Streams;
-using CSCore;
-using CSCore.Streams.Effects;
-using CSCore.CoreAudioAPI;
-using CSCore.SoundOut;
-using ListenerX.DSP;
+using ListenerX.Cscore;
 
 namespace ListenerX
 {
@@ -37,12 +28,6 @@ namespace ListenerX
     {
         private readonly Timer chromaTimer = new Timer();
         private AnimationController animation;
-        private readonly MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
-
-        private WasapiCapture _soundIn;
-        private ISoundOut _soundOut;
-        private IWaveSource _source;
-        private LineSpectrum _lineSpectrum;
 
         private readonly ChromaWorker chroma;
 
@@ -64,8 +49,6 @@ namespace ListenerX
             try
             {
                 InitializeComponent();
-
-                fromDefaultDeviceToolStripMenuItem_Click(null, null);
 
                 InitWidth = this.Width;
                 InitHeight = this.Height;
@@ -143,7 +126,7 @@ namespace ListenerX
             }
             else
             {
-                wallpaper = new Wallpaper(this.FontFamily.ToString());
+                //wallpaper = new Wallpaper(this.FontFamily.ToString());
                 System.Windows.Forms.Application.Exit();
             }
 
@@ -221,7 +204,7 @@ namespace ListenerX
         {
             try
             {
-                var spectrumData = this._lineSpectrum.CreateSpectrumData().Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
+                var spectrumData = OutputDevice.ActiveDevice.GetSpectrums().Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
                 switch (Properties.Settings.Default.RenderStyle)
                 {
                     case 0:
@@ -368,8 +351,7 @@ namespace ListenerX
             wallpaper?.Dispose();
             player?.Dispose();
             chroma?.Dispose();
-            deviceEnumerator?.Dispose();
-            Stop();
+            OutputDevice.ActiveDevice?.Dispose();
             base.OnClosing(e);
         }
 
@@ -438,92 +420,5 @@ namespace ListenerX
         {
             GenerateFormImage();
         }
-
-
-        private void fromDefaultDeviceToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Stop();
-
-            try
-            {
-                _soundIn = new WasapiLoopbackCapture();
-                _soundIn.Initialize();
-            }
-            catch
-            {
-                _soundIn = new WasapiLoopbackCapture(100, new WaveFormat(48000, 24, 2));
-                _soundIn.Initialize();
-            }
-            //Our loopback capture opens the default render device by default so the following is not needed
-            //_soundIn.Device = MMDeviceEnumerator.DefaultAudioEndpoint(DataFlow.Render, Role.Console);
-
-
-            var soundInSource = new SoundInSource(_soundIn);
-            var source = soundInSource.ToSampleSource().AppendSource(x => new BiQuadFilterSource(x));//.AppendSource(x => new PitchShifter(x), out _);
-            //source.Filter = new LowpassFilter(source.WaveFormat.SampleRate, 4000);
-            //source.Filter = new HighpassFilter(source.WaveFormat.SampleRate, 1000);
-            SetupSampleSource(source);
-            // We need to read from our source otherwise SingleBlockRead is never called and our spectrum provider is not populated
-            byte[] buffer = new byte[_source.WaveFormat.BytesPerSecond / 2];
-            soundInSource.DataAvailable += (s, aEvent) =>
-            {
-                int read;
-                while ((read = _source.Read(buffer, 0, buffer.Length)) > 0) ;
-            };
-
-
-            //play the audio
-            _soundIn.Start();
-        }
-
-        private void Stop()
-        {
-            if (_soundOut != null)
-            {
-                _soundOut.Stop();
-                _soundOut.Dispose();
-                _soundOut = null;
-            }
-            if (_soundIn != null)
-            {
-                _soundIn.Stop();
-                _soundIn.Dispose();
-                _soundIn = null;
-            }
-            if (_source != null)
-            {
-                _source.Dispose();
-                _source = null;
-            }
-        }
-
-        private void SetupSampleSource(ISampleSource aSampleSource)
-        {
-            const FftSize fftSize = FftSize.Fft4096;
-            //create a spectrum provider which provides fft data based on some input
-            var spectrumProvider = new BasicSpectrumProvider(aSampleSource.WaveFormat.Channels,
-                aSampleSource.WaveFormat.SampleRate, fftSize);
-
-            //linespectrum and voiceprint3dspectrum used for rendering some fft data
-            //in oder to get some fft data, set the previously created spectrumprovider 
-            _lineSpectrum = new LineSpectrum(fftSize)
-            {
-                SpectrumProvider = spectrumProvider,
-                BarCount = AbstractKeyGrid.GetDefaultGrid().ColumnCount,
-                BarSpacing = 2,
-                IsXLogScale = true,
-                ScalingStrategy = ScalingStrategy.Decibel
-            };
-
-
-            //the SingleBlockNotificationStream is used to intercept the played samples
-            var notificationSource = new SingleBlockNotificationStream(aSampleSource);
-            //pass the intercepted samples as input data to the spectrumprovider (which will calculate a fft based on them)
-            notificationSource.SingleBlockRead += (s, a) => spectrumProvider.Add(a.Left, a.Right);
-
-            _source = notificationSource.ToWaveSource(16);
-
-        }
-
     }
 }

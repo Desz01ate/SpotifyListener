@@ -23,6 +23,22 @@ namespace ListenerX.Helpers
             var bytes = File.ReadAllBytes(filePath);
             return LoadInstance<T>(bytes, args);
         }
+
+        public static T LoadInstance<T>(Assembly asm,params object[] args)
+        {
+            var exportedTypes = asm.GetExportedTypes();
+            var mustImplementedByType = typeof(T);
+            foreach (var type in exportedTypes)
+            {
+                bool isAbleToCastToGenericType = mustImplementedByType.IsAssignableFrom(type) || type.FullName == mustImplementedByType.FullName;
+                if (isAbleToCastToGenericType)
+                {
+                    var instance = (T)Activator.CreateInstance(type, args);
+                    return instance;
+                }
+            }
+            return default;
+        }
         /// <summary>
         /// Load class object from byte array data.
         /// </summary>

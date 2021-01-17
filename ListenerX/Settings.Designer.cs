@@ -32,6 +32,7 @@ namespace ListenerX
         {
             this.ResetButton = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.cb_OutputDevice = new System.Windows.Forms.ComboBox();
             this.cb_EnableArtworkWallpaper = new System.Windows.Forms.CheckBox();
             this.ClearCache = new System.Windows.Forms.Label();
             this.CacheSize = new System.Windows.Forms.Label();
@@ -55,6 +56,7 @@ namespace ListenerX
             this.label11 = new System.Windows.Forms.Label();
             this.ChromaSDKEnable = new System.Windows.Forms.CheckBox();
             this.lbl_Metadata = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.visualizer)).BeginInit();
@@ -74,6 +76,8 @@ namespace ListenerX
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.label5);
+            this.groupBox3.Controls.Add(this.cb_OutputDevice);
             this.groupBox3.Controls.Add(this.cb_EnableArtworkWallpaper);
             this.groupBox3.Controls.Add(this.ClearCache);
             this.groupBox3.Controls.Add(this.CacheSize);
@@ -85,6 +89,15 @@ namespace ListenerX
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Preferences";
             this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
+            // 
+            // cb_OutputDevice
+            // 
+            this.cb_OutputDevice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_OutputDevice.FormattingEnabled = true;
+            this.cb_OutputDevice.Location = new System.Drawing.Point(95, 112);
+            this.cb_OutputDevice.Name = "cb_OutputDevice";
+            this.cb_OutputDevice.Size = new System.Drawing.Size(271, 21);
+            this.cb_OutputDevice.TabIndex = 9;
             // 
             // cb_EnableArtworkWallpaper
             // 
@@ -328,6 +341,15 @@ namespace ListenerX
             this.lbl_Metadata.TabIndex = 7;
             this.lbl_Metadata.Text = "$";
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 115);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(82, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Output Device :";
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -381,5 +403,7 @@ namespace ListenerX
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.ComboBox ScalingStrategy;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox cb_OutputDevice;
+        private System.Windows.Forms.Label label5;
     }
 }

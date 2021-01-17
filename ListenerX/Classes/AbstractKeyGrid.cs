@@ -286,7 +286,7 @@ namespace ListenerX.Classes
         }
 
         static AbstractKeyGrid defaultGrid, keyboardGrid, mouseGrid;
-        public static AbstractKeyGrid ActiveGrid;
+        public static AbstractKeyGrid ActiveGrid { get; private set; } = GetDefaultGrid();
         public static AbstractKeyGrid GetDefaultGrid()
         {
             if (defaultGrid == null)

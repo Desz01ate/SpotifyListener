@@ -17,6 +17,7 @@ using Utilities.Shared;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
+using Colore.Effects.ChromaLink;
 
 namespace ListenerX
 {
@@ -30,6 +31,7 @@ namespace ListenerX
             private CustomMouseEffect mouseGrid = CustomMouseEffect.Create();
             private CustomMousepadEffect mousepadGrid = CustomMousepadEffect.Create();
             private CustomHeadsetEffect headsetGrid = CustomHeadsetEffect.Create();
+            private CustomChromaLinkEffect chromaLinkGrid = CustomChromaLinkEffect.Create();
             private readonly IChroma chromaInterface;
             private readonly AutoshiftCirculaQueue<ColoreColor> rainbowColors;
             private AutoshiftCirculaQueue<ColoreColor> albumColors;
@@ -78,11 +80,13 @@ namespace ListenerX
                     {
                         mouseGrid[key.Key] = key.Color;
                     }
+
                     await chromaInterface.Keyboard.SetCustomAsync(keyboardGrid);
                     await chromaInterface.Mouse.SetGridAsync(mouseGrid);
                     await chromaInterface.Headset.SetCustomAsync(headsetGrid);
                     await chromaInterface.Mousepad.SetCustomAsync(mousepadGrid);
-                    await chromaInterface.ChromaLink.SetAllAsync(ColoreColor.Red);
+                    await chromaInterface.ChromaLink.SetCustomAsync(chromaLinkGrid);
+                    //this.chromaLinkGrid[]
                 }
                 headsetGrid.Clear();
                 mousepadGrid.Clear();
@@ -210,6 +214,7 @@ namespace ListenerX
                         key.Color = foreground;
                     }
                 }
+                this.chromaLinkGrid.Set(colors.Last());
             }
 
             private void SetVisualizeAlbumBackground(
@@ -232,6 +237,7 @@ namespace ListenerX
                         key.Color = foreground;
                     }
                 }
+                this.chromaLinkGrid.Set(colors.Last());
             }
 
             private void SetPlayingPosition(ICollection<ColoreColor> colors, double volume, double position)
@@ -274,6 +280,7 @@ namespace ListenerX
                 {
                     this.FullGridArray[28, y].Color = primaryColor;
                 }
+                this.chromaLinkGrid.Set(colors.Last());
             }
 
             private void SetPlayingPosition(double volume, double position)
@@ -311,6 +318,7 @@ namespace ListenerX
                 {
                     this.FullGridArray[28, y].Color = primaryColor;
                 }
+                this.chromaLinkGrid.Set(this.albumBackgroundSource.Last().Last());
             }
         }
 
