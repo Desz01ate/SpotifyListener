@@ -214,7 +214,10 @@ namespace ListenerX
                         key.Color = foreground;
                     }
                 }
-                this.chromaLinkGrid.Set(colors.Last());
+                var lastColor = colors.Last();
+                this.chromaLinkGrid.Set(lastColor);
+                this.mousepadGrid.Set(lastColor);
+                this.headsetGrid.Set(lastColor);
             }
 
             private void SetVisualizeAlbumBackground(
@@ -237,7 +240,10 @@ namespace ListenerX
                         key.Color = foreground;
                     }
                 }
-                this.chromaLinkGrid.Set(colors.Last());
+                var lastColor = colors.Last();
+                this.chromaLinkGrid.Set(lastColor);
+                this.mousepadGrid.Set(lastColor);
+                this.headsetGrid.Set(lastColor);
             }
 
             private void SetPlayingPosition(ICollection<ColoreColor> colors, double volume, double position)
@@ -280,7 +286,10 @@ namespace ListenerX
                 {
                     this.FullGridArray[28, y].Color = primaryColor;
                 }
-                this.chromaLinkGrid.Set(colors.Last());
+                var lastColor = colors.Last();
+                this.chromaLinkGrid.Set(lastColor);
+                this.mousepadGrid.Set(lastColor);
+                this.headsetGrid.Set(lastColor);
             }
 
             private void SetPlayingPosition(double volume, double position)
@@ -318,7 +327,10 @@ namespace ListenerX
                 {
                     this.FullGridArray[28, y].Color = primaryColor;
                 }
-                this.chromaLinkGrid.Set(this.albumBackgroundSource.Last().Last());
+                var lastColor = this.albumBackgroundSource.Last().Last();
+                this.chromaLinkGrid.Set(lastColor);
+                this.mousepadGrid.Set(lastColor);
+                this.headsetGrid.Set(lastColor);
             }
         }
 
