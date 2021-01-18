@@ -16,14 +16,11 @@ namespace ListenerX
     public partial class VirtualKeyboard : Form
     {
         private readonly VirtualKeyboardComponent virtualKeyboard;
-        private bool SampleInit = false;
         public VirtualKeyboard()
         {
             InitializeComponent();
-
-            var sample = new { Width = 1780, Height = 450 };
-            this.Width = sample.Width;
-            this.Height = sample.Height;
+            this.Width = 1520;
+            this.Height = 450;
             this.pictureBox1.Width = this.Width;
             this.pictureBox1.Height = this.Height;
             this.virtualKeyboard = new VirtualKeyboardComponent(50);
