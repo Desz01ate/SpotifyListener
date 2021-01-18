@@ -117,19 +117,19 @@ namespace ListenerX.Classes
             SearchButton = mainWnd.btn_search;
             #endregion
             AlbumImage.BringToFront();
-            var baseHeight = AlbumImage.Height;
-            var baseWidth = AlbumImage.Width;
+            //var baseHeight = AlbumImage.Height;
+            //var baseWidth = AlbumImage.Width;
 
-            AlbumImage.MouseEnter += delegate
-            {
-                AlbumImage.Width = baseWidth * 1.2;
-                AlbumImage.Height = baseHeight * 1.2;
-            };
-            AlbumImage.MouseLeave += delegate
-            {
-                AlbumImage.Width = baseWidth;
-                AlbumImage.Height = baseHeight;
-            };
+            //AlbumImage.MouseEnter += delegate
+            //{
+            //    AlbumImage.Width = baseWidth * 1.2;
+            //    AlbumImage.Height = baseHeight * 1.2;
+            //};
+            //AlbumImage.MouseLeave += delegate
+            //{
+            //    AlbumImage.Width = baseWidth;
+            //    AlbumImage.Height = baseHeight;
+            //};
         }
 
         public void TransitionEnable()

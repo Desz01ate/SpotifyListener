@@ -80,7 +80,10 @@ namespace ListenerX
                     {
                         mouseGrid[key.Key] = key.Color;
                     }
-
+                    foreach (var key in this.FullGridArray.EnumerateChromaLinkKeys())
+                    {
+                        chromaLinkGrid[(int)key.Key] = key.Color;
+                    }
                     await chromaInterface.Keyboard.SetCustomAsync(keyboardGrid);
                     await chromaInterface.Mouse.SetGridAsync(mouseGrid);
                     await chromaInterface.Headset.SetCustomAsync(headsetGrid);
@@ -214,10 +217,10 @@ namespace ListenerX
                         key.Color = foreground;
                     }
                 }
-                var lastColor = colors.Last();
-                this.chromaLinkGrid.Set(lastColor);
-                this.mousepadGrid.Set(lastColor);
-                this.headsetGrid.Set(lastColor);
+                //var lastColor = colors.Last();
+                //this.chromaLinkGrid.Set(lastColor);
+                //this.mousepadGrid.Set(lastColor);
+                //this.headsetGrid.Set(lastColor);
             }
 
             private void SetVisualizeAlbumBackground(
@@ -240,10 +243,10 @@ namespace ListenerX
                         key.Color = foreground;
                     }
                 }
-                var lastColor = colors.Last();
-                this.chromaLinkGrid.Set(lastColor);
-                this.mousepadGrid.Set(lastColor);
-                this.headsetGrid.Set(lastColor);
+                //var lastColor = colors.Last();
+                //this.chromaLinkGrid.Set(lastColor);
+                //this.mousepadGrid.Set(lastColor);
+                //this.headsetGrid.Set(lastColor);
             }
 
             private void SetPlayingPosition(ICollection<ColoreColor> colors, double volume, double position)
@@ -286,10 +289,10 @@ namespace ListenerX
                 {
                     this.FullGridArray[28, y].Color = primaryColor;
                 }
-                var lastColor = colors.Last();
-                this.chromaLinkGrid.Set(lastColor);
-                this.mousepadGrid.Set(lastColor);
-                this.headsetGrid.Set(lastColor);
+                //var lastColor = colors.Last();
+                //this.chromaLinkGrid.Set(lastColor);
+                //this.mousepadGrid.Set(lastColor);
+                //this.headsetGrid.Set(lastColor);
             }
 
             private void SetPlayingPosition(double volume, double position)
@@ -327,10 +330,10 @@ namespace ListenerX
                 {
                     this.FullGridArray[28, y].Color = primaryColor;
                 }
-                var lastColor = this.albumBackgroundSource.Last().Last();
-                this.chromaLinkGrid.Set(lastColor);
-                this.mousepadGrid.Set(lastColor);
-                this.headsetGrid.Set(lastColor);
+                //var lastColor = this.albumBackgroundSource.Last().Last();
+                //this.chromaLinkGrid.Set(lastColor);
+                //this.mousepadGrid.Set(lastColor);
+                //this.headsetGrid.Set(lastColor);
             }
         }
 

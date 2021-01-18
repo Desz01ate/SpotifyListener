@@ -10,6 +10,9 @@ namespace ListenerX.Classes
     {
         Keyboard,
         Mouse,
+        Mousepad,
+        Headset,
+        ChromaLink,
         Invalid
     }
     public interface IAbstractKey

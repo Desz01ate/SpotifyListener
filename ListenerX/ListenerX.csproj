@@ -209,6 +209,9 @@
     <Compile Include="Classes\IAbstractKey.cs" />
     <Compile Include="Classes\LyricsHelpers.cs" />
     <Compile Include="Classes\CircularQueue.cs" />
+    <Compile Include="Colore\ChromaLinkLed.cs" />
+    <Compile Include="Colore\HeadsetLed.cs" />
+    <Compile Include="Colore\MousepadLed.cs" />
     <Compile Include="Components\CustomProgresBar.cs" />
     <Compile Include="Components\VirtualKeyboardComponent.cs">
       <SubType>Component</SubType>

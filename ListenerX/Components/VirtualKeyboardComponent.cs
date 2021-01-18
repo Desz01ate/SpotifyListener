@@ -16,6 +16,7 @@ namespace ListenerX.Components
         private readonly int boxSize;
 
         public event EventHandler OnImageChanged;
+        
         public VirtualKeyboardComponent(int boxSize, bool autoStart = true)
         {
             this.boxSize = boxSize;
