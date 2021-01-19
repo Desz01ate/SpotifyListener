@@ -23,7 +23,7 @@ namespace ListenerX.Classes
 
         public KeyType Type { get; }
 
-        public int internalKeyCode { get; }
+        public int KeyCode { get; }
 
         public Colore.Data.Color Color { get; set; }
     }

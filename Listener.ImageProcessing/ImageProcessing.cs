@@ -100,18 +100,17 @@ namespace Listener.ImageProcessing
 
         public static BitmapImage ToBitmapImage(this Bitmap src, ImageFormat format)
         {
-            using (MemoryStream memory = new MemoryStream())
-            {
-                src.Save(memory, format);
-                memory.Position = 0;
-                BitmapImage bitmapimage = new BitmapImage();
-                bitmapimage.BeginInit();
-                bitmapimage.StreamSource = memory;
-                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapimage.EndInit();
-                bitmapimage.Freeze();
-                return bitmapimage;
-            }
+            //GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true);
+            using MemoryStream memory = new MemoryStream();
+            src.Save(memory, format);
+            memory.Position = 0;
+            BitmapImage bitmapimage = new BitmapImage();
+            bitmapimage.BeginInit();
+            bitmapimage.StreamSource = memory;
+            bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapimage.EndInit();
+            bitmapimage.Freeze();
+            return bitmapimage;
         }
         public static BitmapImage ToBitmapImage(this Image src, ImageFormat format)
         {

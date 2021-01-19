@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using Colore.Effects.ChromaLink;
+using ListenerX.Extensions;
 
 namespace ListenerX
 {
@@ -27,11 +28,6 @@ namespace ListenerX
         {
             private ColoreColor primaryColor { get; set; } = ColoreColor.White;
             private ColoreColor secondaryColor { get; set; } = ColoreColor.Black;
-            private CustomKeyboardEffect keyboardGrid = CustomKeyboardEffect.Create();
-            private CustomMouseEffect mouseGrid = CustomMouseEffect.Create();
-            private CustomMousepadEffect mousepadGrid = CustomMousepadEffect.Create();
-            private CustomHeadsetEffect headsetGrid = CustomHeadsetEffect.Create();
-            private CustomChromaLinkEffect chromaLinkGrid = CustomChromaLinkEffect.Create();
             private readonly IChroma chromaInterface;
             private readonly AutoshiftCirculaQueue<ColoreColor> rainbowColors;
             private AutoshiftCirculaQueue<ColoreColor> albumColors;
@@ -72,35 +68,13 @@ namespace ListenerX
             {
                 if (!this.IsError)
                 {
-                    foreach (var key in this.FullGridArray.EnumerateKeyboardKeys())
-                    {
-                        keyboardGrid[key.Key] = key.Color;
-                    }
-                    foreach (var key in this.FullGridArray.EnumerateMouseKeys())
-                    {
-                        mouseGrid[key.Key] = key.Color;
-                    }
-                    foreach (var key in this.FullGridArray.EnumerateChromaLinkKeys())
-                    {
-                        chromaLinkGrid[(int)key.Key] = key.Color;
-                    }
-                    await chromaInterface.Keyboard.SetCustomAsync(keyboardGrid);
-                    await chromaInterface.Mouse.SetGridAsync(mouseGrid);
-                    await chromaInterface.Headset.SetCustomAsync(headsetGrid);
-                    await chromaInterface.Mousepad.SetCustomAsync(mousepadGrid);
-                    await chromaInterface.ChromaLink.SetCustomAsync(chromaLinkGrid);
-                    //this.chromaLinkGrid[]
+                    await this.FullGridArray.ApplyAsync(this.chromaInterface);
                 }
-                headsetGrid.Clear();
-                mousepadGrid.Clear();
             }
 
             public void SDKDisable()
             {
-                mouseGrid.Set(ColoreColor.Black);
-                keyboardGrid.Set(ColoreColor.Black);
-                mousepadGrid.Set(ColoreColor.Black);
-                headsetGrid.Set(ColoreColor.Black);
+                this.FullGridArray.Set(ColoreColor.Black);
                 ApplyAsync().Wait();
             }
             /// <summary>
@@ -163,9 +137,6 @@ namespace ListenerX
             {
                 if (double.IsNaN(position) || double.IsInfinity(position))
                     return this;
-                var backgroundColor = this.primaryColor.ChangeBrightnessLevel(0.2);
-                this.keyboardGrid.Set(backgroundColor);
-                this.mouseGrid.Set(backgroundColor);
                 this.SetPlayingPosition(this.albumColors, volume, position);
                 return this;
             }
@@ -217,10 +188,6 @@ namespace ListenerX
                         key.Color = foreground;
                     }
                 }
-                //var lastColor = colors.Last();
-                //this.chromaLinkGrid.Set(lastColor);
-                //this.mousepadGrid.Set(lastColor);
-                //this.headsetGrid.Set(lastColor);
             }
 
             private void SetVisualizeAlbumBackground(
@@ -243,10 +210,6 @@ namespace ListenerX
                         key.Color = foreground;
                     }
                 }
-                //var lastColor = colors.Last();
-                //this.chromaLinkGrid.Set(lastColor);
-                //this.mousepadGrid.Set(lastColor);
-                //this.headsetGrid.Set(lastColor);
             }
 
             private void SetPlayingPosition(ICollection<ColoreColor> colors, double volume, double position)
@@ -260,7 +223,7 @@ namespace ListenerX
                     }
                 }
 
-                var keyboardGrid = this.FullGridArray.EnumerateKeyboardKeys(true);
+                var keyboardGrid = this.FullGridArray.EnumerateKeys(KeyType.Keyboard, true);
                 var keyboardRowCount = keyboardGrid.Max(e => e.Index.Y) + 1;
                 for (var rowIdx = 0; rowIdx < keyboardRowCount; rowIdx++)
                 {
@@ -279,7 +242,7 @@ namespace ListenerX
                     }
                 }
 
-                var mouseGrid = this.FullGridArray.EnumerateMouseKeys(true).ToArray();
+                var mouseGrid = this.FullGridArray.EnumerateKeys(KeyType.Mouse, true).ToArray();
                 var maxMouseY = mouseGrid.Max(e => e.Index.Y) + 1;
                 var currentPlayPosition = (int)Math.Round(position * ((double)(maxMouseY - 1) / 10), 0);
                 this.FullGridArray[22, currentPlayPosition].Color = primaryColor;
@@ -289,10 +252,6 @@ namespace ListenerX
                 {
                     this.FullGridArray[28, y].Color = primaryColor;
                 }
-                //var lastColor = colors.Last();
-                //this.chromaLinkGrid.Set(lastColor);
-                //this.mousepadGrid.Set(lastColor);
-                //this.headsetGrid.Set(lastColor);
             }
 
             private void SetPlayingPosition(double volume, double position)
@@ -301,7 +260,7 @@ namespace ListenerX
                     return;
                 this.FullGridArray.Set(this.albumBackgroundSource, Properties.Settings.Default.BackgroundBrightness);
 
-                var keyboardGrid = this.FullGridArray.EnumerateKeyboardKeys(true);
+                var keyboardGrid = this.FullGridArray.EnumerateKeys(KeyType.Keyboard, true);
                 var keyboardRowCount = keyboardGrid.Max(e => e.Index.Y) + 1;
                 for (var rowIdx = 0; rowIdx < keyboardRowCount; rowIdx++)
                 {
@@ -320,7 +279,7 @@ namespace ListenerX
                     }
                 }
 
-                var mouseGrid = this.FullGridArray.EnumerateMouseKeys(true).ToArray();
+                var mouseGrid = this.FullGridArray.EnumerateKeys(KeyType.Mouse, true).ToArray();
                 var maxMouseY = mouseGrid.Max(e => e.Index.Y) + 1;
                 var currentPlayPosition = (int)Math.Round(position * ((double)(maxMouseY - 1) / 10), 0);
                 this.FullGridArray[22, currentPlayPosition].Color = primaryColor;
@@ -330,13 +289,7 @@ namespace ListenerX
                 {
                     this.FullGridArray[28, y].Color = primaryColor;
                 }
-                //var lastColor = this.albumBackgroundSource.Last().Last();
-                //this.chromaLinkGrid.Set(lastColor);
-                //this.mousepadGrid.Set(lastColor);
-                //this.headsetGrid.Set(lastColor);
             }
         }
-
-
     }
 }

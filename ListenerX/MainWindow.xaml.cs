@@ -174,6 +174,7 @@ namespace ListenerX
                     wallpaper.Disable();
                 }
 
+                this.player.AlbumArtwork.Dispose();
             });
         }
 
@@ -357,17 +358,19 @@ namespace ListenerX
 
         private void GenerateFormImage()
         {
-            var fileName = "10." + RegularExpressionHelpers.AlphabetCleaner($"{player.Track}-{player.Album}-{player.Artist}") + ".jpg";
-            string path;
-            if (CacheFileManager.IsFileExists(fileName))
-            {
-                path = CacheFileManager.GetFullCachePath(fileName);
-            }
-            else
-            {
-                using var image = wallpaper.GetWallpaperImage(3840, 2160);
-                path = CacheFileManager.SaveCache(fileName, image.ToByteArray(ImageFormat.Jpeg));
-            }
+            //var fileName = "10." + RegularExpressionHelpers.AlphabetCleaner($"{player.Track}-{player.Album}-{player.Artist}") + ".jpg";
+            //string path;
+            //if (CacheFileManager.IsFileExists(fileName))
+            //{
+            //    path = CacheFileManager.GetFullCachePath(fileName);
+            //}
+            //else
+            //{
+            //    using var image = wallpaper.GetWallpaperImage(3840, 2160);
+            //    path = CacheFileManager.SaveCache(fileName, image.ToByteArray(ImageFormat.Jpeg));
+            //    //path = wallpaper.GetWallpaperImage();
+            //}
+            var path = wallpaper.GetWallpaperImage();
             Process.Start(path);
         }
 

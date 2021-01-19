@@ -22,6 +22,14 @@ namespace Colore.Effects.Mousepad
         Led11,
         Led12,
         Led13,
-        Led14
+        Led14,
+        [Obsolete("Not supported by Colore")]
+        Led15,
+        [Obsolete("Not supported by Colore")]
+        Led16,
+        [Obsolete("Not supported by Colore")]
+        Led17,
+        [Obsolete("Not supported by Colore")]
+        Led18
     }
 }

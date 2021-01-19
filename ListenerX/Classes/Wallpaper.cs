@@ -14,7 +14,7 @@ namespace ListenerX.Classes
 {
     public class Wallpaper : IDisposable
     {
-        public enum Style : int
+        public enum Style
         {
             Tiled,
             Centered,
@@ -199,7 +199,6 @@ namespace ListenerX.Classes
         {
             var screenWidth = width;
             var screenHeight = height;
-
             backgroundImg = backgroundImg.Resize((int)screenWidth, (int)screenHeight);
             using var g = Graphics.FromImage(backgroundImg);
 
@@ -273,10 +272,11 @@ namespace ListenerX.Classes
 
         }
 
-        public Image GetWallpaperImage(int width, int height)
+        public string GetWallpaperImage()
         {
-            var image = CalculateBackgroundImage(width, height);
-            return image;
+            return temporaryWaitForDeleteFiles;
+            //var image = CalculateBackgroundImage(width, height);
+            //return image;
         }
 
         protected void Dispose(bool disposing)

@@ -218,6 +218,7 @@
     </Compile>
     <Compile Include="Cscore\OutputDevice.cs" />
     <Compile Include="DSP\BiQuadFilterSource.cs" />
+    <Compile Include="Extensions\AbstractKeyGridExtensions.cs" />
     <Compile Include="VirtualKeyboard.cs">
       <SubType>Form</SubType>
     </Compile>
