@@ -8,9 +8,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace ListenerX
+namespace ListenerX.Extensions
 {
-    static class Extension
+    public static class ControlExtensions
     {
         public static double CalculateRelativeValue(this ProgressBar control)
         {

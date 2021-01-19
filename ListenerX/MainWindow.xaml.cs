@@ -18,6 +18,7 @@ using ListenerX.ChromaExtension;
 using ListenerX.Classes;
 using ListenerX.Helpers;
 using ListenerX.Cscore;
+using ListenerX.Extensions;
 
 namespace ListenerX
 {

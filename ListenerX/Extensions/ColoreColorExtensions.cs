@@ -2,9 +2,9 @@
 using System.Linq;
 using ColoreColor = Colore.Data.Color;
 
-namespace ListenerX
+namespace ListenerX.Extensions
 {
-    static class ColoreColorProcessor
+    public static class ColoreColorExtensions
     {
         public static ColoreColor ComplementColor(this ColoreColor c)
         {
