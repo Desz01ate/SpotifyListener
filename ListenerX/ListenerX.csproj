@@ -369,6 +369,10 @@
     <Resource Include="Resources\adjust.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Colore\src\Colore\Colore.csproj">
+      <Project>{a03d43c7-ade9-4753-8cf4-b8937e459172}</Project>
+      <Name>Colore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Listener.Core.Framework\Listener.Core.Framework.csproj">
       <Project>{c2c24ed5-d802-4ac0-9e06-6e3d00eaf895}</Project>
       <Name>Listener.Core.Framework</Name>
