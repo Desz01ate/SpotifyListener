@@ -4,7 +4,7 @@ using Colore.Effects.Headset;
 using Colore.Effects.Keyboard;
 using Colore.Effects.Mouse;
 using Colore.Effects.Mousepad;
-using ListenerX.Classes;
+using Colore.Effects.Virtual;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +13,9 @@ using System.Threading.Tasks;
 
 namespace ListenerX.Extensions
 {
-    public static class AbstractKeyGridExtensions
+    public static class VirtualLedGridExtensions
     {
-        public static System.Drawing.Image VisualizeRenderingGrid(this AbstractKeyGrid grid, int boxWidth = 50, int boxHeight = 50)
+        public static System.Drawing.Image VisualizeRenderingGrid(this IVirtualLedGrid grid, int boxWidth = 50, int boxHeight = 50)
         {
             var fontSize = 13 * (boxWidth / 100.0f);
 
@@ -89,41 +89,16 @@ namespace ListenerX.Extensions
             return bitmap;
         }
 
-        public static async Task ApplyAsync(this AbstractKeyGrid grid, IChroma chroma)
+        public static void Set(this IVirtualLedGrid grid, Colore.Data.Color[][] colors, double brightness)
         {
-            var keyboardGrid = CustomKeyboardEffect.Create();
-            var mouseGrid = CustomMouseEffect.Create();
-            var mousepadGrid = CustomMousepadEffect.Create();
-            var headsetGrid = CustomHeadsetEffect.Create();
-            var chromaLinkGrid = CustomChromaLinkEffect.Create();
-            foreach (var k in grid)
+            for (var y = 0; y < colors.GetLength(0); y++)
             {
-                switch (k.Type)
+                var row = colors[y];
+                for (var x = 0; x < row.Length; x++)
                 {
-                    case KeyType.Invalid:
-                        break;
-                    case KeyType.Keyboard:
-                        keyboardGrid[(Key)k.KeyCode] = k.Color;
-                        break;
-                    case KeyType.Mouse:
-                        mouseGrid[(GridLed)k.KeyCode] = k.Color;
-                        break;
-                    case KeyType.Mousepad:
-                        mousepadGrid[k.KeyCode] = k.Color;
-                        break;
-                    case KeyType.Headset:
-                        headsetGrid[k.KeyCode] = k.Color;
-                        break;
-                    case KeyType.ChromaLink:
-                        chromaLinkGrid[k.KeyCode] = k.Color;
-                        break;
+                    grid[x, y] = row[x].ChangeBrightnessLevel(brightness);
                 }
             }
-            await chroma.Keyboard.SetCustomAsync(keyboardGrid);
-            await chroma.Mouse.SetGridAsync(mouseGrid);
-            await chroma.Mousepad.SetCustomAsync(mousepadGrid);
-            await chroma.Headset.SetCustomAsync(headsetGrid);
-            await chroma.ChromaLink.SetCustomAsync(chromaLinkGrid);
         }
     }
 }

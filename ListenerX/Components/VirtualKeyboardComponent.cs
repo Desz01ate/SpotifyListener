@@ -1,4 +1,5 @@
-﻿using ListenerX.Classes;
+﻿using ListenerX.ChromaExtension;
+using ListenerX.Classes;
 using ListenerX.Extensions;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace ListenerX.Components
         private readonly int boxSize;
 
         public event EventHandler OnImageChanged;
-        
+
         public VirtualKeyboardComponent(int boxSize, bool autoStart = true)
         {
             this.boxSize = boxSize;
@@ -34,7 +35,7 @@ namespace ListenerX.Components
         {
             Task.Run(() =>
             {
-                var nextFrame = AbstractKeyGrid.ActiveGrid.VisualizeRenderingGrid(this.boxSize, this.boxSize);
+                var nextFrame = ChromaWorker.Instance.FullGridArray.VisualizeRenderingGrid(this.boxSize, this.boxSize); //AbstractKeyGrid.ActiveGrid.VisualizeRenderingGrid(this.boxSize, this.boxSize);
                 if (nextFrame != null)
                 {
                     this.Image?.Dispose();

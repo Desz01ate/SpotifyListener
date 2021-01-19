@@ -114,9 +114,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Colore, Version=6.0.0.14, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Colore.6.0.0-rc0014\lib\net452\Colore.dll</HintPath>
-    </Reference>
     <Reference Include="Costura, Version=4.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
     </Reference>
@@ -203,15 +200,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Classes\AbstractKeyGrid.cs" />
     <Compile Include="Classes\AnimationController.cs" />
     <Compile Include="Classes\AutoshiftCirculaQueue.cs" />
     <Compile Include="Classes\IAbstractKey.cs" />
     <Compile Include="Classes\LyricsHelpers.cs" />
     <Compile Include="Classes\CircularQueue.cs" />
-    <Compile Include="Colore\ChromaLinkLed.cs" />
-    <Compile Include="Colore\HeadsetLed.cs" />
-    <Compile Include="Colore\MousepadLed.cs" />
     <Compile Include="Components\CustomProgresBar.cs" />
     <Compile Include="Components\VirtualKeyboardComponent.cs">
       <SubType>Component</SubType>

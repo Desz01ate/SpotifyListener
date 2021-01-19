@@ -19,6 +19,7 @@ using System.Drawing;
 using System.Reflection;
 using Colore.Effects.ChromaLink;
 using ListenerX.Extensions;
+using Colore.Effects.Virtual;
 
 namespace ListenerX
 {
@@ -44,19 +45,21 @@ namespace ListenerX
             }
             public bool IsError { get; private set; }
 
-            private readonly AbstractKeyGrid FullGridArray;
+            public readonly IVirtualLedGrid FullGridArray;
+
             private ChromaWorker()
             {
                 try
                 {
-                    this.FullGridArray = AbstractKeyGrid.GetDefaultGrid();
                     this.chromaInterface = ColoreProvider.CreateNativeAsync().Result;
+                    this.FullGridArray = this.chromaInterface.VirtualLedGrid;
                     this.rainbowColors = new AutoshiftCirculaQueue<ColoreColor>(ColorProcessing.GenerateRainbowSinusoidal().Select(x => new ColoreColor(x.Item1, x.Item2, x.Item3)), 500);
                     this.albumColors = AutoshiftCirculaQueue<ColoreColor>.Empty; //default initializer.
                 }
                 catch (Exception ex)
                 {
-                    IsError = true;
+                    this.FullGridArray = VirtualLedGrid.CreateDefaultGrid();
+                    this.IsError = true;
                     Debug.WriteLine(ex);
                 }
             }
@@ -68,7 +71,7 @@ namespace ListenerX
             {
                 if (!this.IsError)
                 {
-                    await this.FullGridArray.ApplyAsync(this.chromaInterface);
+                    await this.FullGridArray.ApplyAsync();
                 }
             }
 
@@ -184,8 +187,7 @@ namespace ListenerX
                     var absSpectrum = this.FullGridArray.RowCount - (int)Math.Round((this.FullGridArray.RowCount * (c / 100.0d)), 0);
                     for (var y = this.FullGridArray.RowCount - 1; y >= absSpectrum; y--)
                     {
-                        var key = this.FullGridArray[x, y];
-                        key.Color = foreground;
+                        this.FullGridArray[x, y] = foreground;
                     }
                 }
             }
@@ -206,8 +208,7 @@ namespace ListenerX
                     var absSpectrum = this.FullGridArray.RowCount - (int)Math.Round((this.FullGridArray.RowCount * (c / 100.0d)), 0);
                     for (var y = this.FullGridArray.RowCount - 1; y >= absSpectrum; y--)
                     {
-                        var key = this.FullGridArray[x, y];
-                        key.Color = foreground;
+                        this.FullGridArray[x, y] = foreground;
                     }
                 }
             }
@@ -223,34 +224,34 @@ namespace ListenerX
                     }
                 }
 
-                var keyboardGrid = this.FullGridArray.EnumerateKeys(KeyType.Keyboard, true);
+                var keyboardGrid = this.FullGridArray.Where(x => x.Type == Colore.Effects.Virtual.KeyType.Keyboard || x.Type == Colore.Effects.Virtual.KeyType.Invalid);
                 var keyboardRowCount = keyboardGrid.Max(e => e.Index.Y) + 1;
                 for (var rowIdx = 0; rowIdx < keyboardRowCount; rowIdx++)
                 {
                     var row = keyboardGrid.Where(e => e.Index.Y == rowIdx && e.Index.X < 22).ToArray();
                     var pos = (int)Math.Round(position * ((double)(row.Length - 1) / 10), 0);
                     var key = row[pos];
-                    this.FullGridArray[key.Index.X, key.Index.Y].Color = primaryColor;
+                    this.FullGridArray[key.Index.X, key.Index.Y] = primaryColor;
                     if (0 < pos - 1 && pos + 1 < row.Length)
                     {
                         var leftKey = row[pos - 1];
                         var rightKey = row[pos + 1];
 
                         var adjacentColor = primaryColor.ChangeBrightnessLevel(0.5);
-                        this.FullGridArray[leftKey.Index.X, leftKey.Index.Y].Color = adjacentColor;
-                        this.FullGridArray[rightKey.Index.X, rightKey.Index.Y].Color = adjacentColor;
+                        this.FullGridArray[leftKey.Index.X, leftKey.Index.Y] = adjacentColor;
+                        this.FullGridArray[rightKey.Index.X, rightKey.Index.Y] = adjacentColor;
                     }
                 }
 
-                var mouseGrid = this.FullGridArray.EnumerateKeys(KeyType.Mouse, true).ToArray();
+                var mouseGrid = this.FullGridArray.Where(x => x.Type == Colore.Effects.Virtual.KeyType.Mouse || x.Type == Colore.Effects.Virtual.KeyType.Invalid);
                 var maxMouseY = mouseGrid.Max(e => e.Index.Y) + 1;
                 var currentPlayPosition = (int)Math.Round(position * ((double)(maxMouseY - 1) / 10), 0);
-                this.FullGridArray[22, currentPlayPosition].Color = primaryColor;
+                this.FullGridArray[22, currentPlayPosition] = primaryColor;
 
                 var volumeScale = maxMouseY - (int)Math.Round((volume / 100d) * maxMouseY, 0);
                 for (var y = maxMouseY - 1; y >= volumeScale; y--)
                 {
-                    this.FullGridArray[28, y].Color = primaryColor;
+                    this.FullGridArray[28, y] = primaryColor;
                 }
             }
 
@@ -260,34 +261,34 @@ namespace ListenerX
                     return;
                 this.FullGridArray.Set(this.albumBackgroundSource, Properties.Settings.Default.BackgroundBrightness);
 
-                var keyboardGrid = this.FullGridArray.EnumerateKeys(KeyType.Keyboard, true);
+                var keyboardGrid = this.FullGridArray.Where(x => x.Type == Colore.Effects.Virtual.KeyType.Keyboard || x.Type == Colore.Effects.Virtual.KeyType.Invalid);
                 var keyboardRowCount = keyboardGrid.Max(e => e.Index.Y) + 1;
                 for (var rowIdx = 0; rowIdx < keyboardRowCount; rowIdx++)
                 {
                     var row = keyboardGrid.Where(e => e.Index.Y == rowIdx && e.Index.X < 22).ToArray();
                     var pos = (int)Math.Round(position * ((double)(row.Length - 1) / 10), 0);
                     var key = row[pos];
-                    this.FullGridArray[key.Index.X, key.Index.Y].Color = primaryColor;
+                    this.FullGridArray[key.Index.X, key.Index.Y] = primaryColor;
                     if (0 < pos - 1 && pos + 1 < row.Length)
                     {
                         var leftKey = row[pos - 1];
                         var rightKey = row[pos + 1];
 
                         var adjacentColor = primaryColor.ChangeBrightnessLevel(0.5);
-                        this.FullGridArray[leftKey.Index.X, leftKey.Index.Y].Color = adjacentColor;
-                        this.FullGridArray[rightKey.Index.X, rightKey.Index.Y].Color = adjacentColor;
+                        this.FullGridArray[leftKey.Index.X, leftKey.Index.Y] = adjacentColor;
+                        this.FullGridArray[rightKey.Index.X, rightKey.Index.Y] = adjacentColor;
                     }
                 }
 
-                var mouseGrid = this.FullGridArray.EnumerateKeys(KeyType.Mouse, true).ToArray();
+                var mouseGrid = this.FullGridArray.Where(x => x.Type == Colore.Effects.Virtual.KeyType.Mouse || x.Type == Colore.Effects.Virtual.KeyType.Invalid);
                 var maxMouseY = mouseGrid.Max(e => e.Index.Y) + 1;
                 var currentPlayPosition = (int)Math.Round(position * ((double)(maxMouseY - 1) / 10), 0);
-                this.FullGridArray[22, currentPlayPosition].Color = primaryColor;
+                this.FullGridArray[22, currentPlayPosition] = primaryColor;
 
                 var volumeScale = maxMouseY - (int)Math.Round((volume / 100d) * maxMouseY, 0);
                 for (var y = maxMouseY - 1; y >= volumeScale; y--)
                 {
-                    this.FullGridArray[28, y].Color = primaryColor;
+                    this.FullGridArray[28, y] = primaryColor;
                 }
             }
         }

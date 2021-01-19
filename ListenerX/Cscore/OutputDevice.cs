@@ -4,6 +4,7 @@ using CSCore.DSP;
 using CSCore.SoundIn;
 using CSCore.SoundOut;
 using CSCore.Streams;
+using ListenerX.ChromaExtension;
 using ListenerX.Classes;
 using ListenerX.DSP;
 using ListenerX.Visualization;
@@ -58,7 +59,7 @@ namespace ListenerX.Cscore
             }
             //Our loopback capture opens the default render device by default so the following is not needed
             //_soundIn.Device = MMDeviceEnumerator.DefaultAudioEndpoint(DataFlow.Render, Role.Console);
-            
+
 
             var soundInSource = new SoundInSource(_soundIn);
             var source = soundInSource.ToSampleSource().AppendSource(x => new BiQuadFilterSource(x));//.AppendSource(x => new PitchShifter(x), out _);
@@ -111,7 +112,7 @@ namespace ListenerX.Cscore
             _lineSpectrum = new LineSpectrum(fftSize)
             {
                 SpectrumProvider = spectrumProvider,
-                BarCount = AbstractKeyGrid.GetDefaultGrid().ColumnCount,
+                BarCount = ChromaWorker.Instance.FullGridArray.ColumnCount,
                 BarSpacing = 2,
                 IsXLogScale = true,
                 ScalingStrategy = ScalingStrategy.Decibel
