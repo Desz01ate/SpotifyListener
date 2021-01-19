@@ -8,8 +8,7 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
-        Title="MainWindow" Height="560" Width="998"
-        Icon="./Resources/spotify.ico">
+        Title="MainWindow" Height="560" Width="998">
     <Window.Resources>
         <Style x:Key="PathButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="Transparent"/>

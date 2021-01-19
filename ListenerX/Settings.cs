@@ -14,10 +14,11 @@ namespace ListenerX
     {
         private readonly VirtualKeyboardComponent virtualKeyboard;
         private bool firstLaunch = true;
+        private VirtualKeyboard virtualKeyboardDisplayPanel;
         public Settings()
         {
             InitializeComponent();
-            this.Icon = Properties.Resources.spotify;
+            this.Icon = Properties.Resources.listenerx;
             //Due to Facebook updated policy (https://developers.facebook.com/blog/post/2018/04/24/new-facebook-platform-product-changes-policy-updates/), now publish_actions is deprecated so this feature might be remove soon as well
             RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyle;
             ChromaSDKEnable.Checked = Properties.Settings.Default.ChromaSDKEnable;
@@ -39,12 +40,6 @@ namespace ListenerX
 
             this.lbl_Metadata.Text = $"Active module : {ActivatorHelpers.Metadata.ModuleName} {ActivatorHelpers.Metadata.VersionName}";
 
-
-
-            this.virtualKeyboard = new VirtualKeyboardComponent(12);
-            this.virtualKeyboard.OnImageChanged += VirtualKeyboard_OnImageChanged;
-            this.virtualKeyboard.Start();
-
             var devices = OutputDevice.GetDevices().ToArray();
             var activeIndex = Array.FindIndex(devices, x => x.Item1 == OutputDevice.ActiveDevice.DeviceId);
             this.cb_OutputDevice.Items.AddRange(devices.Select(x => x.Item2).ToArray());
@@ -56,7 +51,19 @@ namespace ListenerX
             };
 
 
+            this.virtualKeyboard = new VirtualKeyboardComponent();
+            this.virtualKeyboard.SizeMode = PictureBoxSizeMode.AutoSize;
+            this.virtualKeyboard.OnImageChanged += VirtualKeyboard_OnImageChanged;
+            this.virtualKeyboard.Start();
+
+            this.FormClosing += Settings_FormClosing;
+
             firstLaunch = false;
+        }
+
+        private void Settings_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.virtualKeyboardDisplayPanel?.Dispose();
         }
 
         private void VirtualKeyboard_OnImageChanged(object sender, EventArgs e)
@@ -154,10 +161,8 @@ namespace ListenerX
 
         private void visualizer_Click(object sender, EventArgs e)
         {
-            this.virtualKeyboard.Stop();
-            using var debug = new VirtualKeyboard();
-            debug.ShowDialog();
-            this.virtualKeyboard.Start();
+            virtualKeyboardDisplayPanel = new VirtualKeyboard(this.virtualKeyboard);
+            virtualKeyboardDisplayPanel.Show();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)

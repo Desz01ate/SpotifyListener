@@ -81,6 +81,16 @@ namespace ListenerX.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon listenerx {
+            get {
+                object obj = ResourceManager.GetObject("listenerx", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap next {
@@ -97,16 +107,6 @@ namespace ListenerX.Properties {
             get {
                 object obj = ResourceManager.GetObject("play_button", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon spotify {
-            get {
-                object obj = ResourceManager.GetObject("spotify", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
             }
         }
     }

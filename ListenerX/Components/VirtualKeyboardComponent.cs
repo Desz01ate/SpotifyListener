@@ -15,16 +15,17 @@ namespace ListenerX.Components
     {
         private readonly System.Timers.Timer timer;
 
-        private readonly int boxSize;
+        private readonly VirtualLedGridExtensions.VirtualGridRendererImpl gridRenderer;
 
         public event EventHandler OnImageChanged;
 
-        public VirtualKeyboardComponent(int boxSize, bool autoStart = true)
+        private readonly object lockObj = new object();
+        public VirtualKeyboardComponent(bool autoStart = true)
         {
-            this.boxSize = boxSize;
             this.timer = new System.Timers.Timer();
-            this.timer.Interval = 40;
+            this.timer.Interval = 7;
             this.timer.Elapsed += Timer_Tick;
+            this.gridRenderer = VirtualLedGridExtensions.CreateGridRendererInstance(ChromaWorker.Instance.FullGridArray, 50, 50);
             if (autoStart)
             {
                 this.timer.Start();
@@ -33,16 +34,15 @@ namespace ListenerX.Components
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            Task.Run(() =>
+            lock (lockObj)
             {
-                var nextFrame = ChromaWorker.Instance.FullGridArray.VisualizeRenderingGrid(this.boxSize, this.boxSize); //AbstractKeyGrid.ActiveGrid.VisualizeRenderingGrid(this.boxSize, this.boxSize);
+                var nextFrame = this.gridRenderer.VisualizeRenderingGrid2(50, 50);
                 if (nextFrame != null)
                 {
-                    this.Image?.Dispose();
                     this.Image = nextFrame;
                 }
                 this.OnImageChanged?.Invoke(this, null);
-            });
+            }
         }
 
         public void Start()
@@ -58,6 +58,7 @@ namespace ListenerX.Components
         protected override void Dispose(bool disposing)
         {
             this.timer.Dispose();
+            this.gridRenderer.Dispose();
             base.Dispose(disposing);
         }
     }

@@ -206,14 +206,15 @@ namespace ListenerX
         {
             try
             {
-                var spectrumData = OutputDevice.ActiveDevice.GetSpectrums().Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
-                switch (Properties.Settings.Default.RenderStyle)
+                var renderStyle = Properties.Settings.Default.RenderStyle;
+                double[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(renderStyle < 2 ? 6 : ChromaWorker.Instance.FullGridArray.ColumnCount).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
+                switch (renderStyle)
                 {
                     case 0:
-                        chroma.PlayingPositionEffects(spectrumData.Average(), this.player.CalculatedPosition);
+                        chroma.PlayingPositionEffects(spectrumData, this.player.CalculatedPosition);
                         break;
                     case 1:
-                        chroma.PlayingPositionBackgroundEffects(spectrumData.Average(), this.player.CalculatedPosition);
+                        chroma.PlayingPositionBackgroundEffects(spectrumData, this.player.CalculatedPosition);
                         break;
                     case 2:
                         chroma.VisualizeVolumeEffects(spectrumData);
@@ -417,7 +418,8 @@ namespace ListenerX
 
         private void btn_lyrics_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start($"https://www.google.com/search?q={this.player.Artist.Replace(" ", "+")}+{this.player.Album.Replace(" ", "+")}+{this.player.Track.Replace(" ", "+")}+lyrics");
+            var url = $"https://www.google.com/search?q={this.player.Artist.Replace(" ", "+")}+{this.player.Album.Replace(" ", "+")}+{this.player.Track.Replace(" ", "+")}+lyrics";
+            Process.Start(url);
         }
 
         private void Btn_SaveImage_Click(object sender, RoutedEventArgs e)

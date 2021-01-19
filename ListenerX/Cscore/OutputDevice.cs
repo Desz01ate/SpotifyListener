@@ -128,7 +128,14 @@ namespace ListenerX.Cscore
 
         }
 
-        public double[] GetSpectrums() => this._lineSpectrum.CreateSpectrumData();
+        public double[] GetSpectrums(int? barCount = null)
+        {
+            if (barCount.HasValue)
+            {
+                this._lineSpectrum.BarCount = barCount.Value;
+            }
+            return this._lineSpectrum.CreateSpectrumData();
+        }
         public void Dispose()
         {
             this.Stop();

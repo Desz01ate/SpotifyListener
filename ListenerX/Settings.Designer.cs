@@ -32,6 +32,7 @@ namespace ListenerX
         {
             this.ResetButton = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.cb_OutputDevice = new System.Windows.Forms.ComboBox();
             this.cb_EnableArtworkWallpaper = new System.Windows.Forms.CheckBox();
             this.ClearCache = new System.Windows.Forms.Label();
@@ -56,7 +57,6 @@ namespace ListenerX
             this.label11 = new System.Windows.Forms.Label();
             this.ChromaSDKEnable = new System.Windows.Forms.CheckBox();
             this.lbl_Metadata = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.visualizer)).BeginInit();
@@ -89,6 +89,15 @@ namespace ListenerX
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Preferences";
             this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 115);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(82, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Output Device :";
             // 
             // cb_OutputDevice
             // 
@@ -217,6 +226,7 @@ namespace ListenerX
             this.visualizer.Location = new System.Drawing.Point(5, 363);
             this.visualizer.Name = "visualizer";
             this.visualizer.Size = new System.Drawing.Size(360, 95);
+            this.visualizer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.visualizer.TabIndex = 9;
             this.visualizer.TabStop = false;
             this.visualizer.Click += new System.EventHandler(this.visualizer_Click);
@@ -340,15 +350,6 @@ namespace ListenerX
             this.lbl_Metadata.Size = new System.Drawing.Size(13, 13);
             this.lbl_Metadata.TabIndex = 7;
             this.lbl_Metadata.Text = "$";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 115);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(82, 13);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Output Device :";
             // 
             // Settings
             // 

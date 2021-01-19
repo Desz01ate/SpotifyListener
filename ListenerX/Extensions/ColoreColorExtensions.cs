@@ -84,5 +84,10 @@ namespace ListenerX.Extensions
             /* fallback */
             return c;
         }
+
+        public static string ToHex(this ColoreColor c)
+        {
+            return $"#{c.R:X2}{c.G:X2}{c.B:X2}";
+        }
     }
 }

@@ -81,6 +81,7 @@
     <Compile Include="Models\SearchResult.cs" />
     <Compile Include="Players\IPlayerHost.cs" />
     <Compile Include="Players\IStreamablePlayerHost.cs" />
+    <Compile Include="Plugins\IListenerPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
