@@ -20,6 +20,7 @@ using ListenerX.Helpers;
 using ListenerX.Cscore;
 using ListenerX.Extensions;
 using Listener.Core.Framework.Plugins;
+using System.Drawing;
 
 namespace ListenerX
 {
@@ -53,6 +54,7 @@ namespace ListenerX
             try
             {
                 InitializeComponent();
+                this.Background = System.Windows.Media.Brushes.Gray;
 
                 InitWidth = this.Width;
                 InitHeight = this.Height;
@@ -76,7 +78,20 @@ namespace ListenerX
                 {
                     Dispatcher.InvokeAsync(() =>
                     {
-                        this.PlayProgress.Foreground = state == PlayState.Play ? playColor : pauseColor;
+                        StreamGeometry buttonShape;
+                        SolidColorBrush color;
+                        if (state == PlayState.Play)
+                        {
+                            buttonShape = (StreamGeometry)this.FindResource("pausePath");
+                            color = playColor;
+                        }
+                        else
+                        {
+                            buttonShape = (StreamGeometry)this.FindResource("playPath");
+                            color = pauseColor;
+                        }
+                        this.PlayPath.Data = buttonShape;
+                        this.PlayProgress.Foreground = color;
                     });
                 };
 
@@ -165,7 +180,14 @@ namespace ListenerX
                 }
 
                 this.Title = $"Listening to {player.Track} by {player.Artist} on {player.ActiveDevice.Name}";
-                this.Icon = player.AlbumSource;
+
+                var albumImageSource = playbackContext.AlbumArtwork.ToBitmapImage(ImageFormat.Jpeg);
+                using var background = ImageProcessing.CalculateBackgroundSource(playbackContext.AlbumArtwork, (int)this.InitWidth, (int)this.InitHeight, 10);
+                var albumBackgroundSource = ImageProcessing.ToSafeMemoryBrush(background as Bitmap);
+
+                this.Icon = albumImageSource;
+                this.AlbumImage.Source = albumImageSource;
+                this.Background = albumBackgroundSource;
 
                 this.chroma?.LoadColor(this.player.AlbumArtwork);
 

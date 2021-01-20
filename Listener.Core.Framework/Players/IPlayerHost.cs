@@ -22,10 +22,9 @@ namespace Listener.Core.Framework.Players
         string TimeLeft { get; }
         int Volume { get; }
         System.Drawing.Image AlbumArtwork { get; }
-        ImageSource AlbumSource { get; }
-        System.Windows.Media.Brush AlbumBackgroundSource { get; }
 
         bool IsPlaying { get; }
+
         bool IsMute { get; }
 
         double CalculatedPosition { get; }

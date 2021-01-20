@@ -193,21 +193,8 @@ namespace Listener.Player.AppleMusic
             private set
             {
                 _albumImage = value;
-                if (value != null)
-                {
-                    AlbumSource = value?.ToBitmapImage(ImageFormat.Jpeg);
-                    OnPropertyChanged(nameof(AlbumSource));
-                    using var background = Listener.ImageProcessing.ImageProcessing.CalculateBackgroundSource(value, this.context_width, this.context_height, 10);
-                    AlbumBackgroundSource = Listener.ImageProcessing.ImageProcessing.ToSafeMemoryBrush(background as Bitmap);
-                    AlbumBackgroundSource.Freeze();
-                    OnPropertyChanged(nameof(AlbumBackgroundSource));
-                }
             }
         }
-
-        public System.Windows.Media.ImageSource AlbumSource { get; private set; }
-
-        public System.Windows.Media.Brush AlbumBackgroundSource { get; private set; }
 
         public bool IsPlaying { get; private set; }
 
@@ -236,8 +223,6 @@ namespace Listener.Player.AppleMusic
 
         private ITPlayerState currentPlayState;
 
-        private readonly int context_width, context_height;
-
         private readonly iTunesApp app;
 
         private readonly HttpClient httpClient;
@@ -245,11 +230,9 @@ namespace Listener.Player.AppleMusic
         private System.Windows.Forms.Timer _trackFetcherTimer = new System.Windows.Forms.Timer();
 
         delegate void Router(object arg);
-        public AppleMusicPlayerHost(int contextWidth, int contextHeight)
+        public AppleMusicPlayerHost()
         {
             this.app = new iTunesApp();
-            this.context_width = contextWidth;
-            this.context_height = contextHeight;
 
             var initImage = new Bitmap(100, 100);
             using (Graphics gfx = Graphics.FromImage(initImage))

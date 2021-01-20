@@ -41,6 +41,7 @@ namespace ListenerX
             set
             {
                 SetValue(DataProperty, value);
+                this.Fill = InactiveColor;
             }
         }
         private static void Data_Changed(DependencyObject o, DependencyPropertyChangedEventArgs args)

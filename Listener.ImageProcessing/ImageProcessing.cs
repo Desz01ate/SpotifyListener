@@ -125,6 +125,7 @@ namespace Listener.ImageProcessing
         {
             IntPtr hBitMap = src.GetHbitmap();
             System.Windows.Media.ImageBrush b = new System.Windows.Media.ImageBrush(System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitMap, IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()));
+            b.Freeze();
             DeleteObject(hBitMap);
             return b;
         }

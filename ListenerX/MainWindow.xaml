@@ -31,11 +31,20 @@
 
         <Geometry x:Key="playPath">
             M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
-		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z 
-              M293.909,187.215l-111.818-73.591C162.792,100.926,147,109.445,147,132.545V287.42c0,23.1,15.813,31.647,35.147,18.998
+		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z M293.909,187.215l-111.818-73.591C162.792,100.926,147,109.445,147,132.545V287.42c0,23.1,15.813,31.647,35.147,18.998
 		L293.86,233.31C313.187,220.647,313.208,199.913,293.909,187.215z M279.006,217.868l-99.295,64.981
 		c-6.44,4.221-11.711,1.372-11.711-6.328V143.437c0-7.7,5.264-10.535,11.697-6.3l99.33,65.366
 		C285.46,206.731,285.453,213.647,279.006,217.868z
+        </Geometry>
+        <Geometry x:Key="pausePath">
+            M437.019,74.98C388.667,26.629,324.38,0,256,0C187.619,0,123.332,26.629,74.98,74.98C26.629,123.332,0,187.619,0,256
+			s26.629,132.668,74.98,181.02C123.332,485.371,187.619,512,256,512c68.38,0,132.667-26.629,181.019-74.98
+			C485.371,388.668,512,324.38,512,256S485.371,123.332,437.019,74.98z M256,482C131.383,482,30,380.617,30,256S131.383,30,256,30
+			s226,101.383,226,226S380.617,482,256,482z
+            M304.199,137.723c-8.284,0-15,6.716-15,15V359.28c0,8.284,6.716,15,15,15s15-6.716,15-15V152.723
+			C319.199,144.439,312.483,137.723,304.199,137.723z
+            M207.799,137.723c-8.284,0-15,6.716-15,15V359.28c0,8.284,6.716,15,15,15s15-6.716,15-15V152.723
+			C222.799,144.439,216.083,137.723,207.799,137.723z
         </Geometry>
         <Geometry x:Key="backPath">M210,21c104.216,0,189,84.784,189,189s-84.784,189-189,189S21,314.216,21,210S105.784,21,210,21 M210,0
 		C94.031,0,0,94.024,0,210s94.031,210,210,210s210-94.024,210-210S325.969,0,210,0L210,0z
@@ -148,7 +157,7 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
         <KeyBinding Key="S" Modifiers="Alt"  Command="SaveAs"></KeyBinding>
     </Window.InputBindings>
     <Grid Margin="1,1,1,1" Name="MainWindowGrid" Background="Transparent">
-        <Border x:Name="border_Form" Opacity="1" Background="{Binding AlbumBackgroundSource}" Margin="5" Padding="5" BorderThickness="0.7" BorderBrush="#d9d9d9" CornerRadius="0"/>
+        <Border x:Name="border_Form" Opacity="1" Margin="0" Padding="0" BorderThickness="0.7" BorderBrush="#d9d9d9" CornerRadius="0"/>
         <local:PathButton x:Name="btn_lyrics"   Opacity="0" Data="{StaticResource lyricsSvgPath}" Margin="0,0,140,20" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_lyrics_Click" />
         <local:PathButton x:Name="btn_search"   Opacity="0" Data="{StaticResource magnifyingPath}" Margin="0,0,100,20" Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_search_Click" />
         <local:PathButton x:Name="btn_device"   Opacity="0" Data="{StaticResource phonePath}" Margin="0,0,60,17" Width="27" Height="27" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" Click="btn_device_Click" />
@@ -156,7 +165,7 @@ M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.59
         <local:PathButton x:Name="btn_Minimize" Opacity="0" Data="{StaticResource downArrowPath}" Margin="0,20,65,0" Width="15" Height="15" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" />
         <local:PathButton x:Name="btn_Close"    Opacity="0" Data="{StaticResource closePath}" Margin="0,20,20,0" Width="15" Height="15" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" Fill="White" BorderBrush="Transparent" Focusable="False" Style="{StaticResource PathButtonStyle}" />
 
-        <Image x:Name="AlbumImage" Source="{Binding AlbumSource}" Margin="0,40,0,0" Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <Image x:Name="AlbumImage" Margin="0,40,0,0" Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
         <Label x:Name="lbl_Track" Content="{Binding Track}" HorizontalAlignment="Center" Margin="0,310,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalContentAlignment="Center" BorderThickness="1">
         </Label>

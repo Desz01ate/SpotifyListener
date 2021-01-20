@@ -187,22 +187,9 @@ namespace Listener.Player.Spotify
             private set
             {
                 _albumImage = value;
-                if (value != null)
-                {
-                    _albumSource = value?.ToBitmapImage(ImageFormat.Jpeg);
-                    OnPropertyChanged(nameof(AlbumSource));
-                    using var background = Listener.ImageProcessing.ImageProcessing.CalculateBackgroundSource(value, this.context_width, this.context_height, 10);
-                    AlbumBackgroundSource = Listener.ImageProcessing.ImageProcessing.ToSafeMemoryBrush(background as Bitmap);
-                    AlbumBackgroundSource.Freeze();
-                    OnPropertyChanged(nameof(AlbumBackgroundSource));
-                }
             }
         }
 
-
-        private ImageSource _albumSource;
-        public ImageSource AlbumSource => _albumSource;
-        public System.Windows.Media.Brush AlbumBackgroundSource { get; private set; } = System.Windows.Media.Brushes.Gray;
         public bool IsPlaying
         {
             get
@@ -215,6 +202,7 @@ namespace Listener.Player.Spotify
                 OnPropertyChanged(nameof(IsPlaying));
             }
         }
+
         public double CalculatedPosition
         {
             get
@@ -241,13 +229,9 @@ namespace Listener.Player.Spotify
 
         private readonly Mapper _deiceMapper;
 
-        private readonly int context_width, context_height;
-
-        public SpotifyPlayerHost(int width, int height)
+        public SpotifyPlayerHost()
         {
             Process.Start("spotify");
-            this.context_width = width;
-            this.context_height = height;
             SpotifyWebAPI webApiClient = null;
             var retry = 0;
             SpotifyAuthentication.Context.OnClientReady += (auth, spotifyClient) => webApiClient = spotifyClient;

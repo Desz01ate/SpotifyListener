@@ -20,7 +20,7 @@ namespace ListenerX.Helpers
             var type = typeof(T);
             var assembly = type.Assembly;
             Metadata = AssemblyHelpers.LoadInstance<IPlayerMetadata>(assembly);
-            var instance = Activator.CreateInstance(type, new object[] { (int)mainWindow.Width, (int)mainWindow.Height }) as IStreamablePlayerHost;
+            var instance = Activator.CreateInstance(type) as IStreamablePlayerHost;
             return instance;
         }
 
