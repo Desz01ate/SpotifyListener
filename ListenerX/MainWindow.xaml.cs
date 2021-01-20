@@ -19,6 +19,7 @@ using ListenerX.Classes;
 using ListenerX.Helpers;
 using ListenerX.Cscore;
 using ListenerX.Extensions;
+using Listener.Core.Framework.Plugins;
 
 namespace ListenerX
 {
@@ -45,6 +46,8 @@ namespace ListenerX
 
         private readonly double InitWidth, InitHeight;
 
+        private readonly IListenerPlugin[] plugins;
+
         public MainWindow()
         {
             try
@@ -57,6 +60,7 @@ namespace ListenerX
                 Visibility = Visibility.Hidden;
 
                 player = this.LoadPlayerHost<Listener.Player.Spotify.SpotifyPlayerHost>();
+                plugins = ActivatorHelpers.LoadPlugins().ToArray();
 
                 VolumePath.Fill = playColor;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
@@ -155,14 +159,14 @@ namespace ListenerX
         {
             Dispatcher.InvokeAsync(() =>
             {
+                foreach (var plugin in this.plugins)
+                {
+                    plugin.OnTrackChanged(playbackContext);
+                }
+
                 this.Title = $"Listening to {player.Track} by {player.Artist} on {player.ActiveDevice.Name}";
                 this.Icon = player.AlbumSource;
-                //var colors = player.AlbumArtwork.GetDominantColors(2);
-                //var standardRenderColor = new StandardColor();
-                //standardRenderColor.Standard = colors[0];
-                //standardRenderColor.Complemented = colors[1];
 
-                //this.chroma?.LoadColor(standardRenderColor);
                 this.chroma?.LoadColor(this.player.AlbumArtwork);
 
 
@@ -387,9 +391,14 @@ namespace ListenerX
 
         private void AdjustSettings_Click(object sender, RoutedEventArgs e)
         {
-            using (var setting = new Settings())
+            try
             {
+                using var setting = new Settings();
                 setting.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
         }
 

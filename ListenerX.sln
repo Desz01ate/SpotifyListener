@@ -20,6 +20,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Player.AppleMusic"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Colore", "Colore\src\Colore\Colore.csproj", "{A03D43C7-ADE9-4753-8CF4-B8937E459172}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{F9120AAC-CAA1-4088-81D1-D33EEBDB02D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListenerX.Plugin.Log", "Plugins\ListenerX.Plugin.Log\ListenerX.Plugin.Log.csproj", "{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,9 +106,24 @@ Global
 		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Release|x64.Build.0 = Release|Any CPU
 		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Release|x86.ActiveCfg = Release|Any CPU
 		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Release|x86.Build.0 = Release|Any CPU
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Debug|x64.Build.0 = Debug|Any CPU
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Debug|x86.Build.0 = Debug|Any CPU
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Release|x64.ActiveCfg = Release|Any CPU
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Release|x64.Build.0 = Release|Any CPU
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Release|x86.ActiveCfg = Release|Any CPU
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F} = {F9120AAC-CAA1-4088-81D1-D33EEBDB02D9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1CC1FD92-3FE4-440A-8651-CF864903192A}
