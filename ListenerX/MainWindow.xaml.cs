@@ -140,17 +140,7 @@ namespace ListenerX
 
             #region get current background image
 
-            if (Wallpaper.TryGetWallpaper(out var filePath))
-            {
-                wallpaper = new Wallpaper(filePath, this.FontFamily.ToString());
-            }
-            else
-            {
-                wallpaper = new Wallpaper(this.FontFamily.ToString());
-            }
-
-            wallpaper.SetPlayerBase(player);
-
+            wallpaper = new Wallpaper(this.player, this.FontFamily.ToString());
             #endregion
         }
 

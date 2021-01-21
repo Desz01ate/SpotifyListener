@@ -16,184 +16,153 @@ namespace ListenerX.Classes
 {
     public class Wallpaper : IDisposable
     {
-        public enum Style
+        enum Style
         {
             Tiled,
             Centered,
             Stretched
         }
 
-        string OriginalBackgroundImagePath { get; }
-
-        private uint? OriginalAccentColor, OriginalColorizationAfterglow, OriginalColorizationColor;
-        private uint? OriginalStartColorMenu, OriginalAccentColorMenu;
-        private byte[] OriginalAccentPallete;
-
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern int SystemParametersInfo(UInt32 action, UInt32 uParam, String vParam, UInt32 winIni);
 
-        public static readonly uint SPI_SETDESKWALLPAPER = 0x14;
-        public static readonly uint SPIF_UPDATEINIFILE = 0x01;
-        public static readonly uint SPIF_SENDWININICHANGE = 0x02;
-        private static readonly string BAK_IMAGE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "IMGBAK.bak");
-        private readonly string FontFamily;
-        private IPlayerHost player;
-        private string temporaryWaitForDeleteFiles = "";
+        public const uint SPI_SETDESKWALLPAPER = 0x14;
+        public const uint SPIF_UPDATEINIFILE = 0x01;
+        public const uint SPIF_SENDWININICHANGE = 0x02;
 
-        public Wallpaper(string fontFamily)
+        private readonly string _fontFamily;
+        private readonly IPlayerHost _player;
+        private readonly string OriginalBackgroundImagePath;
+        private readonly uint OriginalAccentColor, OriginalColorizationAfterglow, OriginalColorizationColor;
+        private readonly uint OriginalStartColorMenu, OriginalAccentColorMenu;
+        private readonly byte[] OriginalAccentPallete;
+
+        private bool disposed = false;
+        private string _temporaryWaitForDeleteFiles = "";
+
+        public Wallpaper(IPlayerHost player, string fontFamily)
         {
-            OriginalBackgroundImagePath = BAK_IMAGE;
-            FontFamily = fontFamily;
-            Disable();
-        }
+            var backgroundImagePathCache = Properties.Settings.Default.BackgroundImagePath;
 
-        public Wallpaper(string backgroundImagePath, string fontFamily)
-        {
-            OriginalBackgroundImagePath = backgroundImagePath;
-            FontFamily = fontFamily;
-            try
+            if (!string.IsNullOrWhiteSpace(backgroundImagePathCache))
             {
-                File.Copy(backgroundImagePath, BAK_IMAGE, true);
+                OriginalBackgroundImagePath = backgroundImagePathCache;
             }
-            catch
+            else
             {
+                using RegistryKey desktopKey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
+                var path = (string)desktopKey.GetValue("Wallpaper");
+                OriginalBackgroundImagePath = path;
+                Properties.Settings.Default.BackgroundImagePath = path;
+                Properties.Settings.Default.Save();
             }
-        }
 
-        public static bool TryGetWallpaper(out string imagePath)
-        {
-            try
-            {
-                byte[] SliceMe(byte[] source, int pos)
-                {
-                    byte[] dest = new byte[source.Length - pos];
-                    Array.Copy(source, pos, dest, 0, dest.Length);
-                    return dest;
-                }
+            this._player = player;
+            this._fontFamily = fontFamily;
 
-                ;
-                byte[] path = (byte[])Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Control Panel\\Desktop")
-                    .GetValue("TranscodedImageCache");
-                var wallpaper_file_path = System.Text.Encoding.Unicode.GetString(SliceMe(path, 24))
-                    .TrimEnd("\0".ToCharArray());
-                imagePath = wallpaper_file_path;
-                return File.Exists(wallpaper_file_path);
-            }
-            catch
-            {
-                imagePath = null;
-                return false;
-            }
+            using var dwmKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\DWM", true);
+            this.OriginalAccentColor = DwordConversion((int)dwmKey.GetValue("AccentColor"));//4282927692
+            //this.OriginalColorizationAfterglow = DwordConversion((int)dwmKey.GetValue("ColorizationAfterglow")); //3293334088
+            //this.OriginalColorizationColor = DwordConversion((int)dwmKey.GetValue("ColorizationColor")); //3293334088
+            //this.OriginalStartColorMenu = DwordConversion((int)explorerAccentKey.GetValue("StartColorMenu"));
+            //this.OriginalAccentColorMenu = DwordConversion((int)explorerAccentKey.GetValue("AccentColorMenu"));
+            //this.OriginalAccentPallete = (byte[])explorerAccentKey.GetValue("AccentPalette");
+
+            //Disable();
         }
 
         public void Enable()
         {
             using var image = CalculateBackgroundImage((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
-            Set(image, Wallpaper.Style.Stretched);
+            var color = this._player.AlbumArtwork.GetDominantColors(1).First();
+
+            DeleteTempFile();
+            SetDesktopWallpaper(image, Wallpaper.Style.Stretched);
+            SetAeroColor(color);
         }
 
         public void Disable()
         {
-            Set(null, Wallpaper.Style.Stretched, OriginalBackgroundImagePath);
-        }
-
-        private bool Set(Image image, Style style, string path = "")
-        {
             DeleteTempFile();
-            bool success = false;
-            string tempPath = CacheFileManager.GetTempPath().Replace("tmp", "jpg");
+            SetDesktopWallpaper(this.OriginalBackgroundImagePath, Wallpaper.Style.Stretched);
+            SetAeroColor(this.OriginalAccentColor);
+        }
+
+        private bool SetDesktopWallpaper(string path, Style style)
+        {
             using RegistryKey desktopKey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
-            temporaryWaitForDeleteFiles = tempPath;
-            try
+            var values = style switch
             {
-                if (image != null)
-                {
-                    File.Create(tempPath).Close();
-                    image.Save(tempPath, image.RawFormat);
-                }
-                switch (style)
-                {
-                    case Style.Stretched:
-                        desktopKey.SetValue(@"WallpaperStyle", "2");
-                        desktopKey.SetValue(@"TileWallpaper", "0");
-                        break;
-                    case Style.Centered:
-                        desktopKey.SetValue(@"WallpaperStyle", "1");
-                        desktopKey.SetValue(@"TileWallpaper", "0");
-                        break;
-                    default:
-                    case Style.Tiled:
-                        desktopKey.SetValue(@"WallpaperStyle", "1");
-                        desktopKey.SetValue(@"TileWallpaper", "1");
-                        break;
-                }
+                Style.Stretched => ("2", "0"),
+                Style.Centered => ("1", "0"),
+                Style.Tiled => ("1", "1"),
+                _ => throw new NotSupportedException(style.ToString())
+            };
+            desktopKey.SetValue("WallpaperStyle", values.Item1);
+            desktopKey.SetValue("TileWallpaper", values.Item2);
+            Task.Run(() => SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE));
+            return true;
+        }
 
-                if (!string.IsNullOrWhiteSpace(path))
-                {
-                    Task.Run(() =>
-                        SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path,
-                            SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE));
-                }
-                else
-                {
-                    Task.Run(() => SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, tempPath,
-                        SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE));
-                }
-                if (Environment.OSVersion.Version.Major >= 6 && Environment.OSVersion.Version.Minor >= 2)
-                {
-                    using var dwmKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\DWM", true);
-                    //using var explorerAccentKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Accent", true);
-                    if (!OriginalAccentColor.HasValue)
-                    {
-                        this.OriginalAccentColor = DwordConversion((int)dwmKey.GetValue("AccentColor"));//4282927692
-                        //this.OriginalColorizationAfterglow = DwordConversion((int)dwmKey.GetValue("ColorizationAfterglow")); //3293334088
-                        //this.OriginalColorizationColor = DwordConversion((int)dwmKey.GetValue("ColorizationColor")); //3293334088
-                        //this.OriginalStartColorMenu = DwordConversion((int)explorerAccentKey.GetValue("StartColorMenu"));
-                        //this.OriginalAccentColorMenu = DwordConversion((int)explorerAccentKey.GetValue("AccentColorMenu"));
-                        //this.OriginalAccentPallete = (byte[])explorerAccentKey.GetValue("AccentPalette");
-                    }
-                    unchecked
-                    {
-                        if (image == null)
-                        {
-                            dwmKey.SetValue("AccentColor", (int)this.OriginalAccentColor, RegistryValueKind.DWord);
-                            //dwmKey.SetValue("ColorizationAfterglow", (int)this.OriginalColorizationAfterglow, RegistryValueKind.DWord);
-                            //dwmKey.SetValue("ColorizationColor", (int)this.OriginalColorizationColor, RegistryValueKind.DWord);
-                            //explorerAccentKey.SetValue("StartColorMenu", (int)this.OriginalStartColorMenu, RegistryValueKind.DWord);
-                            //explorerAccentKey.SetValue("AccentColorMenu", (int)this.OriginalAccentColorMenu, RegistryValueKind.DWord);
-                        }
-                        else
-                        {
-                            var color = this.player.AlbumArtwork.GetDominantColors(1).First();
-                            //due to windows is weird shit, arrange ARGB as ABGR instead so we need to swap rgb position.
-                            var swappedColor = Color.FromArgb(color.A, color.B, color.G, color.R).ToUint();
-                            dwmKey.SetValue("AccentColor", (int)swappedColor, RegistryValueKind.DWord);
-                            //dwmKey.SetValue("ColorizationAfterglow", (int)swappedColor, RegistryValueKind.DWord);
-                            //dwmKey.SetValue("ColorizationColor", (int)swappedColor, RegistryValueKind.DWord);
-                            //explorerAccentKey.SetValue("StartColorMenu", (int)swappedColor, RegistryValueKind.DWord);
-                            //explorerAccentKey.SetValue("AccentColorMenu", (int)swappedColor, RegistryValueKind.DWord);
-                        }
-                    }
-                }
-                success = true;
-            }
-            finally
+        private void SetAeroColor(Color color)
+        {
+            SetAeroColor(Color.FromArgb(color.A, color.B, color.G, color.R).ToUint());
+        }
+        private void SetAeroColor(uint hex)
+        {
+            unchecked
             {
-                //pass
+                SetAeroColor((int)hex);
             }
-
-            return success;
-            uint DwordConversion(int value)
+        }
+        private void SetAeroColor(int hex)
+        {
+            if (Environment.OSVersion.Version.Major >= 6 && Environment.OSVersion.Version.Minor >= 2)
             {
-                var binary = Convert.ToString(value, 2);
-                var converted = Convert.ToUInt32(binary, 2);
-                return converted;
+                using var dwmKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\DWM", true);
+                //using var explorerAccentKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Accent", true);
+                dwmKey.SetValue("AccentColor", hex, RegistryValueKind.DWord);
+                //if (image == null)
+                //{
+                //    dwmKey.SetValue("AccentColor", (int)this.OriginalAccentColor, RegistryValueKind.DWord);
+                //    //dwmKey.SetValue("ColorizationAfterglow", (int)this.OriginalColorizationAfterglow, RegistryValueKind.DWord);
+                //    //dwmKey.SetValue("ColorizationColor", (int)this.OriginalColorizationColor, RegistryValueKind.DWord);
+                //    //explorerAccentKey.SetValue("StartColorMenu", (int)this.OriginalStartColorMenu, RegistryValueKind.DWord);
+                //    //explorerAccentKey.SetValue("AccentColorMenu", (int)this.OriginalAccentColorMenu, RegistryValueKind.DWord);
+                //}
+                //else
+                //{
+                //    var color = this.player.AlbumArtwork.GetDominantColors(1).First();
+                //    //due to windows is weird shit, arrange ARGB as ABGR instead so we need to swap rgb position.
+                //    var swappedColor = Color.FromArgb(color.A, color.B, color.G, color.R).ToUint();
+                //    dwmKey.SetValue("AccentColor", (int)swappedColor, RegistryValueKind.DWord);
+                //    //dwmKey.SetValue("ColorizationAfterglow", (int)swappedColor, RegistryValueKind.DWord);
+                //    //dwmKey.SetValue("ColorizationColor", (int)swappedColor, RegistryValueKind.DWord);
+                //    //explorerAccentKey.SetValue("StartColorMenu", (int)swappedColor, RegistryValueKind.DWord);
+                //    //explorerAccentKey.SetValue("AccentColorMenu", (int)swappedColor, RegistryValueKind.DWord);
+                //}
             }
         }
 
-        internal void SetPlayerBase(IPlayerHost music)
+        private bool SetDesktopWallpaper(Image image, Style style)
         {
-            player = music;
+            if (image == null)
+            {
+                return false;
+            }
+            _temporaryWaitForDeleteFiles = CacheFileManager.GetTempPath().Replace("tmp", "jpg");
+
+            File.Create(_temporaryWaitForDeleteFiles).Close();
+            image.Save(_temporaryWaitForDeleteFiles, image.RawFormat);
+
+            return SetDesktopWallpaper(_temporaryWaitForDeleteFiles, style);
+        }
+
+        private uint DwordConversion(int value)
+        {
+            var binary = Convert.ToString(value, 2);
+            var converted = Convert.ToUInt32(binary, 2);
+            return converted;
         }
 
         private Image CalculateBackgroundImage(Image highlightImg, Image backgroundImg, string track, string album,
@@ -209,8 +178,8 @@ namespace ListenerX.Classes
             g.DrawImage(highlightImg, highlightX, highlightY);
 
             var fontSize = width * 0.0052592592592593f;//0.0185185185185185f;
-            using var font = new Font(FontFamily, fontSize, FontStyle.Regular);
-            using var trackFont = new Font(FontFamily, fontSize * 1.3f, FontStyle.Bold);
+            using var font = new Font(_fontFamily, fontSize, FontStyle.Regular);
+            using var trackFont = new Font(_fontFamily, fontSize * 1.3f, FontStyle.Bold);
 
             var trackMeasure = g.MeasureString(track, trackFont);
             var albumMeasure = g.MeasureString(album, font);
@@ -231,7 +200,7 @@ namespace ListenerX.Classes
         {
             var highlightSize = (int)Math.Round(height * 0.555);
 
-            var artwork = player.AlbumArtwork;
+            var artwork = _player.AlbumArtwork;
             using var background = ImageProcessing.CalculateBackgroundSource(
                 artwork,
                 width,
@@ -262,9 +231,9 @@ namespace ListenerX.Classes
                 var image = CalculateBackgroundImage(
                     highlight,
                     background,
-                    player.Track,
-                    player.Album,
-                    player.Artist,
+                    _player.Track,
+                    _player.Album,
+                    _player.Artist,
                     width,
                     height);
                 return image;
@@ -275,10 +244,10 @@ namespace ListenerX.Classes
 
         public string GetWallpaperImage()
         {
-            if (File.Exists(temporaryWaitForDeleteFiles))
-                return temporaryWaitForDeleteFiles;
+            if (File.Exists(_temporaryWaitForDeleteFiles))
+                return _temporaryWaitForDeleteFiles;
 
-            var fileName = "10." + RegularExpressionHelpers.AlphabetCleaner($"{player.Track}-{player.Album}-{player.Artist}") + ".jpg";
+            var fileName = "10." + RegularExpressionHelpers.AlphabetCleaner($"{_player.Track}-{_player.Album}-{_player.Artist}") + ".jpg";
             if (!CacheFileManager.IsFileExists(fileName))
             {
                 using var image = this.CalculateBackgroundImage((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
@@ -289,25 +258,28 @@ namespace ListenerX.Classes
             return CacheFileManager.GetFullCachePath(fileName);
         }
 
-        protected void Dispose(bool disposing)
+        private void DeleteTempFile()
         {
-            if (disposing)
+            if (File.Exists(_temporaryWaitForDeleteFiles))
             {
-                this.Disable();
-                DeleteTempFile();
+                File.Delete(_temporaryWaitForDeleteFiles);
             }
         }
 
-        private void DeleteTempFile()
+        protected virtual void Dispose(bool disposing)
         {
-            if (File.Exists(temporaryWaitForDeleteFiles))
+            if (disposing && !this.disposed)
             {
-                File.Delete(temporaryWaitForDeleteFiles);
+                this.Disable();
             }
+            this.disposed = true;
         }
+
 
         public void Dispose()
         {
+            Properties.Settings.Default.BackgroundImagePath = string.Empty;
+            Properties.Settings.Default.Save();
             Dispose(true);
             GC.SuppressFinalize(this);
         }
