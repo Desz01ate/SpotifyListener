@@ -146,8 +146,7 @@ namespace ListenerX
             }
             else
             {
-                //wallpaper = new Wallpaper(this.FontFamily.ToString());
-                System.Windows.Forms.Application.Exit();
+                wallpaper = new Wallpaper(this.FontFamily.ToString());
             }
 
             wallpaper.SetPlayerBase(player);
@@ -200,8 +199,6 @@ namespace ListenerX
                 {
                     wallpaper.Disable();
                 }
-
-                this.player.AlbumArtwork.Dispose();
             });
         }
 

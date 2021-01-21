@@ -1,10 +1,12 @@
 ﻿using Listener.Core.Framework.Helpers;
 using Listener.Core.Framework.Players;
 using Listener.ImageProcessing;
+using ListenerX.Helpers;
 using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -35,7 +37,7 @@ namespace ListenerX.Classes
         public static readonly uint SPIF_SENDWININICHANGE = 0x02;
         private static readonly string BAK_IMAGE = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "IMGBAK.bak");
         private readonly string FontFamily;
-        private IPlayerHost Player;
+        private IPlayerHost player;
         private string temporaryWaitForDeleteFiles = "";
 
         public Wallpaper(string fontFamily)
@@ -162,7 +164,7 @@ namespace ListenerX.Classes
                         }
                         else
                         {
-                            var color = this.Player.AlbumArtwork.GetDominantColors(1).First();
+                            var color = this.player.AlbumArtwork.GetDominantColors(1).First();
                             //due to windows is weird shit, arrange ARGB as ABGR instead so we need to swap rgb position.
                             var swappedColor = Color.FromArgb(color.A, color.B, color.G, color.R).ToUint();
                             dwmKey.SetValue("AccentColor", (int)swappedColor, RegistryValueKind.DWord);
@@ -191,7 +193,7 @@ namespace ListenerX.Classes
 
         internal void SetPlayerBase(IPlayerHost music)
         {
-            Player = music;
+            player = music;
         }
 
         private Image CalculateBackgroundImage(Image highlightImg, Image backgroundImg, string track, string album,
@@ -227,10 +229,9 @@ namespace ListenerX.Classes
 
         private Image CalculateBackgroundImage(int width, int height)
         {
-
             var highlightSize = (int)Math.Round(height * 0.555);
 
-            var artwork = Player.AlbumArtwork;
+            var artwork = player.AlbumArtwork;
             using var background = ImageProcessing.CalculateBackgroundSource(
                 artwork,
                 width,
@@ -261,9 +262,9 @@ namespace ListenerX.Classes
                 var image = CalculateBackgroundImage(
                     highlight,
                     background,
-                    Player.Track,
-                    Player.Album,
-                    Player.Artist,
+                    player.Track,
+                    player.Album,
+                    player.Artist,
                     width,
                     height);
                 return image;
@@ -274,9 +275,18 @@ namespace ListenerX.Classes
 
         public string GetWallpaperImage()
         {
-            return temporaryWaitForDeleteFiles;
-            //var image = CalculateBackgroundImage(width, height);
-            //return image;
+            if (File.Exists(temporaryWaitForDeleteFiles))
+                return temporaryWaitForDeleteFiles;
+
+            var fileName = "10." + RegularExpressionHelpers.AlphabetCleaner($"{player.Track}-{player.Album}-{player.Artist}") + ".jpg";
+            if (!CacheFileManager.IsFileExists(fileName))
+            {
+                using var image = this.CalculateBackgroundImage((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
+                var bytes = image.ToByteArray(ImageFormat.Jpeg);
+                CacheFileManager.SaveCache(fileName, bytes);
+            }
+
+            return CacheFileManager.GetFullCachePath(fileName);
         }
 
         protected void Dispose(bool disposing)

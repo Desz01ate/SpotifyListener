@@ -16,7 +16,7 @@ namespace ListenerX
         {
             InitializeComponent();
             this.Width = 1520;
-            this.Height = 450;
+            this.Height = 440;
             this.pictureBox1.Width = this.Width;
             this.pictureBox1.Height = this.Height;
             this.pictureBox1.MouseMove += PictureBox1_MouseMove;

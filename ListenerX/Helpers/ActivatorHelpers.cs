@@ -32,6 +32,7 @@ namespace ListenerX.Helpers
             foreach (var file in files)
             {
                 var plugin = AssemblyHelpers.LoadInstance<IListenerPlugin>(file);
+                Console.WriteLine($" [Plugin][{DateTime.Now}] {Path.GetFileName(file)} loaded.");
                 yield return plugin;
             }
         }
