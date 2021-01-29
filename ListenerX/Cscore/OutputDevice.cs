@@ -148,9 +148,19 @@ namespace ListenerX.Cscore
         public static IEnumerable<(string, string)> GetDevices()
         {
             using var enumerator = MMDeviceEnumerator.EnumerateDevices(DataFlow.Render);
-            foreach (var deviceName in enumerator.Select(x => (x.DeviceID, x.FriendlyName)))
+            foreach (var device in enumerator)
             {
-                yield return deviceName;
+                string deviceId, friendlyName;
+                try
+                {
+                    deviceId = device.DeviceID;
+                    friendlyName = device.FriendlyName;
+                }
+                catch (CSCore.Win32.Win32ComException)
+                {
+                    continue;
+                }
+                yield return (deviceId, friendlyName);
             }
         }
 
