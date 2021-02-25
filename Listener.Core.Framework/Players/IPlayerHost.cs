@@ -29,9 +29,9 @@ namespace Listener.Core.Framework.Players
 
         double CalculatedPosition { get; }
 
-        event TrackChangedEventHandler OnTrackChanged;
-        event TrackProgressionChangedEventHandler OnTrackDurationChanged;
-        event TrackPlayStateChangedEventHandler OnTrackPlayStateChanged;
+        event TrackChangedEventHandler TrackChanged;
+        event TrackProgressionChangedEventHandler TrackDurationChanged;
+        event TrackPlayStateChangedEventHandler TrackPlayStateChanged;
 
         void Get();
         Task GetAsync();

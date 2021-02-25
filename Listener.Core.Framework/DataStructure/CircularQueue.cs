@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ListenerX.Classes
+namespace Listener.Core.Framework.DataStructure
 {
     /// <summary>
     /// Fixed-size queue which automatically dequeue when elements are going to exceed the limit.
@@ -26,7 +25,7 @@ namespace ListenerX.Classes
         /// <param name="limitSize"></param>
         public CircularQueue(int limitSize)
         {
-            if (limitSize < 0) throw new ArgumentOutOfRangeException(nameof(limitSize));
+            if (limitSize <= 0) throw new ArgumentOutOfRangeException(nameof(limitSize));
             limit = limitSize;
             q = new ConcurrentQueue<T>(new T[limit]);
         }
@@ -128,29 +127,32 @@ namespace ListenerX.Classes
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         public void Add(T item)
         {
-            throw new NotImplementedException();
+            this.Enqueue(item);
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            while (!q.IsEmpty)
+            {
+                this.q.TryDequeue(out _);
+            }
         }
 
         public bool Contains(T item)
         {
-            throw new NotImplementedException();
+            return this.q.Contains(item);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            this.q.CopyTo(array, arrayIndex);
         }
 
         public bool Remove(T item)

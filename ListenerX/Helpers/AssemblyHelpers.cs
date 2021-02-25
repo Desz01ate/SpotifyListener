@@ -24,20 +24,37 @@ namespace ListenerX.Helpers
             return LoadInstance<T>(bytes, args);
         }
 
-        public static T LoadInstance<T>(Assembly asm,params object[] args)
+        public static T LoadInstance<T>(Assembly asm, params object[] args)
         {
             var exportedTypes = asm.GetExportedTypes();
             var mustImplementedByType = typeof(T);
             foreach (var type in exportedTypes)
             {
                 bool isAbleToCastToGenericType = mustImplementedByType.IsAssignableFrom(type) || type.FullName == mustImplementedByType.FullName;
-                if (isAbleToCastToGenericType)
+                if (isAbleToCastToGenericType && type.IsClass)
                 {
                     var instance = (T)Activator.CreateInstance(type, args);
                     return instance;
                 }
             }
             return default;
+        }
+
+        public static IEnumerable<T> LoadInstances<T>(Assembly asm, params object[] args)
+        {
+            var exportedTypes = asm.GetExportedTypes();
+            var mustImplementedByType = typeof(T);
+            foreach (var type in exportedTypes)
+            {
+                bool isAbleToCastToGenericType = mustImplementedByType.IsAssignableFrom(type) || type.FullName == mustImplementedByType.FullName;
+                if (isAbleToCastToGenericType && type.IsClass)
+                {
+                    var instance = (T)Activator.CreateInstance(type, args);
+                    if (instance == null) continue;
+                    yield return instance;
+                }
+            }
+            yield break;
         }
         /// <summary>
         /// Load class object from byte array data.

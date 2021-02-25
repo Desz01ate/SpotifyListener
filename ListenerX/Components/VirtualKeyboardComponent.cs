@@ -23,7 +23,7 @@ namespace ListenerX.Components
         public VirtualKeyboardComponent(bool autoStart = true)
         {
             this.timer = new System.Timers.Timer();
-            this.timer.Interval = 7;
+            this.timer.Interval = 33;
             this.timer.Elapsed += Timer_Tick;
             this.gridRenderer = VirtualLedGridExtensions.CreateGridRendererInstance(ChromaWorker.Instance.FullGridArray, 50, 50);
             if (autoStart)

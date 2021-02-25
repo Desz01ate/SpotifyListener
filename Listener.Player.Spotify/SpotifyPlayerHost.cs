@@ -233,8 +233,9 @@ namespace Listener.Player.Spotify
         {
             Process.Start("spotify");
             SpotifyWebAPI webApiClient = null;
+            var spotifyAuthentication = new SpotifyAuthentication();
             var retry = 0;
-            SpotifyAuthentication.Context.OnClientReady += (auth, spotifyClient) => webApiClient = spotifyClient;
+            spotifyAuthentication.ClientReady += (auth, spotifyClient) => webApiClient = spotifyClient;
             while (webApiClient == null)
             {
                 if (retry++ >= 10)
@@ -253,13 +254,13 @@ namespace Listener.Player.Spotify
         }
 
 
-        public event TrackChangedEventHandler OnTrackChanged;
+        public event TrackChangedEventHandler TrackChanged;
 
-        public event TrackProgressionChangedEventHandler OnTrackDurationChanged;
+        public event TrackProgressionChangedEventHandler TrackDurationChanged;
 
-        public event TrackPlayStateChangedEventHandler OnTrackPlayStateChanged;
+        public event TrackPlayStateChangedEventHandler TrackPlayStateChanged;
 
-        public event ActiveDeviceChangedEventHandler OnDeviceChanged;
+        public event ActiveDeviceChangedEventHandler DeviceChanged;
 
 
         public override string ToString()
@@ -292,7 +293,7 @@ namespace Listener.Player.Spotify
                     if (ActiveDevice.Id != currentActiveDevice.Id)
                     {
                         ActiveDevice = _deiceMapper.Map<SpotifyDevice, Device>(currentActiveDevice);
-                        OnDeviceChanged?.Invoke(ActiveDevice);
+                        DeviceChanged?.Invoke(ActiveDevice);
                     }
 
                     if (currentTrack.Item != null)
@@ -342,7 +343,7 @@ namespace Listener.Player.Spotify
                                 AlbumArtwork = new Bitmap(1, 1);
                             }
 
-                            OnTrackChanged?.Invoke(this);
+                            TrackChanged?.Invoke(this);
                         };
                     }
                     else
@@ -353,14 +354,14 @@ namespace Listener.Player.Spotify
                         Duration_ms = 0;
                         Position_ms = 0;
                         Volume = 0;
-                        OnTrackChanged?.Invoke(this);
+                        TrackChanged?.Invoke(this);
                     }
                 }
 
                 if (IsPlaying != currentTrack.IsPlaying)
-                    OnTrackPlayStateChanged?.Invoke(currentTrack.IsPlaying ? PlayState.Play : PlayState.Pause);
+                    TrackPlayStateChanged?.Invoke(currentTrack.IsPlaying ? PlayState.Play : PlayState.Pause);
                 IsPlaying = currentTrack.IsPlaying;
-                OnTrackDurationChanged?.Invoke(this);
+                TrackDurationChanged?.Invoke(this);
             }
             catch (Exception ex)
             {

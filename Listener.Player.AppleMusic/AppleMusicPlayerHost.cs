@@ -215,10 +215,10 @@ namespace Listener.Player.AppleMusic
             }
         }
 
-        public event ActiveDeviceChangedEventHandler OnDeviceChanged;
-        public event TrackChangedEventHandler OnTrackChanged;
-        public event TrackProgressionChangedEventHandler OnTrackDurationChanged;
-        public event TrackPlayStateChangedEventHandler OnTrackPlayStateChanged;
+        public event ActiveDeviceChangedEventHandler DeviceChanged;
+        public event TrackChangedEventHandler TrackChanged;
+        public event TrackProgressionChangedEventHandler TrackDurationChanged;
+        public event TrackPlayStateChangedEventHandler TrackPlayStateChanged;
         public event PropertyChangedEventHandler PropertyChanged;
 
         private ITPlayerState currentPlayState;
@@ -267,7 +267,7 @@ namespace Listener.Player.AppleMusic
             if (currentPlayState != this.app.PlayerState)
             {
                 currentPlayState = this.app.PlayerState;
-                OnTrackPlayStateChanged?.Invoke(currentPlayState switch
+                TrackPlayStateChanged?.Invoke(currentPlayState switch
                 {
                     ITPlayerState.ITPlayerStatePlaying => PlayState.Play,
                     _ => PlayState.Pause
@@ -297,7 +297,7 @@ namespace Listener.Player.AppleMusic
                     {
                         image.Wait();
                         this.AlbumArtwork = image.Result;
-                        this.OnTrackChanged?.Invoke(this);
+                        this.TrackChanged?.Invoke(this);
                     });
                     return;
                 });

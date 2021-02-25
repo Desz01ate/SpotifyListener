@@ -26,6 +26,6 @@ namespace Listener.Core.Framework.Players
 
         Task SetActiveDeviceAsync(object deviceId);
 
-        event ActiveDeviceChangedEventHandler OnDeviceChanged;
+        event ActiveDeviceChangedEventHandler DeviceChanged;
     }
 }

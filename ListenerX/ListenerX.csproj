@@ -373,6 +373,10 @@
       <Project>{7064fa7b-102f-4883-a75f-ea969f9ec272}</Project>
       <Name>Listener.Player.Spotify</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Listener.Plugin.Razer\Listener.Plugin.Razer.csproj">
+      <Project>{edd8e9c9-6e1f-4661-abaa-d9512d46c814}</Project>
+      <Name>Listener.Plugin.Razer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="player.ico" />

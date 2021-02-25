@@ -19,8 +19,10 @@ namespace ListenerX
         {
             InitializeComponent();
             this.Icon = Properties.Resources.listenerx;
-            //Due to Facebook updated policy (https://developers.facebook.com/blog/post/2018/04/24/new-facebook-platform-product-changes-policy-updates/), now publish_actions is deprecated so this feature might be remove soon as well
-            RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyle;
+
+            this.RenderStyleCombobox.Items.AddRange(ActivatorHelpers.Effects.Select(x => x.EffectName).ToArray());
+            this.RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyle;
+
             ChromaSDKEnable.Checked = Properties.Settings.Default.ChromaSDKEnable;
             RenderFPS.Text = Properties.Settings.Default.RenderFPS.ToString();
             cb_EnableArtworkWallpaper.Checked = Properties.Settings.Default.ArtworkWallpaperEnable;

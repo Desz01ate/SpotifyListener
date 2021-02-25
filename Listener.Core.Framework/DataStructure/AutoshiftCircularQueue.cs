@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 
-namespace ListenerX.Classes
+namespace Listener.Core.Framework.DataStructure
 {
-    class AutoshiftCirculaQueue<T> : CircularQueue<T>, IDisposable
+    public class AutoshiftCirculaQueue<T> : CircularQueue<T>, IDisposable
     {
-        private readonly static Lazy<AutoshiftCirculaQueue<T>> _emptySource = new Lazy<AutoshiftCirculaQueue<T>>(() => new AutoshiftCirculaQueue<T>());
+        private readonly static Lazy<AutoshiftCirculaQueue<T>> _emptySource = new Lazy<AutoshiftCirculaQueue<T>>();
         public static AutoshiftCirculaQueue<T> Empty => _emptySource.Value;
 
         private readonly Timer shiftTimer;
         private bool disposed;
-
-        private AutoshiftCirculaQueue() : base(0)
-        {
-
-        }
 
         public AutoshiftCirculaQueue(int limitSize, int shiftInMs) : base(limitSize)
         {
@@ -31,6 +29,10 @@ namespace ListenerX.Classes
             this.shiftTimer.Interval = shiftInMs;
             this.shiftTimer.Elapsed += ShiftTimer_Elapsed;
             this.shiftTimer.Start();
+        }
+
+        private AutoshiftCirculaQueue() : base(1)
+        {
         }
 
         private void ShiftTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -52,6 +54,5 @@ namespace ListenerX.Classes
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
-
     }
 }

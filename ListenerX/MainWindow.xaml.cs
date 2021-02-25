@@ -61,20 +61,28 @@ namespace ListenerX
                 ResizeMode = ResizeMode.CanMinimize;
                 Visibility = Visibility.Hidden;
 
-                player = this.LoadPlayerHost<Listener.Player.Spotify.SpotifyPlayerHost>();
+                player = ActivatorHelpers.LoadPlayerHost<Listener.Player.Spotify.SpotifyPlayerHost>();
                 plugins = ActivatorHelpers.LoadPlugins().ToArray();
+                ActivatorHelpers.LoadRazerChromaPlugins(this);
+
+                var maxEffectCount = ActivatorHelpers.Effects.Count - 1;
+                if (Properties.Settings.Default.RenderStyle > maxEffectCount)
+                {
+                    Properties.Settings.Default.RenderStyle = maxEffectCount;
+                    Properties.Settings.Default.Save();
+                }
 
                 VolumePath.Fill = playColor;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
 
-                player.OnTrackChanged += OnTrackChanged;
-                player.OnDeviceChanged += Player_OnDeviceChanged;
-                player.OnTrackDurationChanged += (p) =>
+                player.TrackChanged += OnTrackChanged;
+                player.DeviceChanged += Player_OnDeviceChanged;
+                player.TrackDurationChanged += (p) =>
                 {
                     this.VolumePath.Fill = p.IsMute ? pauseColor : playColor;
                 };
 
-                player.OnTrackPlayStateChanged += (state) =>
+                player.TrackPlayStateChanged += (state) =>
                 {
                     Dispatcher.InvokeAsync(() =>
                     {
@@ -219,29 +227,9 @@ namespace ListenerX
         {
             try
             {
-                var renderStyle = Properties.Settings.Default.RenderStyle;
-                double[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(renderStyle < 2 ? 6 : ChromaWorker.Instance.FullGridArray.ColumnCount).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
-                switch (renderStyle)
-                {
-                    case 0:
-                        chroma.PlayingPositionEffects(spectrumData, this.player.CalculatedPosition);
-                        break;
-                    case 1:
-                        chroma.PlayingPositionBackgroundEffects(spectrumData, this.player.CalculatedPosition);
-                        break;
-                    case 2:
-                        chroma.VisualizeVolumeEffects(spectrumData);
-                        break;
-                    case 3:
-                        chroma.VisualizeVolumeBackgroundEffects(spectrumData);
-                        break;
-                    case 4:
-                        chroma.VisualizeVolumeChromaEffects(spectrumData);
-                        break;
-                    default:
-                        break;
-                }
-
+                var effect = ActivatorHelpers.Effects[Properties.Settings.Default.RenderStyle];
+                double[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(effect.RequiredSpectrumRange).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
+                chroma.SetEffect(effect, spectrumData, this.player.CalculatedPosition);
                 chroma.ApplyAsync().Wait();
             }
             catch (Exception ex)

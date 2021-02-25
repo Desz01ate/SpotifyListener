@@ -7,24 +7,18 @@ namespace Listener.Player.Spotify
 {
     internal class SpotifyAuthentication
     {
-        public delegate void SpotifyEventHandler(SpotifyAuthentication sender, SpotifyWebAPI client);
-        public event SpotifyEventHandler OnClientReady;
-        private readonly AuthorizationCodeAuth AuthenFactory;
+        public delegate void SpotifyClientReadyEventHandler(SpotifyAuthentication sender, SpotifyWebAPI client);
+        public event SpotifyClientReadyEventHandler ClientReady;
+        private readonly AuthorizationCodeAuth _authenFactory;
         private readonly Timer _refreshTokenWorker;
-        private string RefreshToken;
-        private SpotifyWebAPI Client
-        { get; set; }
-        public static SpotifyAuthentication Context { get; }
-        static SpotifyAuthentication()
-        {
-            Context = new SpotifyAuthentication();
-        }
-        private SpotifyAuthentication()
+        private string _refreshToken;
+        private SpotifyWebAPI _client { get; set; }
+        internal SpotifyAuthentication()
         {
             bool initialized = false;
             var client_id = "7b2f38e47869431caeda389929a1908e";
             var secret_id = "c3a86330ef844c16be6cb46d5e285a45";
-            AuthenFactory = new AuthorizationCodeAuth(
+            _authenFactory = new AuthorizationCodeAuth(
                                 client_id,
                                 secret_id,
                                 "http://localhost:8800",
@@ -34,16 +28,16 @@ namespace Listener.Player.Spotify
                                 Scope.AppRemoteControl |
                                 Scope.UserReadPlaybackState
                                 );
-            AuthenFactory.AuthReceived += async (s, p) =>
+            _authenFactory.AuthReceived += async (s, p) =>
             {
                 var ath = (AuthorizationCodeAuth)s;
                 ath.Stop();
 
                 var token = await ath.ExchangeCode(p.Code);
-                RefreshToken = token.RefreshToken;
-                if (Client == null)
+                _refreshToken = token.RefreshToken;
+                if (_client == null)
                 {
-                    Client = new SpotifyWebAPI()
+                    _client = new SpotifyWebAPI()
                     {
                         AccessToken = token.AccessToken,
                         TokenType = "Bearer"
@@ -51,21 +45,21 @@ namespace Listener.Player.Spotify
                 }
                 else
                 {
-                    Client.AccessToken = token.AccessToken;
+                    _client.AccessToken = token.AccessToken;
                 }
                 if (!initialized)
-                    OnClientReady.Invoke(this, Client);
+                    ClientReady?.Invoke(this, _client);
                 initialized = true;
 
             };
-            AuthenFactory.Start();
-            AuthenFactory.OpenBrowser();
+            _authenFactory.Start();
+            _authenFactory.OpenBrowser();
             _refreshTokenWorker = new Timer();
             _refreshTokenWorker.Interval = 30 * (1000 * 60);
             _refreshTokenWorker.Elapsed += async (s, e) =>
             {
-                var token = await AuthenFactory.RefreshToken(RefreshToken);
-                Client.AccessToken = token.AccessToken;
+                var token = await _authenFactory.RefreshToken(_refreshToken);
+                _client.AccessToken = token.AccessToken;
             };
             _refreshTokenWorker.Start();
         }

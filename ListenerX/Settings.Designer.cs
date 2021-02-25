@@ -292,12 +292,6 @@ namespace ListenerX
             // 
             this.RenderStyleCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.RenderStyleCombobox.FormattingEnabled = true;
-            this.RenderStyleCombobox.Items.AddRange(new object[] {
-            "Album Cover (Gradients) - Progression + Volume",
-            "Album Cover - Progression + Volume",
-            "Album Cover (Gradients)  - Spectrum Vitualizer",
-            "Album Cover - Spectrum Vitualizer",
-            "Chroma - Spectrum Vitualizer"});
             this.RenderStyleCombobox.Location = new System.Drawing.Point(114, 112);
             this.RenderStyleCombobox.Name = "RenderStyleCombobox";
             this.RenderStyleCombobox.Size = new System.Drawing.Size(232, 21);

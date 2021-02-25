@@ -4,15 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C2C24ED5-D802-4AC0-9E06-6E3D00EAF895}</ProjectGuid>
+    <ProjectGuid>{EDD8E9C9-6E1F-4661-ABAA-D9512D46C814}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Listener.Core.Framework</RootNamespace>
-    <AssemblyName>Listener.Core.Framework</AssemblyName>
+    <RootNamespace>Listener.Plugin.Razer</RootNamespace>
+    <AssemblyName>Listener.Plugin.Razer</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,36 +29,10 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>8.0</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>8.0</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>8.0</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.4.6.1\lib\net461\System.Drawing.Common.dll</HintPath>
-    </Reference>
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -72,19 +44,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataStructure\AutoshiftCircularQueue.cs" />
-    <Compile Include="DataStructure\CircularQueue.cs" />
-    <Compile Include="Events\PlayerEvents.cs" />
-    <Compile Include="Events\PlayState.cs" />
-    <Compile Include="Events\SearchType.cs" />
-    <Compile Include="Helpers\CacheFileManager.cs" />
-    <Compile Include="Metadata\IPlayerMetadata.cs" />
-    <Compile Include="Models\Device.cs" />
-    <Compile Include="Models\SearchResult.cs" />
-    <Compile Include="Players\IPlayerHost.cs" />
-    <Compile Include="Players\IStreamablePlayerHost.cs" />
-    <Compile Include="Plugins\IListenerPlugin.cs" />
+    <Compile Include="Effects\PlayingPosition.cs" />
+    <Compile Include="Effects\PlayingPositionAlbumArtwork.cs" />
+    <Compile Include="Effects\VisualizeVolume.cs" />
+    <Compile Include="Effects\VisualizeVolumeAlbumArtwork.cs" />
+    <Compile Include="Effects\VisualizeVolumeChroma.cs" />
+    <Compile Include="Extensions\ColoreColorExtensions.cs" />
+    <Compile Include="Interfaces\IRazerEffect.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shared\SharedColors.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Colore\src\Colore\Colore.csproj">
+      <Project>{a03d43c7-ade9-4753-8cf4-b8937e459172}</Project>
+      <Name>Colore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Listener.Core.Framework\Listener.Core.Framework.csproj">
+      <Project>{c2c24ed5-d802-4ac0-9e06-6e3d00eaf895}</Project>
+      <Name>Listener.Core.Framework</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

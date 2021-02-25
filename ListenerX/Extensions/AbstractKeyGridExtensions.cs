@@ -47,32 +47,6 @@ namespace ListenerX.Extensions
                 using var g = System.Drawing.Graphics.FromImage(bitmap);
                 using var font = new System.Drawing.Font("Microsoft Sans Serif", fontSize, System.Drawing.FontStyle.Regular);
 
-                //for (var x = 0; x < totalWidth; x++)
-                //{
-                //    using var block = new System.Drawing.Bitmap(boxWidth, boxHeight);
-                //    using var _g = System.Drawing.Graphics.FromImage(block);
-                //    _g.FillRectangle(System.Drawing.Brushes.Black, new System.Drawing.RectangleF(0, 0, boxWidth, boxHeight));
-                //    var text = (x - 1).ToString();
-                //    if (text == "-1")
-                //        text = "";
-                //    var textMeasure = _g.MeasureString(text, font);
-                //    _g.DrawString(text, font, System.Drawing.Brushes.Green, (int)((boxWidth - textMeasure.Width) / 2), (int)((boxHeight - textMeasure.Height) / 2));
-                //    g.DrawImage(block, x * boxWidth, 0);
-                //}
-
-                //for (var y = 0; y < totalHeight; y++)
-                //{
-                //    using var block = new System.Drawing.Bitmap(boxWidth, boxHeight);
-                //    using var _g = System.Drawing.Graphics.FromImage(block);
-                //    _g.FillRectangle(System.Drawing.Brushes.Black, new System.Drawing.RectangleF(0, 0, boxWidth, boxHeight));
-                //    var text = (y - 1).ToString();
-                //    if (text == "-1")
-                //        text = "";
-                //    var textMeasure = _g.MeasureString(text, font);
-                //    _g.DrawString(text, font, System.Drawing.Brushes.Green, (int)((boxWidth - textMeasure.Width) / 2), (int)((boxHeight - textMeasure.Height) / 2));
-                //    g.DrawImage(block, 0, y * boxHeight);
-                //}
-
                 foreach (var key in grid)
                 {
                     using var block = new System.Drawing.Bitmap(boxWidth, boxHeight);
@@ -101,10 +75,6 @@ namespace ListenerX.Extensions
                     g.DrawImage(block, (key.Index.X + 1) * boxWidth, (key.Index.Y + 1) * boxHeight);
 
                 }
-
-                //var tempPath = System.IO.Path.GetTempFileName().Replace(".tmp", ".jpg");
-                //bitmap.Save(tempPath);
-                //System.Diagnostics.Process.Start(tempPath);
 
                 return bitmap;
             }

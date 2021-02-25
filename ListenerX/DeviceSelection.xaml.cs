@@ -36,7 +36,7 @@ namespace ListenerX
             this.player = player;
             this.SourceInitialized += DeviceSelectionForm_SourceInitialized;
             this.lbl_close.MouseDown += (s, e) => this.Close();
-            this.player.OnDeviceChanged += delegate
+            this.player.DeviceChanged += delegate
             {
                 Refresh();
             };
