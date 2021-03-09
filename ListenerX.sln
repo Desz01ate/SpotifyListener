@@ -22,17 +22,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Colore", "Colore\src\Colore
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{F9120AAC-CAA1-4088-81D1-D33EEBDB02D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListenerX.Plugin.Log", "Plugins\ListenerX.Plugin.Log\ListenerX.Plugin.Log.csproj", "{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.Log", "Plugins\Listener.Plugin.Log\Listener.Plugin.Log.csproj", "{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.Razer", "Listener.Plugin.Razer\Listener.Plugin.Razer.csproj", "{EDD8E9C9-6E1F-4661-ABAA-D9512D46C814}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.Razer.Whitebow", "Listener.Plugin.Razer.Whitebow\Listener.Plugin.Razer.Whitebow.csproj", "{B1C4F3FA-EB77-4F09-877F-9BF2E6AEB1EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.Razer.Whitebow", "Plugins\Listener.Plugin.Razer.Whitebow\Listener.Plugin.Razer.Whitebow.csproj", "{B1C4F3FA-EB77-4F09-877F-9BF2E6AEB1EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListenerX.Plugin.Razer.Symmetry", "ListenerX.Plugin.Razer.Symmetry\ListenerX.Plugin.Razer.Symmetry.csproj", "{332491CE-D200-46C8-BEB9-4D82D7773743}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.Razer.Symmetry", "Plugins\Listener.Plugin.Razer.Symmetry\Listener.Plugin.Razer.Symmetry.csproj", "{332491CE-D200-46C8-BEB9-4D82D7773743}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListenerX.Plugin.Razer.SymmetryReverse", "ListenerX.Plugin.Razer.SymmetryReverse\ListenerX.Plugin.Razer.SymmetryReverse.csproj", "{0BB4970E-ED6A-4C1F-805A-AFAD3B471014}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.Razer.SymmetryReverse", "Plugins\Listener.Plugin.Razer.SymmetryReverse\Listener.Plugin.Razer.SymmetryReverse.csproj", "{0BB4970E-ED6A-4C1F-805A-AFAD3B471014}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.Razer.DebugGrid", "Listener.Plugin.Razer.DebugGrid\Listener.Plugin.Razer.DebugGrid.csproj", "{F9BB01F2-C2A9-43CD-B48D-D61953F047D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.Razer.DebugGrid", "Plugins\Listener.Plugin.Razer.DebugGrid\Listener.Plugin.Razer.DebugGrid.csproj", "{F9BB01F2-C2A9-43CD-B48D-D61953F047D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.Razer.CustomizableVisualizer", "Plugins\Listener.Plugin.Razer.CustomizableVisualizer\Listener.Plugin.Razer.CustomizableVisualizer.csproj", "{2F2A2224-9B93-4259-8C0D-70926A6BE515}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -188,6 +190,18 @@ Global
 		{F9BB01F2-C2A9-43CD-B48D-D61953F047D3}.Release|x64.Build.0 = Release|Any CPU
 		{F9BB01F2-C2A9-43CD-B48D-D61953F047D3}.Release|x86.ActiveCfg = Release|Any CPU
 		{F9BB01F2-C2A9-43CD-B48D-D61953F047D3}.Release|x86.Build.0 = Release|Any CPU
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515}.Debug|x64.Build.0 = Debug|Any CPU
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515}.Debug|x86.Build.0 = Debug|Any CPU
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515}.Release|x64.ActiveCfg = Release|Any CPU
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515}.Release|x64.Build.0 = Release|Any CPU
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515}.Release|x86.ActiveCfg = Release|Any CPU
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -198,6 +212,7 @@ Global
 		{332491CE-D200-46C8-BEB9-4D82D7773743} = {F9120AAC-CAA1-4088-81D1-D33EEBDB02D9}
 		{0BB4970E-ED6A-4C1F-805A-AFAD3B471014} = {F9120AAC-CAA1-4088-81D1-D33EEBDB02D9}
 		{F9BB01F2-C2A9-43CD-B48D-D61953F047D3} = {F9120AAC-CAA1-4088-81D1-D33EEBDB02D9}
+		{2F2A2224-9B93-4259-8C0D-70926A6BE515} = {F9120AAC-CAA1-4088-81D1-D33EEBDB02D9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1CC1FD92-3FE4-440A-8651-CF864903192A}

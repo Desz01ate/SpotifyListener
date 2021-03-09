@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ListenerX.Plugin.Razer.Symmetry
+namespace Listener.Plugin.Razer.Symmetry
 {
     public class SymmetryEffect : IRazerEffect
     {
@@ -20,12 +20,13 @@ namespace ListenerX.Plugin.Razer.Symmetry
             var fullLength = virtualGrid.ColumnCount;
             var volume = spectrumValues[0] / 100.0;
             var startPosition = (fullLength / 2);
-            var absolutePosition = Math.Round((volume * fullLength), 0) / 2;
+            var absolutePosition = (int)Math.Round((volume * fullLength), 0) / 2;
+            var upperbound = startPosition + absolutePosition;
             for (var row = 0; row < virtualGrid.RowCount; row++)
             {
-                for (var col = startPosition; col < startPosition + absolutePosition; col++)
+                for (var col = startPosition; col < upperbound; col++)
                 {
-                    var color = Listener.Plugin.Razer.Shared.SharedColors.RainbowColor.ElementAt(col).ChangeBrightnessLevel(volume);
+                    var color = Listener.Plugin.Razer.Shared.SharedColors.RainbowColor.ElementAt(upperbound - col).ChangeBrightnessLevel(volume);
                     virtualGrid[col, row] = color;
                     virtualGrid[fullLength - col - 1, row] = color;
                 }

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{332491CE-D200-46C8-BEB9-4D82D7773743}</ProjectGuid>
+    <ProjectGuid>{B1C4F3FA-EB77-4F09-877F-9BF2E6AEB1EF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ListenerX.Plugin.Razer.Symmetry</RootNamespace>
-    <AssemblyName>ListenerX.Plugin.Razer.Symmetry</AssemblyName>
+    <RootNamespace>Listener.Plugin.Razer.Whitebow</RootNamespace>
+    <AssemblyName>Listener.Plugin.Razer.Whitebow</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\pluginbuild\debug</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\pluginbuild\release</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -33,6 +33,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,22 +44,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SymmetryEffect.cs" />
+    <Compile Include="Whitebow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Colore\src\Colore\Colore.csproj">
+    <ProjectReference Include="..\..\Colore\src\Colore\Colore.csproj">
       <Project>{A03D43C7-ADE9-4753-8CF4-B8937E459172}</Project>
       <Name>Colore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Listener.Core.Framework\Listener.Core.Framework.csproj">
+    <ProjectReference Include="..\..\Listener.Core.Framework\Listener.Core.Framework.csproj">
       <Project>{C2C24ED5-D802-4AC0-9E06-6E3D00EAF895}</Project>
       <Name>Listener.Core.Framework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Listener.Plugin.Razer\Listener.Plugin.Razer.csproj">
-      <Project>{EDD8E9C9-6E1F-4661-ABAA-D9512D46C814}</Project>
+    <ProjectReference Include="..\..\Listener.Plugin.Razer\Listener.Plugin.Razer.csproj">
+      <Project>{edd8e9c9-6e1f-4661-abaa-d9512d46c814}</Project>
       <Name>Listener.Plugin.Razer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

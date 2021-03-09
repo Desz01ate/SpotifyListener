@@ -1,5 +1,6 @@
 ﻿using Colore.Data;
 using Listener.Core.Framework.DataStructure;
+using Listener.Core.Framework.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace Listener.Plugin.Razer.Shared
 {
     public static class SharedColors
     {
-        public static readonly AutoshiftCirculaQueue<Color> RainbowColor = new AutoshiftCirculaQueue<Color>(GenerateRainbowSinusoidal().Select(c => new Color(c.Item1, c.Item2, c.Item3)), 500);
+        public static readonly IReadOnlyCollection<Color> RainbowColor = (new AutoshiftCirculaQueue<Color>(GenerateRainbowSinusoidal().Select(c => new Color(c.Item1, c.Item2, c.Item3)), 500)).AsReadOnly();
 
         private static IEnumerable<Tuple<int, int, int>> GenerateRainbowSinusoidal(int range = 64)
         {

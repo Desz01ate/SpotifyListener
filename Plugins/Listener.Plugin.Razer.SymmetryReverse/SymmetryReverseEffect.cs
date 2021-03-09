@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ListenerX.Plugin.Razer.SymmetryReverse
+namespace Listener.Plugin.Razer.SymmetryReverse
 {
     public class SymmetryReverseEffect : IRazerEffect
     {

@@ -77,6 +77,7 @@
     <Compile Include="Events\PlayerEvents.cs" />
     <Compile Include="Events\PlayState.cs" />
     <Compile Include="Events\SearchType.cs" />
+    <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Helpers\CacheFileManager.cs" />
     <Compile Include="Metadata\IPlayerMetadata.cs" />
     <Compile Include="Models\Device.cs" />

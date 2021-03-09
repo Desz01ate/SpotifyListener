@@ -21,6 +21,7 @@ using ListenerX.Cscore;
 using ListenerX.Extensions;
 using Listener.Core.Framework.Plugins;
 using System.Drawing;
+using System.Web;
 
 namespace ListenerX
 {
@@ -424,7 +425,9 @@ namespace ListenerX
 
         private void btn_lyrics_Click(object sender, RoutedEventArgs e)
         {
-            var url = $"https://www.google.com/search?q={this.player.Artist.Replace(" ", "+")}+{this.player.Album.Replace(" ", "+")}+{this.player.Track.Replace(" ", "+")}+lyrics";
+            var query = $"{this.player.Artist} {this.player.Album} {this.player.Track} lyrics";
+            var encodedQuery = HttpUtility.UrlEncode(query);
+            var url = $"https://www.google.com/search?q={encodedQuery}";
             Process.Start(url);
         }
 

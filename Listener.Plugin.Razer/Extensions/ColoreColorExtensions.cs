@@ -16,7 +16,12 @@ namespace Listener.Plugin.Razer.Extensions
             var R = (byte)(c.R * multiplier);
             var G = (byte)(c.G * multiplier);
             var B = (byte)(c.B * multiplier);
-            var hex = $"0x{R:X2}{G:X2}{B:X2}";
+            return FromRgb(R, G, B);
+        }
+
+        public static ColoreColor FromRgb(byte r, byte g, byte b)
+        {
+            var hex = $"0x{r:X2}{g:X2}{b:X2}";
             return ColoreColor.FromRgb(Convert.ToUInt32(hex, 16));
         }
     }

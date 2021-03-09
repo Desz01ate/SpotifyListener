@@ -1,0 +1,7 @@
+D:\Documents\GitHub\ListenerX\Plugins\pluginbuild\release\ListenerX.Plugin.Log.dll
+D:\Documents\GitHub\ListenerX\Plugins\pluginbuild\release\ListenerX.Plugin.Log.pdb
+D:\Documents\GitHub\ListenerX\Plugins\ListenerX.Plugin.Log\obj\Release\Listener.Plugin.Log.csprojAssemblyReference.cache
+D:\Documents\GitHub\ListenerX\Plugins\ListenerX.Plugin.Log\obj\Release\Listener.Plugin.Log.csproj.CoreCompileInputs.cache
+D:\Documents\GitHub\ListenerX\Plugins\ListenerX.Plugin.Log\obj\Release\Listener.Plugin.Log.csproj.CopyComplete
+D:\Documents\GitHub\ListenerX\Plugins\ListenerX.Plugin.Log\obj\Release\ListenerX.Plugin.Log.dll
+D:\Documents\GitHub\ListenerX\Plugins\ListenerX.Plugin.Log\obj\Release\ListenerX.Plugin.Log.pdb
