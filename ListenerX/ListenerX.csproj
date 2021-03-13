@@ -204,7 +204,6 @@
     <Compile Include="Classes\AnimationController.cs" />
     <Compile Include="Classes\AutoshiftCirculaQueue.cs" />
     <Compile Include="Classes\CircularQueue.cs" />
-    <Compile Include="Components\CustomProgresBar.cs" />
     <Compile Include="Components\VirtualKeyboardComponent.cs">
       <SubType>Component</SubType>
     </Compile>

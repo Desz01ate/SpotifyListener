@@ -71,7 +71,7 @@ namespace ListenerX.Helpers
             foreach (var type in exportedTypes)
             {
                 bool isAbleToCastToGenericType = mustImplementedByType.IsAssignableFrom(type) || type.FullName == mustImplementedByType.FullName;
-                if (isAbleToCastToGenericType)
+                if (isAbleToCastToGenericType && type.IsClass)
                 {
                     var instance = (T)Activator.CreateInstance(type, args);
                     return instance;
