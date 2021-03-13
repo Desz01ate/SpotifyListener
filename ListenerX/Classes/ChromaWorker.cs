@@ -5,14 +5,13 @@ using System.Linq;
 using ListenerX.Classes;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Collections.Generic;
 using System.Drawing;
 using ListenerX.Extensions;
-using Utilities.Shared;
 using Colore;
-using Colore.Effects.Virtual;
-using ColoreColor = Colore.Data.Color;
-using Listener.Plugin.Razer.Interfaces;
+using ChromaColor = Listener.Plugin.ChromaEffect.Implementation.Color;
+using Listener.Plugin.ChromaEffect.Interfaces;
+using System.Collections.Generic;
+using ListenerX.Classes.Adapter;
 
 namespace ListenerX
 {
@@ -20,17 +19,19 @@ namespace ListenerX
     {
         public sealed partial class ChromaWorker : IDisposable
         {
-            private ColoreColor _primaryColor { get; set; } = ColoreColor.White;
-            private ColoreColor _secondaryColor { get; set; } = ColoreColor.Black;
-            private readonly IChroma _chromaInterface;
+            private ChromaColor _primaryColor { get; set; } = ChromaColor.White;
+            private ChromaColor _secondaryColor { get; set; } = ChromaColor.Black;
 
-            private AutoshiftCirculaQueue<ColoreColor> _albumColors;
+            private ChromaColor[][] _albumBackgroundSource;
+
+            private readonly IReadOnlyList<IPhysicalDeviceAdapter> _deviceAdapters;
+
+            private AutoshiftCirculaQueue<ChromaColor> _albumColors;
 
             public readonly IVirtualLedGrid FullGridArray;
 
             public readonly bool IsError;
 
-            private ColoreColor[][] _albumBackgroundSource;
 
             private static Lazy<ChromaWorker> _instance = new Lazy<ChromaWorker>(() => new ChromaWorker(), true);
             public static ChromaWorker Instance => _instance.Value;
@@ -38,15 +39,16 @@ namespace ListenerX
 
             private ChromaWorker()
             {
-                this._albumColors = AutoshiftCirculaQueue<ColoreColor>.Empty;
+                this._albumColors = AutoshiftCirculaQueue<ChromaColor>.Empty;
+                this.FullGridArray = Listener.Plugin.ChromaEffect.Implementation.VirtualLedGrid.CreateDefaultGrid();
                 try
                 {
-                    this._chromaInterface = ColoreProvider.CreateNativeAsync().Result;
-                    this.FullGridArray = this._chromaInterface.VirtualLedGrid;
+                    var adapters = new List<IPhysicalDeviceAdapter>();
+                    adapters.Add(new RazerSdkAdapter());
+                    this._deviceAdapters = adapters;
                 }
                 catch (Exception ex)
                 {
-                    this.FullGridArray = VirtualLedGrid.CreateDefaultGrid();
                     this.IsError = true;
                     Debug.WriteLine(ex);
                 }
@@ -59,13 +61,16 @@ namespace ListenerX
             {
                 if (!this.IsError)
                 {
-                    await this.FullGridArray.ApplyAsync();
+                    foreach (var adapter in _deviceAdapters)
+                    {
+                        await adapter?.ApplyAsync(FullGridArray);
+                    }
                 }
             }
 
             public void SDKDisable()
             {
-                this.FullGridArray.Set(ColoreColor.Black);
+                this.FullGridArray.Set(ChromaColor.Black);
                 ApplyAsync().Wait();
             }
             /// <summary>
@@ -75,12 +80,12 @@ namespace ListenerX
             /// <param name="density">density for adaptive color</param>
             public void LoadColor(Color primaryColor, Color secondaryColor)
             {
-                this._primaryColor = primaryColor.ToColoreColor();
-                this._secondaryColor = secondaryColor.ToColoreColor();
+                this._primaryColor = primaryColor.ToChromaColor();
+                this._secondaryColor = secondaryColor.ToChromaColor();
 
                 var gradients = ColorProcessing.GenerateGradients(new[] { primaryColor, secondaryColor }, true);
                 this._albumColors?.Dispose();
-                this._albumColors = new AutoshiftCirculaQueue<ColoreColor>(gradients.Select(ColoreColorExtensions.ToColoreColor), 500);
+                this._albumColors = new AutoshiftCirculaQueue<ChromaColor>(gradients.Select(ColorExtensions.ToChromaColor), 500);
             }
 
             public void LoadColor(Image image)
@@ -92,11 +97,11 @@ namespace ListenerX
 
                 using var source = (Bitmap)ImageProcessing.Cut((Bitmap)image, width, height);
                 using var resizedImage = (Bitmap)source.Resize(width, height);
-                this._albumBackgroundSource = resizedImage.GetPixels().ToColoreColors();
+                this._albumBackgroundSource = resizedImage.GetPixels().ToChromaColors();
                 LoadColor(colors[0], colors[1]);
             }
 
-            internal void SetEffect(IRazerEffect effect, double[] spectrumValues, double playingPosition)
+            internal void SetEffect(IChromaEffect effect, double[] spectrumValues, double playingPosition)
             {
                 effect.SetEffect(this.FullGridArray, this._primaryColor, this._secondaryColor, this._albumColors, this._albumBackgroundSource, spectrumValues, playingPosition, Properties.Settings.Default.BackgroundBrightness);
             }
@@ -106,7 +111,8 @@ namespace ListenerX
             {
                 if (disposing && !disposed)
                 {
-                    this._chromaInterface?.Dispose();
+                    foreach (var adapter in _deviceAdapters)
+                        adapter?.Dispose();
                 }
                 disposed = true;
             }

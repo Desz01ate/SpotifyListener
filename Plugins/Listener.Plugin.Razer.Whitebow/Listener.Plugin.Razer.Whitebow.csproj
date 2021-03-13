@@ -48,17 +48,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Colore\src\Colore\Colore.csproj">
-      <Project>{A03D43C7-ADE9-4753-8CF4-B8937E459172}</Project>
-      <Name>Colore</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Listener.Core.Framework\Listener.Core.Framework.csproj">
       <Project>{C2C24ED5-D802-4AC0-9E06-6E3D00EAF895}</Project>
       <Name>Listener.Core.Framework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Listener.Plugin.Razer\Listener.Plugin.Razer.csproj">
+    <ProjectReference Include="..\..\Listener.Plugin.Razer\Listener.Plugin.ChromaEffect.csproj">
       <Project>{edd8e9c9-6e1f-4661-abaa-d9512d46c814}</Project>
-      <Name>Listener.Plugin.Razer</Name>
+      <Name>Listener.Plugin.ChromaEffect</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

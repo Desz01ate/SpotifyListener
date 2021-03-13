@@ -6,6 +6,8 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using Listener.Plugin.ChromaEffect.Enums;
+
 namespace ListenerX
 {
     public partial class VirtualKeyboard : Form
@@ -33,7 +35,7 @@ namespace ListenerX
             if ((0 <= posX && posX < ChromaWorker.Instance.FullGridArray.ColumnCount) && (0 <= posY && posY < ChromaWorker.Instance.FullGridArray.RowCount))
             {
                 var key = ChromaWorker.Instance.FullGridArray.Single(x => x.Index == (posX, posY));
-                if (key.Type != Colore.Effects.Virtual.KeyType.Invalid)
+                if (key.Type != KeyType.Invalid)
                 {
                     tt.SetToolTip(pictureBox1, $"({key.Index.X},{key.Index.Y}) {key.FriendlyName}\nType = {key.Type}\n{key.Color.ToHex()}");
                     return;

@@ -1,18 +1,16 @@
-﻿using Colore.Data;
-using Listener.Core.Framework.DataStructure;
+﻿using Listener.Core.Framework.DataStructure;
 using Listener.Core.Framework.Extensions;
-using Listener.Plugin.Razer.Extensions;
-using Listener.Plugin.Razer.Interfaces;
+using Listener.Plugin.ChromaEffect.Extensions;
+using Listener.Plugin.ChromaEffect.Implementation;
+using Listener.Plugin.ChromaEffect.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Listener.Plugin.Razer.CustomizableVisualizer
 {
-    public class CustomizableVisualizer : IRazerEffect
+    public class CustomizableVisualizer : IChromaEffect
     {
         public string EffectName => "Spectrum Visualizer (Customizable)";
 
@@ -35,26 +33,26 @@ namespace Listener.Plugin.Razer.CustomizableVisualizer
                     {
                         case "foreground":
                             if (value == "rainbow")
-                                foreground = Listener.Plugin.Razer.Shared.SharedColors.RainbowColor;
+                                foreground = ChromaEffect.Shared.SharedColors.RainbowColor;
                             else
                             {
                                 var rgb = value.Split(',').Select(x => x.Trim()).ToArray();
                                 var r = rgb[0];
                                 var g = rgb[1];
                                 var b = rgb[2];
-                                foreground = (new AutoshiftCirculaQueue<Color>(Enumerable.Range(0, 64).Select(_ => ColoreColorExtensions.FromRgb(byte.Parse(r), byte.Parse(g), byte.Parse(b))), 500)).AsReadOnly();
+                                foreground = (new AutoshiftCirculaQueue<Color>(Enumerable.Range(0, 64).Select(_ => ColorExtensions.FromRgb(byte.Parse(r), byte.Parse(g), byte.Parse(b))), 500)).AsReadOnly();
                             }
                             break;
                         case "background":
                             if (value == "rainbow")
-                                background = Listener.Plugin.Razer.Shared.SharedColors.RainbowColor;
+                                background = Listener.Plugin.ChromaEffect.Shared.SharedColors.RainbowColor;
                             else
                             {
                                 var rgb = value.Split(',').Select(x => x.Trim()).ToArray();
                                 var r = rgb[0];
                                 var g = rgb[1];
                                 var b = rgb[2];
-                                background = (new AutoshiftCirculaQueue<Color>(Enumerable.Range(0, 64).Select(_ => ColoreColorExtensions.FromRgb(byte.Parse(r), byte.Parse(g), byte.Parse(b))), 500)).AsReadOnly();
+                                background = (new AutoshiftCirculaQueue<Color>(Enumerable.Range(0, 64).Select(_ => ColorExtensions.FromRgb(byte.Parse(r), byte.Parse(g), byte.Parse(b))), 500)).AsReadOnly();
                             }
                             break;
                         default:
@@ -68,7 +66,7 @@ namespace Listener.Plugin.Razer.CustomizableVisualizer
             background = (new AutoshiftCirculaQueue<Color>(Enumerable.Range(0, 64).Select(_ => Color.Black), 500)).AsReadOnly();
         }
 
-        public void SetEffect(global::Colore.Effects.Virtual.IVirtualLedGrid virtualGrid, global::Colore.Data.Color firstColor, global::Colore.Data.Color secondaryColor, ICollection<global::Colore.Data.Color> albumColor, global::Colore.Data.Color[][] albumArtworkColor, double[] spectrumValues, double position, double brightnessMultiplier)
+        public void SetEffect(IVirtualLedGrid virtualGrid, Color firstColor, Color secondaryColor, ICollection<Color> albumColor, Color[][] albumArtworkColor, double[] spectrumValues, double position, double brightnessMultiplier)
         {
             for (var x = 0; x < virtualGrid.ColumnCount; x++)
             {

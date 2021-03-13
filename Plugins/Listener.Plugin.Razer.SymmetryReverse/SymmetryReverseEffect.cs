@@ -1,5 +1,6 @@
-﻿using Listener.Plugin.Razer.Extensions;
-using Listener.Plugin.Razer.Interfaces;
+﻿using Listener.Plugin.ChromaEffect.Extensions;
+using Listener.Plugin.ChromaEffect.Implementation;
+using Listener.Plugin.ChromaEffect.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace Listener.Plugin.Razer.SymmetryReverse
 {
-    public class SymmetryReverseEffect : IRazerEffect
+    public class SymmetryReverseEffect : IChromaEffect
     {
         public string EffectName => "Symmetry Chroma (Reverse)";
 
         public int RequiredSpectrumRange => 1;
 
-        public void SetEffect(global::Colore.Effects.Virtual.IVirtualLedGrid virtualGrid, global::Colore.Data.Color firstColor, global::Colore.Data.Color secondaryColor, ICollection<global::Colore.Data.Color> albumColor, global::Colore.Data.Color[][] albumArtworkColor, double[] spectrumValues, double position, double brightnessMultiplier)
+        public void SetEffect(IVirtualLedGrid virtualGrid, Color firstColor, Color secondaryColor, ICollection<Color> albumColor, Color[][] albumArtworkColor, double[] spectrumValues, double position, double brightnessMultiplier)
         {
-            virtualGrid.Set(Colore.Data.Color.Black);
+            virtualGrid.Set(Color.Black);
             var fullLength = virtualGrid.ColumnCount;
             var volume = spectrumValues[0] / 100.0;
             var startPosition = 0;
@@ -25,7 +26,7 @@ namespace Listener.Plugin.Razer.SymmetryReverse
             {
                 for (var col = startPosition; col < startPosition + absolutePosition; col++)
                 {
-                    var color = Listener.Plugin.Razer.Shared.SharedColors.RainbowColor.ElementAt(col).ChangeBrightnessLevel(volume);
+                    var color = Listener.Plugin.ChromaEffect.Shared.SharedColors.RainbowColor.ElementAt(col).ChangeBrightnessLevel(volume);
                     virtualGrid[col, row] = color;
                     virtualGrid[fullLength - col - 1, row] = color;
                 }

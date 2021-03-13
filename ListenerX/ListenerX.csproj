@@ -114,6 +114,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Colore, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colore.6.0.0\lib\net452\Colore.dll</HintPath>
+    </Reference>
     <Reference Include="Costura, Version=4.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
     </Reference>
@@ -201,6 +204,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\Adapter\RazerSdkAdapter.cs" />
     <Compile Include="Classes\AnimationController.cs" />
     <Compile Include="Classes\AutoshiftCirculaQueue.cs" />
     <Compile Include="Classes\CircularQueue.cs" />
@@ -210,7 +214,7 @@
     <Compile Include="Cscore\OutputDevice.cs" />
     <Compile Include="DSP\BiQuadFilterSource.cs" />
     <Compile Include="Extensions\AbstractKeyGridExtensions.cs" />
-    <Compile Include="Extensions\ColoreColorExtensions.cs" />
+    <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="VirtualKeyboard.cs">
@@ -357,10 +361,6 @@
     <Resource Include="Resources\adjust.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Colore\src\Colore\Colore.csproj">
-      <Project>{a03d43c7-ade9-4753-8cf4-b8937e459172}</Project>
-      <Name>Colore</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Listener.Core.Framework\Listener.Core.Framework.csproj">
       <Project>{c2c24ed5-d802-4ac0-9e06-6e3d00eaf895}</Project>
       <Name>Listener.Core.Framework</Name>
@@ -373,9 +373,9 @@
       <Project>{7064fa7b-102f-4883-a75f-ea969f9ec272}</Project>
       <Name>Listener.Player.Spotify</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Listener.Plugin.Razer\Listener.Plugin.Razer.csproj">
+    <ProjectReference Include="..\Listener.Plugin.Razer\Listener.Plugin.ChromaEffect.csproj">
       <Project>{edd8e9c9-6e1f-4661-abaa-d9512d46c814}</Project>
-      <Name>Listener.Plugin.Razer</Name>
+      <Name>Listener.Plugin.ChromaEffect</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

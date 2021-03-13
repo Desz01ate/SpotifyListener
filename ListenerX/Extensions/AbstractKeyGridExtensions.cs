@@ -1,17 +1,7 @@
-﻿using Colore;
-using Colore.Effects.ChromaLink;
-using Colore.Effects.Headset;
-using Colore.Effects.Keyboard;
-using Colore.Effects.Mouse;
-using Colore.Effects.Mousepad;
-using Colore.Effects.Virtual;
+﻿using Listener.Plugin.ChromaEffect.Enums;
+using Listener.Plugin.ChromaEffect.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace ListenerX.Extensions
 {
@@ -174,7 +164,7 @@ namespace ListenerX.Extensions
             return new VirtualGridRendererImpl(grid, boxWidth, boxHeight);
         }
 
-        public static void Set(this IVirtualLedGrid grid, Colore.Data.Color[][] colors, double brightness)
+        public static void Set(this IVirtualLedGrid grid, Listener.Plugin.ChromaEffect.Implementation.Color[][] colors, double brightness)
         {
             for (var y = 0; y < colors.GetLength(0); y++)
             {

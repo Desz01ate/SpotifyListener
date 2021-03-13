@@ -1,5 +1,6 @@
-﻿using Colore.Data;
-using Listener.Plugin.Razer.Interfaces;
+﻿using Listener.Plugin.ChromaEffect.Enums;
+using Listener.Plugin.ChromaEffect.Implementation;
+using Listener.Plugin.ChromaEffect.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,41 +9,41 @@ using System.Threading.Tasks;
 
 namespace Listener.Plugin.Razer.DebugGrid
 {
-    public class DebugGrid : IRazerEffect
+    public class DebugGrid : IChromaEffect
     {
         public string EffectName => "Debug Grid";
 
         public int RequiredSpectrumRange => 29;
 
-        public void SetEffect(global::Colore.Effects.Virtual.IVirtualLedGrid virtualGrid, global::Colore.Data.Color firstColor, global::Colore.Data.Color secondaryColor, ICollection<global::Colore.Data.Color> albumColor, global::Colore.Data.Color[][] albumArtworkColor, double[] spectrumValues, double position, double brightnessMultiplier)
+        public void SetEffect(IVirtualLedGrid virtualGrid, Color firstColor, Color secondaryColor, ICollection<Color> albumColor, Color[][] albumArtworkColor, double[] spectrumValues, double position, double brightnessMultiplier)
         {
             virtualGrid.Set(Color.Black);
 
-            var keyboardGrid = virtualGrid.Where(x => x.Type == Colore.Effects.Virtual.KeyType.Keyboard);
+            var keyboardGrid = virtualGrid.Where(x => x.Type == KeyType.Keyboard);
             foreach (var key in keyboardGrid)
             {
                 key.Color = Color.Red;
             }
 
-            var mouseGrid = virtualGrid.Where(x => x.Type == Colore.Effects.Virtual.KeyType.Mouse);
+            var mouseGrid = virtualGrid.Where(x => x.Type == KeyType.Mouse);
             foreach (var key in mouseGrid)
             {
                 key.Color = Color.Blue;
             }
 
-            var mousepadGrid = virtualGrid.Where(x => x.Type == Colore.Effects.Virtual.KeyType.Mousepad);
+            var mousepadGrid = virtualGrid.Where(x => x.Type == KeyType.Mousepad);
             foreach (var key in mousepadGrid)
             {
                 key.Color = Color.Purple;
             }
 
-            var chromaLinkGrid = virtualGrid.Where(x => x.Type == Colore.Effects.Virtual.KeyType.ChromaLink);
+            var chromaLinkGrid = virtualGrid.Where(x => x.Type == KeyType.ChromaLink);
             foreach (var key in chromaLinkGrid)
             {
                 key.Color = Color.Green;
             }
 
-            var headsetGrid = virtualGrid.Where(x => x.Type == Colore.Effects.Virtual.KeyType.Headset);
+            var headsetGrid = virtualGrid.Where(x => x.Type == KeyType.Headset);
             foreach (var key in headsetGrid)
             {
                 key.Color = Color.White;

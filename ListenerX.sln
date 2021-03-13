@@ -18,13 +18,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.ImageProcessing", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Player.AppleMusic", "Listener.Player.AppleMusic\Listener.Player.AppleMusic.csproj", "{5F8004BB-F796-42D4-97DC-F35C1FA0D7FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Colore", "Colore\src\Colore\Colore.csproj", "{A03D43C7-ADE9-4753-8CF4-B8937E459172}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{F9120AAC-CAA1-4088-81D1-D33EEBDB02D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.Log", "Plugins\Listener.Plugin.Log\Listener.Plugin.Log.csproj", "{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.Razer", "Listener.Plugin.Razer\Listener.Plugin.Razer.csproj", "{EDD8E9C9-6E1F-4661-ABAA-D9512D46C814}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.ChromaEffect", "Listener.Plugin.Razer\Listener.Plugin.ChromaEffect.csproj", "{EDD8E9C9-6E1F-4661-ABAA-D9512D46C814}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Plugin.Razer.Whitebow", "Plugins\Listener.Plugin.Razer.Whitebow\Listener.Plugin.Razer.Whitebow.csproj", "{B1C4F3FA-EB77-4F09-877F-9BF2E6AEB1EF}"
 EndProject
@@ -106,18 +104,6 @@ Global
 		{5F8004BB-F796-42D4-97DC-F35C1FA0D7FF}.Release|x64.Build.0 = Release|Any CPU
 		{5F8004BB-F796-42D4-97DC-F35C1FA0D7FF}.Release|x86.ActiveCfg = Release|x86
 		{5F8004BB-F796-42D4-97DC-F35C1FA0D7FF}.Release|x86.Build.0 = Release|x86
-		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Debug|x64.Build.0 = Debug|Any CPU
-		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Debug|x86.Build.0 = Debug|Any CPU
-		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Release|x64.ActiveCfg = Release|Any CPU
-		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Release|x64.Build.0 = Release|Any CPU
-		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Release|x86.ActiveCfg = Release|Any CPU
-		{A03D43C7-ADE9-4753-8CF4-B8937E459172}.Release|x86.Build.0 = Release|Any CPU
 		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADC9AAAC-52C3-4926-9FD3-476D69C40D6F}.Debug|x64.ActiveCfg = Debug|Any CPU

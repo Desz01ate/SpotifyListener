@@ -1,16 +1,15 @@
-﻿using Colore.Data;
-using Colore.Effects.Virtual;
-using Listener.Plugin.Razer.Extensions;
-using Listener.Plugin.Razer.Interfaces;
+﻿using Listener.Plugin.ChromaEffect.Extensions;
+using Listener.Plugin.ChromaEffect.Implementation;
+using Listener.Plugin.ChromaEffect.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Listener.Plugin.Razer.Effects
+namespace Listener.Plugin.ChromaEffect.Effects
 {
-    public class VisualizeVolume : IRazerEffect
+    public class VisualizeVolume : IChromaEffect
     {
         /// <inheritdoc/>
         public string EffectName => "Album Cover - Spectrum Visualizer (Gradient)";

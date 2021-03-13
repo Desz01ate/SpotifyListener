@@ -1,16 +1,16 @@
-﻿using Colore.Data;
-using Colore.Effects.Virtual;
-using Listener.Plugin.Razer.Extensions;
-using Listener.Plugin.Razer.Interfaces;
+﻿using Listener.Plugin.ChromaEffect.Enums;
+using Listener.Plugin.ChromaEffect.Extensions;
+using Listener.Plugin.ChromaEffect.Implementation;
+using Listener.Plugin.ChromaEffect.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Listener.Plugin.Razer.Effects
+namespace Listener.Plugin.ChromaEffect.Effects
 {
-    public class PlayingPosition : IRazerEffect
+    public class PlayingPosition : IChromaEffect
     {
         public string EffectName => "Album Cover - Progression + Volume (Gradient)";
 
@@ -30,7 +30,7 @@ namespace Listener.Plugin.Razer.Effects
                 }
             }
 
-            var keyboardGrid = virtualGrid.Where(x => x.Type == Colore.Effects.Virtual.KeyType.Keyboard || x.Type == Colore.Effects.Virtual.KeyType.Mousepad || x.Type == Colore.Effects.Virtual.KeyType.Invalid);
+            var keyboardGrid = virtualGrid.Where(x => x.Type == KeyType.Keyboard || x.Type == KeyType.Mousepad || x.Type == KeyType.Invalid);
             var keyboardRowCount = keyboardGrid.Max(e => e.Index.Y) + 1;
             for (var rowIdx = 0; rowIdx < keyboardRowCount; rowIdx++)
             {

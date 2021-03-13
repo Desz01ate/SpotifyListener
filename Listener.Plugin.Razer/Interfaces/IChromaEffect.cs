@@ -1,14 +1,9 @@
-﻿using Colore.Effects.Virtual;
-using System;
+﻿using Listener.Plugin.ChromaEffect.Implementation;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ColoreColor = Colore.Data.Color;
 
-namespace Listener.Plugin.Razer.Interfaces
+namespace Listener.Plugin.ChromaEffect.Interfaces
 {
-    public interface IRazerEffect
+    public interface IChromaEffect
     {
         /// <summary>
         /// Effect name description.
@@ -28,10 +23,10 @@ namespace Listener.Plugin.Razer.Interfaces
         /// <param name="spectrumValues">Current spectrum values.</param>
         /// <param name="position">Current playing position.</param>
         void SetEffect(IVirtualLedGrid virtualGrid,
-                       ColoreColor firstColor,
-                       ColoreColor secondaryColor,
-                       ICollection<ColoreColor> albumColor,
-                       ColoreColor[][] albumArtworkColor,
+                       Color firstColor,
+                       Color secondaryColor,
+                       ICollection<Color> albumColor,
+                       Color[][] albumArtworkColor,
                        double[] spectrumValues,
                        double position,
                        double brightnessMultiplier);

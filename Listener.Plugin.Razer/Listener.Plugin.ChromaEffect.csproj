@@ -7,8 +7,8 @@
     <ProjectGuid>{EDD8E9C9-6E1F-4661-ABAA-D9512D46C814}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Listener.Plugin.Razer</RootNamespace>
-    <AssemblyName>Listener.Plugin.Razer</AssemblyName>
+    <RootNamespace>Listener.Plugin.ChromaEffect</RootNamespace>
+    <AssemblyName>Listener.Plugin.ChromaEffect</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -49,16 +49,24 @@
     <Compile Include="Effects\VisualizeVolume.cs" />
     <Compile Include="Effects\VisualizeVolumeAlbumArtwork.cs" />
     <Compile Include="Effects\VisualizeVolumeChroma.cs" />
-    <Compile Include="Extensions\ColoreColorExtensions.cs" />
-    <Compile Include="Interfaces\IRazerEffect.cs" />
+    <Compile Include="Enums\ChromaLinkLed.cs" />
+    <Compile Include="Enums\HeadsetLed.cs" />
+    <Compile Include="Enums\KeyboardLed.cs" />
+    <Compile Include="Enums\KeyType.cs" />
+    <Compile Include="Enums\MouseLed.cs" />
+    <Compile Include="Enums\MousepadLed.cs" />
+    <Compile Include="Extensions\ColorExtensions.cs" />
+    <Compile Include="Implementation\Color.cs" />
+    <Compile Include="Implementation\Partials\Color.cs" />
+    <Compile Include="Implementation\VirtuialLedGrid.cs" />
+    <Compile Include="Interfaces\IChromaEffect.cs" />
+    <Compile Include="Interfaces\IPhysicalDeviceAdapter.cs" />
+    <Compile Include="Interfaces\IVirtualKey.cs" />
+    <Compile Include="Interfaces\IVirtualLedGrid.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shared\SharedColors.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Colore\src\Colore\Colore.csproj">
-      <Project>{a03d43c7-ade9-4753-8cf4-b8937e459172}</Project>
-      <Name>Colore</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Listener.Core.Framework\Listener.Core.Framework.csproj">
       <Project>{c2c24ed5-d802-4ac0-9e06-6e3d00eaf895}</Project>
       <Name>Listener.Core.Framework</Name>
