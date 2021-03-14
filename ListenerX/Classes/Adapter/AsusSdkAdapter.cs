@@ -226,7 +226,7 @@ namespace ListenerX.Classes.Adapter
             if (_sdk == null || this._notebookKeyboard == null)
                 return;
 
-            foreach (var key in virtualGrid)
+            foreach (var key in virtualGrid.Where(x => x.Type != KeyType.Headset))
             {
                 var color = ToRGBNetColor(key.Color);
                 switch (key.FriendlyName)
@@ -313,10 +313,7 @@ namespace ListenerX.Classes.Adapter
 { "N", RogStrixKeyboardMap.N },
 { "M", RogStrixKeyboardMap.M },
 { "Logo", RogStrixKeyboardMap.GhostKey },
-{ "LeftWindows", RogStrixKeyboardMap.LeftWindows },
 { "LeftShift", RogStrixKeyboardMap.LeftShift },
-{ "LeftControl", RogStrixKeyboardMap.LeftCtrl },
-{ "LeftAlt", RogStrixKeyboardMap.LeftAlt },
 { "Left", RogStrixKeyboardMap.ArrowLeft },
 { "L", RogStrixKeyboardMap.L },
 { "K", RogStrixKeyboardMap.K },
@@ -326,7 +323,11 @@ namespace ListenerX.Classes.Adapter
 { "Home", RogStrixKeyboardMap.GhostKey },
 { "H", RogStrixKeyboardMap.H },
 { "G", RogStrixKeyboardMap.G },
-{ "Function", RogStrixKeyboardMap.OemFunction },
+{ "Function", RogStrixKeyboardMap.GhostKey },
+{ "Macro5", RogStrixKeyboardMap.LeftCtrl },
+{ "LeftControl", RogStrixKeyboardMap.OemFunction },
+{ "LeftWindows", RogStrixKeyboardMap.LeftWindows },
+{ "LeftAlt", RogStrixKeyboardMap.LeftAlt },
 { "F9", RogStrixKeyboardMap.F9 },
 { "F8", RogStrixKeyboardMap.F8 },
 { "F7", RogStrixKeyboardMap.F7 },
@@ -373,11 +374,11 @@ namespace ListenerX.Classes.Adapter
             { "LeftSide5", RogStrixKeyboardMap.MultimediaPrevious },
             { "LeftSide6", RogStrixKeyboardMap.MultimediaNext },
             { "LeftSide7", RogStrixKeyboardMap.PrintScreen },
-            { "Led10", RogStrixKeyboardMap.VolumeDown },
-            { "Led11", RogStrixKeyboardMap.VolumeUp },
-            { "Led12", RogStrixKeyboardMap.MicMute },
-            { "Led13", RogStrixKeyboardMap.FanToggle },
-            { "Led14", RogStrixKeyboardMap.RogKey }
+            { "Led3", RogStrixKeyboardMap.VolumeDown },
+            { "Led4", RogStrixKeyboardMap.VolumeUp },
+            { "Led5", RogStrixKeyboardMap.MicMute },
+            { "Led6", RogStrixKeyboardMap.FanToggle },
+            { "Led7", RogStrixKeyboardMap.RogKey }
 
 
         };
@@ -392,7 +393,7 @@ namespace ListenerX.Classes.Adapter
 
         private static uint ToRGBNetColor(Listener.Plugin.ChromaEffect.Implementation.Color color)
         {
-            return Listener.ImageProcessing.ColorProcessing.ToUint(color.R, color.G, color.B);
+            return Listener.ImageProcessing.ColorProcessing.ToUint(color.B, color.G, color.R);
         }
     }
 }
