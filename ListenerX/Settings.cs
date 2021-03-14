@@ -163,7 +163,14 @@ namespace ListenerX
 
         private void visualizer_Click(object sender, EventArgs e)
         {
+            if (virtualKeyboardDisplayPanel != null)
+            {
+                virtualKeyboardDisplayPanel.BringToFront();
+                return;
+            }
+
             virtualKeyboardDisplayPanel = new VirtualKeyboard(this.virtualKeyboard);
+            virtualKeyboardDisplayPanel.FormClosing += (s, e) => virtualKeyboardDisplayPanel = null;
             virtualKeyboardDisplayPanel.Show();
         }
 
