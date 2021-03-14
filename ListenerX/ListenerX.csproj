@@ -204,6 +204,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\Adapter\AsusSdkAdapter.cs" />
     <Compile Include="Classes\Adapter\RazerSdkAdapter.cs" />
     <Compile Include="Classes\AnimationController.cs" />
     <Compile Include="Classes\AutoshiftCirculaQueue.cs" />
@@ -394,6 +395,17 @@
     <Resource Include="Resources\listenerx.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AuraServiceLib">
+      <Guid>{F1AA5209-5217-4B82-BA7E-A68198999AFA}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

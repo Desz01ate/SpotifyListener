@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ListenerX.Classes.Adapter
@@ -23,7 +24,7 @@ namespace ListenerX.Classes.Adapter
             this._chromaInterface = ColoreProvider.CreateNativeAsync().Result;
         }
 
-        public async Task ApplyAsync(IVirtualLedGrid virtualGrid)
+        public async Task ApplyAsync(IVirtualLedGrid virtualGrid, CancellationToken cancellationToken = default)
         {
             var keyboardGrid = CustomKeyboardEffect.Create();
             var mouseGrid = CustomMouseEffect.Create();

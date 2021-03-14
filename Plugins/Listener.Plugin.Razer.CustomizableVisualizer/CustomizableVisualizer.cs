@@ -19,10 +19,14 @@ namespace Listener.Plugin.Razer.CustomizableVisualizer
         private readonly IReadOnlyCollection<Color> foreground, background;
         public CustomizableVisualizer()
         {
-            var pluginDir = Path.Combine(Directory.GetCurrentDirectory(), "plugins");
-            var configFile = Path.Combine(pluginDir, "customvisual.cfg");
-            if (File.Exists(configFile))
+            try
             {
+                var pluginDir = Path.Combine(Directory.GetCurrentDirectory(), "plugins");
+                var configFile = Path.Combine(pluginDir, "customvisual.cfg");
+                if (!File.Exists(configFile))
+                {
+                    throw new FileNotFoundException();
+                }
                 var config = File.ReadAllLines(configFile);
                 foreach (var line in config)
                 {
@@ -56,14 +60,15 @@ namespace Listener.Plugin.Razer.CustomizableVisualizer
                             }
                             break;
                         default:
-                            goto Fallback;
+                            throw new NotSupportedException();
                     }
                 }
             }
-            return;
-        Fallback:
-            foreground = (new AutoshiftCirculaQueue<Color>(Enumerable.Range(0, 64).Select(_ => Color.White), 500)).AsReadOnly();
-            background = (new AutoshiftCirculaQueue<Color>(Enumerable.Range(0, 64).Select(_ => Color.Black), 500)).AsReadOnly();
+            catch (Exception)
+            {
+                foreground = (new AutoshiftCirculaQueue<Color>(Enumerable.Range(0, 64).Select(_ => Color.White), 500)).AsReadOnly();
+                background = (new AutoshiftCirculaQueue<Color>(Enumerable.Range(0, 64).Select(_ => Color.Black), 500)).AsReadOnly();
+            }
         }
 
         public void SetEffect(IVirtualLedGrid virtualGrid, Color firstColor, Color secondaryColor, ICollection<Color> albumColor, Color[][] albumArtworkColor, double[] spectrumValues, double position, double brightnessMultiplier)
