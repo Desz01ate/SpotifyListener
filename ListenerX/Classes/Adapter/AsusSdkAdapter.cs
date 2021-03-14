@@ -220,10 +220,10 @@ namespace ListenerX.Classes.Adapter
             this._notebookKeyboard = devices.Count > 0 ? devices[0] : null;
         }
 
-        public async Task ApplyAsync(IVirtualLedGrid virtualGrid, CancellationToken cancellationToken = default)
+        public Task ApplyAsync(IVirtualLedGrid virtualGrid, CancellationToken cancellationToken = default)
         {
             if (_sdk == null || this._notebookKeyboard == null)
-                return;
+                return Task.CompletedTask;
 
             foreach (var key in virtualGrid.Where(x => x.Type != KeyType.Headset))
             {
@@ -265,6 +265,7 @@ namespace ListenerX.Classes.Adapter
 
             }
             _notebookKeyboard.Apply();
+            return Task.CompletedTask;
         }
 
         public void Dispose()

@@ -171,7 +171,7 @@ namespace ListenerX
             this.groupBox2.Size = new System.Drawing.Size(369, 467);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Razer Chroma SDK";
+            this.groupBox2.Text = "RGB Support";
             // 
             // label4
             // 
@@ -330,9 +330,9 @@ namespace ListenerX
             this.ChromaSDKEnable.AutoSize = true;
             this.ChromaSDKEnable.Location = new System.Drawing.Point(6, 25);
             this.ChromaSDKEnable.Name = "ChromaSDKEnable";
-            this.ChromaSDKEnable.Size = new System.Drawing.Size(154, 17);
+            this.ChromaSDKEnable.Size = new System.Drawing.Size(123, 17);
             this.ChromaSDKEnable.TabIndex = 0;
-            this.ChromaSDKEnable.Text = "Enable Razer Chroma SDK";
+            this.ChromaSDKEnable.Text = "Enable RGB Render";
             this.ChromaSDKEnable.UseVisualStyleBackColor = true;
             this.ChromaSDKEnable.CheckedChanged += new System.EventHandler(this.ChromaSDKEnable_CheckedChanged_1);
             // 
