@@ -44,9 +44,15 @@ namespace ListenerX
                 try
                 {
                     var adapters = new List<IPhysicalDeviceAdapter>();
+                    this._deviceAdapters = adapters;
                     adapters.Add(new RazerSdkAdapter());
                     adapters.Add(new AsusSdkAdapter());
-                    this._deviceAdapters = adapters;
+
+                }
+                catch (System.Runtime.InteropServices.COMException comException)
+                {
+                    //Asus SDK can sometime don't want to play by the rules.
+                    Debug.WriteLine(comException);
                 }
                 catch (Exception ex)
                 {
