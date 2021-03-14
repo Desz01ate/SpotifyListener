@@ -45,6 +45,7 @@ namespace ListenerX
                 {
                     var adapters = new List<IPhysicalDeviceAdapter>();
                     adapters.Add(new RazerSdkAdapter());
+                    adapters.Add(new AsusSdkAdapter());
                     this._deviceAdapters = adapters;
                 }
                 catch (Exception ex)

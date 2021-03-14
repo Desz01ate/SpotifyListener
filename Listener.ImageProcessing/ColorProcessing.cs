@@ -119,7 +119,18 @@ namespace Listener.ImageProcessing
 
         public static uint ToUint(this Color c)
         {
-            return (uint)(((c.A << 24) | (c.R << 16) | (c.G << 8) | c.B) & 0xffffffffL);
+            return ToUint(c.A, c.R, c.G, c.B);
+        }
+
+        public static uint ToUint(int a, int r, int g, int b)
+        {
+            return (uint)(((a << 24) | (r << 16) | (g << 8) | b) & 0xffffffffL);
+        }
+
+        public static uint ToUint(int r, int g, int b)
+        {
+            var value = (r << 16) | (g << 8) | (b);
+            return (uint)value;
         }
     }
 }
