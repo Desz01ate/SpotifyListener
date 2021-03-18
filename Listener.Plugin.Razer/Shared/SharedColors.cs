@@ -1,11 +1,9 @@
 ﻿using Listener.Core.Framework.DataStructure;
 using Listener.Core.Framework.Extensions;
-using Listener.Plugin.ChromaEffect.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using VirtualGrid;
 
 namespace Listener.Plugin.ChromaEffect.Shared
 {

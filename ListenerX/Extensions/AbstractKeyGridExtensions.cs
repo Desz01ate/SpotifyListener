@@ -1,7 +1,7 @@
-﻿using Listener.Plugin.ChromaEffect.Enums;
-using Listener.Plugin.ChromaEffect.Interfaces;
-using System;
+﻿using System;
 using System.Drawing;
+using VirtualGrid.Enums;
+using VirtualGrid.Interfaces;
 
 namespace ListenerX.Extensions
 {
@@ -52,7 +52,7 @@ namespace ListenerX.Extensions
                         case KeyType.Mouse:
                         case KeyType.Mousepad:
                         case KeyType.Headset:
-                        case KeyType.ChromaLink:
+                        case KeyType.ExtraDevice:
                             text = key.FriendlyName;
                             break;
                         default:
@@ -86,7 +86,7 @@ namespace ListenerX.Extensions
                         case KeyType.Mouse:
                         case KeyType.Mousepad:
                         case KeyType.Headset:
-                        case KeyType.ChromaLink:
+                        case KeyType.ExtraDevice:
                             text = key.FriendlyName;
                             break;
                         default:
@@ -164,7 +164,7 @@ namespace ListenerX.Extensions
             return new VirtualGridRendererImpl(grid, boxWidth, boxHeight);
         }
 
-        public static void Set(this IVirtualLedGrid grid, Listener.Plugin.ChromaEffect.Implementation.Color[][] colors, double brightness)
+        public static void Set(this IVirtualLedGrid grid, VirtualGrid.Color[][] colors, double brightness)
         {
             for (var y = 0; y < colors.GetLength(0); y++)
             {

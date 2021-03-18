@@ -11,7 +11,9 @@ namespace ListenerX.Helpers
     public static class ActivatorHelpers
     {
         public static IPlayerMetadata Metadata { get; private set; }
-        public static IReadOnlyList<IChromaEffect> Effects { get; private set; }
+
+        private static IReadOnlyList<IChromaEffect> _effects;
+        public static IReadOnlyList<IChromaEffect> Effects = _effects ??= LoadChromaPlugins();
 
         public static IStreamablePlayerHost LoadPlayerHost<T>() where T : IStreamablePlayerHost
         {
@@ -30,7 +32,7 @@ namespace ListenerX.Helpers
             foreach (var file in files)
             {
                 var plugin = AssemblyHelpers.LoadInstance<IListenerPlugin>(file);
-                if (plugin == null) 
+                if (plugin == null)
                     continue;
 
                 Console.WriteLine($" [Plugin][{DateTime.Now}] {Path.GetFileName(file)} loaded.");
@@ -38,7 +40,7 @@ namespace ListenerX.Helpers
             }
         }
 
-        public static void LoadRazerChromaPlugins(this MainWindow mainWindow)
+        private static List<IChromaEffect> LoadChromaPlugins()
         {
             var effects = new List<IChromaEffect>();
             var type = typeof(IChromaEffect);
@@ -57,7 +59,7 @@ namespace ListenerX.Helpers
                 effects.Add(plugin);
             }
 
-            Effects = effects;
+            return effects;
         }
     }
 }

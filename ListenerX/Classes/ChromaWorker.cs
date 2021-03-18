@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Drawing;
 using ListenerX.Extensions;
-using Colore;
-using ChromaColor = Listener.Plugin.ChromaEffect.Implementation.Color;
+using ChromaColor = VirtualGrid.Color;
 using Listener.Plugin.ChromaEffect.Interfaces;
 using System.Collections.Generic;
-using ListenerX.Classes.Adapter;
+using VirtualGrid.Interfaces;
+using VirtualGrid.Razer;
+using VirtualGrid.Asus;
 
 namespace ListenerX
 {
@@ -40,24 +41,27 @@ namespace ListenerX
             private ChromaWorker()
             {
                 this._albumColors = AutoshiftCirculaQueue<ChromaColor>.Empty;
-                this.FullGridArray = Listener.Plugin.ChromaEffect.Implementation.VirtualLedGrid.CreateDefaultGrid();
+                this.FullGridArray = VirtualGrid.VirtualLedGrid.CreateDefaultGrid();
                 try
                 {
                     var adapters = new List<IPhysicalDeviceAdapter>();
                     this._deviceAdapters = adapters;
-                    adapters.Add(new RazerSdkAdapter());
-                    adapters.Add(new AsusSdkAdapter());
+                    adapters.Add(RazerAdapter.Instance);
+                    adapters.Add(AsusRogStrix_G15_2021_Adapter.Instance);
 
-                }
-                catch (System.Runtime.InteropServices.COMException comException)
-                {
-                    //Asus SDK can sometime don't want to play by the rules.
-                    Debug.WriteLine(comException);
                 }
                 catch (Exception ex)
                 {
-                    this.IsError = true;
-                    Debug.WriteLine(ex);
+                    Console.WriteLine(ex);
+                    //Asus SDK can sometime don't want to play by the rules.
+                    if (ex is System.TypeInitializationException || ex is System.Runtime.InteropServices.COMException)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        this.IsError = true;
+                    }
                 }
             }
 

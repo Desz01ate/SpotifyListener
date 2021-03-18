@@ -1,7 +1,5 @@
-﻿using Listener.Plugin.ChromaEffect.Implementation;
-using System;
-using System.Drawing;
-using System.Linq;
+﻿using System;
+using VirtualGrid;
 
 namespace Listener.Plugin.ChromaEffect.Extensions
 {

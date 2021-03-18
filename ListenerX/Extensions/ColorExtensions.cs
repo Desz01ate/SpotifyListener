@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using System.Linq;
-using ChromaColor = Listener.Plugin.ChromaEffect.Implementation.Color;
+using ChromaColor = VirtualGrid.Color;
 
 namespace ListenerX.Extensions
 {

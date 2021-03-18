@@ -1,5 +1,6 @@
-﻿using Listener.Plugin.ChromaEffect.Implementation;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using VirtualGrid;
+using VirtualGrid.Interfaces;
 
 namespace Listener.Plugin.ChromaEffect.Interfaces
 {

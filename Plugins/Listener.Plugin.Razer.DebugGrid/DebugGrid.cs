@@ -1,11 +1,9 @@
-﻿using Listener.Plugin.ChromaEffect.Enums;
-using Listener.Plugin.ChromaEffect.Implementation;
-using Listener.Plugin.ChromaEffect.Interfaces;
-using System;
+﻿using Listener.Plugin.ChromaEffect.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using VirtualGrid;
+using VirtualGrid.Enums;
+using VirtualGrid.Interfaces;
 
 namespace Listener.Plugin.Razer.DebugGrid
 {
@@ -37,8 +35,8 @@ namespace Listener.Plugin.Razer.DebugGrid
                 key.Color = Color.Purple;
             }
 
-            var chromaLinkGrid = virtualGrid.Where(x => x.Type == KeyType.ChromaLink);
-            foreach (var key in chromaLinkGrid)
+            var extraKeyGrid = virtualGrid.Where(x => x.Type == KeyType.ExtraDevice);
+            foreach (var key in extraKeyGrid)
             {
                 key.Color = Color.Green;
             }

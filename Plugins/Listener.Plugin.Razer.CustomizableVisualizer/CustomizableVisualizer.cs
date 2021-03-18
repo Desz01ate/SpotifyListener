@@ -1,12 +1,13 @@
 ﻿using Listener.Core.Framework.DataStructure;
 using Listener.Core.Framework.Extensions;
 using Listener.Plugin.ChromaEffect.Extensions;
-using Listener.Plugin.ChromaEffect.Implementation;
 using Listener.Plugin.ChromaEffect.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using VirtualGrid;
+using VirtualGrid.Interfaces;
 
 namespace Listener.Plugin.Razer.CustomizableVisualizer
 {

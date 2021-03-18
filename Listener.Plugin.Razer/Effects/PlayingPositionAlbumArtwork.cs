@@ -1,12 +1,11 @@
-﻿using Listener.Plugin.ChromaEffect.Enums;
-using Listener.Plugin.ChromaEffect.Extensions;
-using Listener.Plugin.ChromaEffect.Implementation;
+﻿using Listener.Plugin.ChromaEffect.Extensions;
 using Listener.Plugin.ChromaEffect.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using VirtualGrid;
+using VirtualGrid.Enums;
+using VirtualGrid.Interfaces;
 
 namespace Listener.Plugin.ChromaEffect.Effects
 {

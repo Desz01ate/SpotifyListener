@@ -64,7 +64,6 @@ namespace ListenerX
 
                 player = ActivatorHelpers.LoadPlayerHost<Listener.Player.Spotify.SpotifyPlayerHost>();
                 plugins = ActivatorHelpers.LoadPlugins().ToArray();
-                ActivatorHelpers.LoadRazerChromaPlugins(this);
 
                 var maxEffectCount = ActivatorHelpers.Effects.Count - 1;
                 if (Properties.Settings.Default.RenderStyle > maxEffectCount)
