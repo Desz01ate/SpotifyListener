@@ -1,0 +1,63 @@
+2021-03-19 22:11:28.650 +07:00 [INF] MSBuild registered from C:\Program Files\dotnet\sdk\5.0.201\
+2021-03-19 22:11:28.670 +07:00 [INF] Registered 1 extensions:
+	Default extension
+2021-03-19 22:11:29.641 +07:00 [INF] Initializing upgrade step Select an entrypoint
+2021-03-19 22:11:29.643 +07:00 [INF] Setting entrypoint to only project in solution: D:\Documents\GitHub\ListenerX\Listener.Core.Framework\Listener.Core.Framework.csproj
+2021-03-19 22:11:29.643 +07:00 [INF] Initializing upgrade step Select project to upgrade
+2021-03-19 22:11:29.644 +07:00 [INF] Setting only project in solution as the current project: D:\Documents\GitHub\ListenerX\Listener.Core.Framework\Listener.Core.Framework.csproj
+2021-03-19 22:11:29.645 +07:00 [INF] Initializing upgrade step Back up project
+2021-03-19 22:11:31.228 +07:00 [INF] Applying upgrade step Back up project
+2021-03-19 22:11:32.998 +07:00 [INF] Backing up D:\Documents\GitHub\ListenerX\Listener.Core.Framework to D:\Documents\GitHub\ListenerX\Listener.Core.Framework.backup
+2021-03-19 22:11:33.005 +07:00 [WRN] Could not copy file D:\Documents\GitHub\ListenerX\Listener.Core.Framework\log.txt due to 'The process cannot access the file 'D:\Documents\GitHub\ListenerX\Listener.Core.Framework\log.txt' because it is being used by another process.'
+2021-03-19 22:11:34.041 +07:00 [INF] Project backed up to D:\Documents\GitHub\ListenerX\Listener.Core.Framework.backup
+2021-03-19 22:11:34.042 +07:00 [INF] Upgrade step Back up project applied successfully
+2021-03-19 22:11:36.301 +07:00 [INF] Initializing upgrade step Convert project file to SDK style
+2021-03-19 22:11:36.302 +07:00 [FTL] Try-Convert not found. This tool depends on the Try-Convert CLI tool. Please ensure that Try-Convert is installed and that the correct location for the tool is specified (in configuration, for example). https://github.com/dotnet/try-convert
+2021-03-19 22:11:44.843 +07:00 [INF] Applying upgrade step Convert project file to SDK style
+2021-03-19 22:11:44.844 +07:00 [INF] Converting project file format with try-convert
+2021-03-19 22:11:44.848 +07:00 [ERR] Unexpected error applying step
+System.ComponentModel.Win32Exception (2): The system cannot find the file specified.
+   at System.Diagnostics.Process.StartWithCreateProcess(ProcessStartInfo startInfo)
+   at System.Diagnostics.Process.Start()
+   at Microsoft.DotNet.UpgradeAssistant.ProcessRunner.RunProcessAsync(ProcessInfo args, CancellationToken token) in /_/src/common/Microsoft.DotNet.UpgradeAssistant.Abstractions/ProcessRunner.cs:line 53
+   at Microsoft.DotNet.UpgradeAssistant.Steps.ProjectFormat.TryConvertProjectConverterStep.RunTryConvertAsync(IUpgradeContext context, IProject project, CancellationToken token) in /_/src/steps/Microsoft.DotNet.UpgradeAssistant.Steps.ProjectFormat/TryConvertProjectConverterStep.cs:line 64
+   at Microsoft.DotNet.UpgradeAssistant.Steps.ProjectFormat.TryConvertProjectConverterStep.ApplyImplAsync(IUpgradeContext context, CancellationToken token) in /_/src/steps/Microsoft.DotNet.UpgradeAssistant.Steps.ProjectFormat/TryConvertProjectConverterStep.cs:line 53
+   at Microsoft.DotNet.UpgradeAssistant.UpgradeStep.ApplyAsync(IUpgradeContext context, CancellationToken token) in /_/src/common/Microsoft.DotNet.UpgradeAssistant.Abstractions/UpgradeStep.cs:line 169
+2021-03-19 22:14:20.165 +07:00 [INF] Saving upgrade progress file at D:\Documents\GitHub\ListenerX\Listener.Core.Framework\.upgrade-assistant
+2021-03-19 22:14:31.488 +07:00 [INF] MSBuild registered from C:\Program Files\dotnet\sdk\5.0.201\
+2021-03-19 22:14:31.507 +07:00 [INF] Registered 1 extensions:
+	Default extension
+2021-03-19 22:14:32.257 +07:00 [INF] Loading upgrade progress file at D:\Documents\GitHub\ListenerX\Listener.Core.Framework\.upgrade-assistant
+2021-03-19 22:14:32.775 +07:00 [INF] Initializing upgrade step Back up project
+2021-03-19 22:14:32.778 +07:00 [INF] Initializing upgrade step Convert project file to SDK style
+2021-03-19 22:14:33.939 +07:00 [INF] Applying upgrade step Convert project file to SDK style
+2021-03-19 22:14:33.941 +07:00 [INF] Converting project file format with try-convert
+2021-03-19 22:14:37.114 +07:00 [INF] [try-convert] Conversion complete!
+2021-03-19 22:14:37.362 +07:00 [INF] Project file converted successfully! The project may require additional changes to build successfully against the new .NET target.
+2021-03-19 22:14:38.169 +07:00 [INF] Upgrade step Convert project file to SDK style applied successfully
+2021-03-19 22:14:39.457 +07:00 [INF] Initializing upgrade step Update TFM
+2021-03-19 22:14:41.999 +07:00 [INF] Applying upgrade step Update TFM
+2021-03-19 22:14:44.482 +07:00 [INF] Upgrade step Update TFM applied successfully
+2021-03-19 22:14:48.902 +07:00 [INF] Initializing upgrade step Update NuGet packages
+2021-03-19 22:14:50.821 +07:00 [INF] Reference to .NET Upgrade Assistant analyzer package (Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers, version 0.2.212405) needs added
+2021-03-19 22:14:52.237 +07:00 [INF] Adding Microsoft.Windows.Compatibility 5.0.2
+2021-03-19 22:14:52.239 +07:00 [INF] Packages to be addded:
+Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers, Version=0.2.212405
+Microsoft.Windows.Compatibility, Version=5.0.2
+2021-03-19 22:14:58.318 +07:00 [INF] Applying upgrade step Update NuGet packages
+2021-03-19 22:14:58.322 +07:00 [INF] Adding package reference: Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers, Version=0.2.212405
+2021-03-19 22:14:58.323 +07:00 [INF] Adding package reference: Microsoft.Windows.Compatibility, Version=5.0.2
+2021-03-19 22:15:06.494 +07:00 [INF] Marking package System.Data.DataSetExtensions for removal because it appears to be a transitive dependency
+2021-03-19 22:15:06.561 +07:00 [INF] Removing outdated package reference: System.Data.DataSetExtensions, Version=4.5.0
+2021-03-19 22:15:07.720 +07:00 [INF] Upgrade step Update NuGet packages applied successfully
+2021-03-19 22:15:09.654 +07:00 [INF] Initializing upgrade step Add template files
+2021-03-19 22:15:09.668 +07:00 [INF] 0 expected template items needed
+2021-03-19 22:15:09.669 +07:00 [INF] Initializing upgrade step Update C# source
+2021-03-19 22:15:10.659 +07:00 [INF] Initializing upgrade step Move to next project
+2021-03-19 22:15:14.436 +07:00 [INF] Applying upgrade step Move to next project
+2021-03-19 22:15:14.437 +07:00 [INF] Upgrade step Move to next project applied successfully
+2021-03-19 22:15:15.711 +07:00 [INF] Initializing upgrade step Finalize Solution
+2021-03-19 22:15:20.657 +07:00 [INF] Applying upgrade step Finalize Solution
+2021-03-19 22:15:20.658 +07:00 [INF] Upgrade step Finalize Solution applied successfully
+2021-03-19 22:15:21.891 +07:00 [INF] Upgrade has completed. Please review any changes.
+2021-03-19 22:15:21.892 +07:00 [INF] Saving upgrade progress file at D:\Documents\GitHub\ListenerX\Listener.Core.Framework\.upgrade-assistant

@@ -1,0 +1,45 @@
+2021-03-19 22:18:03.387 +07:00 [INF] MSBuild registered from C:\Program Files\dotnet\sdk\5.0.201\
+2021-03-19 22:18:03.406 +07:00 [INF] Registered 1 extensions:
+	Default extension
+2021-03-19 22:18:04.161 +07:00 [INF] Initializing upgrade step Select an entrypoint
+2021-03-19 22:18:04.163 +07:00 [INF] Setting entrypoint to only project in solution: D:\Documents\GitHub\ListenerX\Listener.ImageProcessing\Listener.ImageProcessing.csproj
+2021-03-19 22:18:04.163 +07:00 [INF] Initializing upgrade step Select project to upgrade
+2021-03-19 22:18:04.164 +07:00 [INF] Setting only project in solution as the current project: D:\Documents\GitHub\ListenerX\Listener.ImageProcessing\Listener.ImageProcessing.csproj
+2021-03-19 22:18:04.165 +07:00 [INF] Initializing upgrade step Back up project
+2021-03-19 22:18:05.392 +07:00 [INF] Applying upgrade step Back up project
+2021-03-19 22:18:06.992 +07:00 [INF] Backing up D:\Documents\GitHub\ListenerX\Listener.ImageProcessing to D:\Documents\GitHub\ListenerX\Listener.ImageProcessing.backup
+2021-03-19 22:18:07.032 +07:00 [WRN] Could not copy file D:\Documents\GitHub\ListenerX\Listener.ImageProcessing\log.txt due to 'The process cannot access the file 'D:\Documents\GitHub\ListenerX\Listener.ImageProcessing\log.txt' because it is being used by another process.'
+2021-03-19 22:18:07.674 +07:00 [INF] Project backed up to D:\Documents\GitHub\ListenerX\Listener.ImageProcessing.backup
+2021-03-19 22:18:07.675 +07:00 [INF] Upgrade step Back up project applied successfully
+2021-03-19 22:18:10.682 +07:00 [INF] Initializing upgrade step Convert project file to SDK style
+2021-03-19 22:18:11.919 +07:00 [INF] Applying upgrade step Convert project file to SDK style
+2021-03-19 22:18:11.921 +07:00 [INF] Converting project file format with try-convert
+2021-03-19 22:18:14.298 +07:00 [INF] [try-convert] Conversion complete!
+2021-03-19 22:18:14.455 +07:00 [INF] Project file converted successfully! The project may require additional changes to build successfully against the new .NET target.
+2021-03-19 22:18:15.218 +07:00 [INF] Upgrade step Convert project file to SDK style applied successfully
+2021-03-19 22:18:16.380 +07:00 [INF] Initializing upgrade step Update TFM
+2021-03-19 22:18:17.598 +07:00 [INF] Applying upgrade step Update TFM
+2021-03-19 22:18:18.625 +07:00 [INF] Upgrade step Update TFM applied successfully
+2021-03-19 22:18:19.502 +07:00 [INF] Initializing upgrade step Update NuGet packages
+2021-03-19 22:18:20.358 +07:00 [INF] Reference to .NET Upgrade Assistant analyzer package (Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers, version 0.2.212405) needs added
+2021-03-19 22:18:20.400 +07:00 [INF] Adding Microsoft.Windows.Compatibility 5.0.2
+2021-03-19 22:18:20.401 +07:00 [INF] Packages to be addded:
+Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers, Version=0.2.212405
+Microsoft.Windows.Compatibility, Version=5.0.2
+2021-03-19 22:18:20.404 +07:00 [INF] Applying upgrade step Update NuGet packages
+2021-03-19 22:18:20.407 +07:00 [INF] Adding package reference: Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers, Version=0.2.212405
+2021-03-19 22:18:20.408 +07:00 [INF] Adding package reference: Microsoft.Windows.Compatibility, Version=5.0.2
+2021-03-19 22:18:21.562 +07:00 [INF] Marking package System.Data.DataSetExtensions for removal because it appears to be a transitive dependency
+2021-03-19 22:18:21.609 +07:00 [INF] Removing outdated package reference: System.Data.DataSetExtensions, Version=4.5.0
+2021-03-19 22:18:22.717 +07:00 [INF] Upgrade step Update NuGet packages applied successfully
+2021-03-19 22:18:25.108 +07:00 [INF] Initializing upgrade step Add template files
+2021-03-19 22:18:25.116 +07:00 [INF] 0 expected template items needed
+2021-03-19 22:18:25.116 +07:00 [INF] Initializing upgrade step Update C# source
+2021-03-19 22:18:25.992 +07:00 [INF] Initializing upgrade step Move to next project
+2021-03-19 22:18:27.445 +07:00 [INF] Applying upgrade step Move to next project
+2021-03-19 22:18:27.445 +07:00 [INF] Upgrade step Move to next project applied successfully
+2021-03-19 22:18:29.101 +07:00 [INF] Initializing upgrade step Finalize Solution
+2021-03-19 22:18:31.068 +07:00 [INF] Applying upgrade step Finalize Solution
+2021-03-19 22:18:31.068 +07:00 [INF] Upgrade step Finalize Solution applied successfully
+2021-03-19 22:18:32.146 +07:00 [INF] Upgrade has completed. Please review any changes.
+2021-03-19 22:18:32.147 +07:00 [INF] Saving upgrade progress file at D:\Documents\GitHub\ListenerX\Listener.ImageProcessing\.upgrade-assistant

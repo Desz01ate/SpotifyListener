@@ -1,0 +1,44 @@
+2021-03-19 22:23:11.036 +07:00 [INF] MSBuild registered from C:\Program Files\dotnet\sdk\5.0.201\
+2021-03-19 22:23:11.055 +07:00 [INF] Registered 1 extensions:
+	Default extension
+2021-03-19 22:23:12.221 +07:00 [INF] Initializing upgrade step Select an entrypoint
+2021-03-19 22:23:13.297 +07:00 [INF] Applying upgrade step Select an entrypoint
+2021-03-19 22:23:19.512 +07:00 [INF] Upgrade step Select an entrypoint applied successfully
+2021-03-19 22:23:21.129 +07:00 [INF] Initializing upgrade step Back up project
+2021-03-19 22:23:21.841 +07:00 [INF] Applying upgrade step Back up project
+2021-03-19 22:23:23.150 +07:00 [INF] Backing up D:\Documents\GitHub\ListenerX\Listener.Plugin.Razer to D:\Documents\GitHub\ListenerX\Listener.Plugin.Razer.backup
+2021-03-19 22:23:23.157 +07:00 [WRN] Could not copy file D:\Documents\GitHub\ListenerX\Listener.Plugin.Razer\log.txt due to 'The process cannot access the file 'D:\Documents\GitHub\ListenerX\Listener.Plugin.Razer\log.txt' because it is being used by another process.'
+2021-03-19 22:23:27.812 +07:00 [INF] Project backed up to D:\Documents\GitHub\ListenerX\Listener.Plugin.Razer.backup
+2021-03-19 22:23:27.813 +07:00 [INF] Upgrade step Back up project applied successfully
+2021-03-19 22:23:27.858 +07:00 [INF] Initializing upgrade step Convert project file to SDK style
+2021-03-19 22:23:28.787 +07:00 [INF] Applying upgrade step Convert project file to SDK style
+2021-03-19 22:23:28.789 +07:00 [INF] Converting project file format with try-convert
+2021-03-19 22:23:31.167 +07:00 [INF] [try-convert] Conversion complete!
+2021-03-19 22:23:31.365 +07:00 [INF] Project file converted successfully! The project may require additional changes to build successfully against the new .NET target.
+2021-03-19 22:23:32.274 +07:00 [INF] Upgrade step Convert project file to SDK style applied successfully
+2021-03-19 22:23:32.320 +07:00 [INF] Initializing upgrade step Update TFM
+2021-03-19 22:23:32.377 +07:00 [INF] Applying upgrade step Update TFM
+2021-03-19 22:23:33.645 +07:00 [INF] Upgrade step Update TFM applied successfully
+2021-03-19 22:23:33.690 +07:00 [INF] Initializing upgrade step Update NuGet packages
+2021-03-19 22:23:34.673 +07:00 [INF] Reference to .NET Upgrade Assistant analyzer package (Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers, version 0.2.212405) needs added
+2021-03-19 22:23:34.754 +07:00 [INF] Adding Microsoft.Windows.Compatibility 5.0.2
+2021-03-19 22:23:34.755 +07:00 [INF] Packages to be addded:
+Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers, Version=0.2.212405
+Microsoft.Windows.Compatibility, Version=5.0.2
+2021-03-19 22:23:34.758 +07:00 [INF] Applying upgrade step Update NuGet packages
+2021-03-19 22:23:34.761 +07:00 [INF] Adding package reference: Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers, Version=0.2.212405
+2021-03-19 22:23:34.762 +07:00 [INF] Adding package reference: Microsoft.Windows.Compatibility, Version=5.0.2
+2021-03-19 22:23:36.107 +07:00 [INF] Marking package System.Data.DataSetExtensions for removal because it appears to be a transitive dependency
+2021-03-19 22:23:36.161 +07:00 [INF] Removing outdated package reference: System.Data.DataSetExtensions, Version=4.5.0
+2021-03-19 22:23:37.549 +07:00 [INF] Upgrade step Update NuGet packages applied successfully
+2021-03-19 22:23:37.595 +07:00 [INF] Initializing upgrade step Add template files
+2021-03-19 22:23:37.603 +07:00 [INF] 0 expected template items needed
+2021-03-19 22:23:37.606 +07:00 [INF] Initializing upgrade step Update C# source
+2021-03-19 22:23:38.622 +07:00 [INF] Initializing upgrade step Move to next project
+2021-03-19 22:23:38.625 +07:00 [INF] Applying upgrade step Move to next project
+2021-03-19 22:23:38.625 +07:00 [INF] Upgrade step Move to next project applied successfully
+2021-03-19 22:23:38.717 +07:00 [INF] Initializing upgrade step Finalize Solution
+2021-03-19 22:23:38.734 +07:00 [INF] Applying upgrade step Finalize Solution
+2021-03-19 22:23:38.734 +07:00 [INF] Upgrade step Finalize Solution applied successfully
+2021-03-19 22:23:39.870 +07:00 [INF] Upgrade has completed. Please review any changes.
+2021-03-19 22:23:39.871 +07:00 [INF] Saving upgrade progress file at D:\Documents\GitHub\ListenerX\Listener.Plugin.Razer\.upgrade-assistant
