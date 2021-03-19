@@ -40,7 +40,7 @@ namespace ListenerX
             }
             ScalingStrategy.SelectedIndex = Properties.Settings.Default.ScalingStrategy;
 
-            this.lbl_Metadata.Text = $"Active module : {ActivatorHelpers.Metadata.ModuleName} {ActivatorHelpers.Metadata.VersionName}";
+            //this.lbl_Metadata.Text = $"Active module : {ActivatorHelpers.Metadata.ModuleName} {ActivatorHelpers.Metadata.VersionName}";
 
             var devices = OutputDevice.GetDevices().ToArray();
             var activeIndex = Array.FindIndex(devices, x => x.Item1 == OutputDevice.ActiveDevice.DeviceId);

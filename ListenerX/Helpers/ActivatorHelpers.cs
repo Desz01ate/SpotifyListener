@@ -10,7 +10,7 @@ namespace ListenerX.Helpers
 {
     public static class ActivatorHelpers
     {
-        public static IPlayerMetadata Metadata { get; private set; }
+        //public static IPlayerMetadata Metadata { get; private set; }
 
         private static IReadOnlyList<IChromaEffect> _effects;
         public static IReadOnlyList<IChromaEffect> Effects = _effects ??= LoadChromaPlugins();
@@ -19,7 +19,7 @@ namespace ListenerX.Helpers
         {
             var type = typeof(T);
             var assembly = type.Assembly;
-            Metadata = AssemblyHelpers.LoadInstance<IPlayerMetadata>(assembly);
+            //Metadata = AssemblyHelpers.LoadInstance<IPlayerMetadata>(assembly);
             var instance = Activator.CreateInstance(type) as IStreamablePlayerHost;
             return instance;
         }

@@ -62,7 +62,8 @@ namespace ListenerX
                 ResizeMode = ResizeMode.CanMinimize;
                 Visibility = Visibility.Hidden;
 
-                player = ActivatorHelpers.LoadPlayerHost<Listener.Player.Spotify.SpotifyPlayerHost>();
+                //player = ActivatorHelpers.LoadPlayerHost<Listener.Player.Spotify.SpotifyPlayerHost>();
+                player = new Listener.Player.Spotify.SpotifyPlayerHost();
                 plugins = ActivatorHelpers.LoadPlugins().ToArray();
 
                 var maxEffectCount = ActivatorHelpers.Effects.Count - 1;
