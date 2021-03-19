@@ -1,4 +1,5 @@
 ﻿using Listener.Core.Framework.Players;
+using ListenerX.Helpers;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -90,7 +91,7 @@ namespace ListenerX
                         switch (searchType)
                         {
                             case SearchType.Artist:
-                                Process.Start(element.Uri.AbsoluteUri);
+                                OpenerHelpers.Open(element.Uri.AbsoluteUri);
                                 break;
                             case SearchType.Track:
                             case SearchType.All:

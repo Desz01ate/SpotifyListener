@@ -231,7 +231,14 @@ namespace Listener.Player.Spotify
 
         public SpotifyPlayerHost()
         {
-            Process.Start("spotify");
+            try
+            {
+                Process.Start("spotify");
+            }
+            catch
+            {
+                //Spotify is not installed, no problem just skip it.
+            }
             SpotifyWebAPI webApiClient = null;
             var spotifyAuthentication = new SpotifyAuthentication();
             var retry = 0;

@@ -163,7 +163,7 @@ namespace ListenerX
                     //Player.PlayAsync("");
                     break;
                 case MouseButton.Right:
-                    Task.Run(() => Process.Start(player.Url));
+                    Task.Run(() => OpenerHelpers.Open(player.Url));
                     break;
             }
         }
@@ -297,7 +297,7 @@ namespace ListenerX
                         FacebookShare();
                         break;
                     case Key.O:
-                        Process.Start(player.Url);
+                        OpenerHelpers.Open(player.Url);
                         break;
                     case Key.P:
                         GenerateFormImage();
@@ -376,7 +376,7 @@ namespace ListenerX
             //    //path = wallpaper.GetWallpaperImage();
             //}
             var path = wallpaper.GetWallpaperImage();
-            Process.Start(path);
+            OpenerHelpers.Open(path);
         }
 
         private void Btn_Repeat_Click(object sender, RoutedEventArgs e)
@@ -429,7 +429,7 @@ namespace ListenerX
             var query = $"{this.player.Artist} {this.player.Album} {this.player.Track} lyrics";
             var encodedQuery = HttpUtility.UrlEncode(query);
             var url = $"https://www.google.com/search?q={encodedQuery}";
-            Process.Start(url);
+            OpenerHelpers.Open(url);
         }
 
         private void Btn_SaveImage_Click(object sender, RoutedEventArgs e)
