@@ -71,34 +71,20 @@ namespace ListenerX
 
                 ActivatorHelpers.Instance.PlayerModuleChanged += (s, _) =>
                 {
-                    this.player?.Dispose();
+                    if(this.player != null)
+                    {
+                        this.player.TrackChanged -= Player_OnTrackChanged;
+                        this.player.DeviceChanged -= Player_OnDeviceChanged;
+                        this.player.TrackDurationChanged -= Player_TrackDurationChanged;
+                        this.player.TrackPlayStateChanged -= Player_TrackPlayStateChanged;
+                        this.player.Dispose();
+                    }
+                    
                     this.player = (IStreamablePlayerHost)s;
-                    this.player.TrackChanged += OnTrackChanged;
+                    this.player.TrackChanged += Player_OnTrackChanged;
                     this.player.DeviceChanged += Player_OnDeviceChanged;
-                    this.player.TrackDurationChanged += (p) =>
-                    {
-                        this.VolumePath.Fill = p.IsMute ? pauseColor : playColor;
-                    };
-                    this.player.TrackPlayStateChanged += (state) =>
-                    {
-                        Dispatcher.InvokeAsync(() =>
-                        {
-                            StreamGeometry buttonShape;
-                            SolidColorBrush color;
-                            if (state == PlayState.Play)
-                            {
-                                buttonShape = (StreamGeometry)this.FindResource("pausePath");
-                                color = playColor;
-                            }
-                            else
-                            {
-                                buttonShape = (StreamGeometry)this.FindResource("playPath");
-                                color = pauseColor;
-                            }
-                            this.PlayPath.Data = buttonShape;
-                            this.PlayProgress.Foreground = color;
-                        });
-                    };
+                    this.player.TrackDurationChanged += Player_TrackDurationChanged;
+                    this.player.TrackPlayStateChanged += Player_TrackPlayStateChanged;
                     this.DataContext = this.player;
                 };
                 player = ActivatorHelpers.Instance.GetDefaultPlayerHost();
@@ -143,6 +129,32 @@ namespace ListenerX
             this.Visibility = Visibility.Visible;
         }
 
+        private void Player_TrackPlayStateChanged(PlayState state)
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                StreamGeometry buttonShape;
+                SolidColorBrush color;
+                if (state == PlayState.Play)
+                {
+                    buttonShape = (StreamGeometry)this.FindResource("pausePath");
+                    color = playColor;
+                }
+                else
+                {
+                    buttonShape = (StreamGeometry)this.FindResource("playPath");
+                    color = pauseColor;
+                }
+                this.PlayPath.Data = buttonShape;
+                this.PlayProgress.Foreground = color;
+            });
+        }
+
+        private void Player_TrackDurationChanged(IPlayerHost p)
+        {
+            this.VolumePath.Fill = p.IsMute ? pauseColor : playColor;
+        }
+
         private void Player_OnDeviceChanged(Device device)
         {
             Dispatcher.InvokeAsync(() =>
@@ -179,7 +191,7 @@ namespace ListenerX
             }
         }
 
-        private void OnTrackChanged(IPlayerHost playbackContext)
+        private void Player_OnTrackChanged(IPlayerHost playbackContext)
         {
             Dispatcher.InvokeAsync(() =>
             {

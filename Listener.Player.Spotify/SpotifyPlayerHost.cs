@@ -23,7 +23,7 @@ namespace Listener.Player.Spotify
 {
     public sealed class SpotifyPlayerHost : IStreamablePlayerHost
     {
-        private readonly HttpClient httpClient;
+        private HttpClient httpClient;
         private SpotifyWebAPI client;
         private string _track, _album, _artist, _genre, _type, _url, _artworkUrl, _lyrics;
         private int _pos_ms, _dur_ms, _vol;
@@ -242,7 +242,6 @@ namespace Listener.Player.Spotify
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<SpotifyDevice, Device>());
             this._deviceMapper = new Mapper(config);
-            this.httpClient = new HttpClient();
         }
 
 
@@ -256,6 +255,7 @@ namespace Listener.Player.Spotify
             {
                 //Spotify is not installed, no problem just skip it.
             }
+            this.httpClient = new HttpClient();
             SpotifyWebAPI webApiClient = null;
             var spotifyAuthentication = new SpotifyAuthentication();
             var retry = 0;

@@ -226,17 +226,17 @@ namespace Listener.Player.AppleMusic
 
         private iTunesApp app;
 
-        private readonly HttpClient httpClient;
+        private HttpClient httpClient;
 
         private System.Windows.Forms.Timer _trackFetcherTimer = new System.Windows.Forms.Timer();
 
         delegate void Router(object arg);
         public AppleMusicPlayerHost()
         {
-            this.httpClient = new HttpClient();
         }
         public Task StartAsync(CancellationToken cancellationToken = default)
         {
+            this.httpClient = new HttpClient();
             this.app = new iTunesApp();
 
             var initImage = new Bitmap(100, 100);
