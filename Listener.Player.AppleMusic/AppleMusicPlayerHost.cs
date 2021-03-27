@@ -16,6 +16,7 @@ using IF.Lastfm.Core.Api;
 using Listener.ImageProcessing;
 using System.Drawing.Imaging;
 using System.Net.Http;
+using System.Threading;
 
 namespace Listener.Player.AppleMusic
 {
@@ -223,7 +224,7 @@ namespace Listener.Player.AppleMusic
 
         private ITPlayerState currentPlayState;
 
-        private readonly iTunesApp app;
+        private iTunesApp app;
 
         private readonly HttpClient httpClient;
 
@@ -231,6 +232,10 @@ namespace Listener.Player.AppleMusic
 
         delegate void Router(object arg);
         public AppleMusicPlayerHost()
+        {
+            this.httpClient = new HttpClient();
+        }
+        public Task StartAsync(CancellationToken cancellationToken = default)
         {
             this.app = new iTunesApp();
 
@@ -245,12 +250,18 @@ namespace Listener.Player.AppleMusic
             _trackFetcherTimer.Interval = 1000;
             _trackFetcherTimer.Tick += (s, e) => Get();
             _trackFetcherTimer.Start();
-
-            httpClient = new HttpClient();
+            return Task.CompletedTask;
         }
 
+        public Task StopAsync(CancellationToken cancellationToken = default)
+        {
+            _trackFetcherTimer?.Stop();
+            _trackFetcherTimer?.Dispose();
+            return Task.CompletedTask;
+        }
         public void Dispose()
         {
+            _trackFetcherTimer?.Dispose();
             return;
         }
 

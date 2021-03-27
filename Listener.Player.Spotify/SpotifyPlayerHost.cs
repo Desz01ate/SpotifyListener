@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using AutoMapper;
@@ -23,7 +24,7 @@ namespace Listener.Player.Spotify
     public sealed class SpotifyPlayerHost : IStreamablePlayerHost
     {
         private readonly HttpClient httpClient;
-        private readonly SpotifyWebAPI client;
+        private SpotifyWebAPI client;
         private string _track, _album, _artist, _genre, _type, _url, _artworkUrl, _lyrics;
         private int _pos_ms, _dur_ms, _vol;
         private bool _isPlaying;
@@ -221,15 +222,31 @@ namespace Listener.Player.Spotify
         {
             get; private set;
         } = Listener.Core.Framework.Models.Device.Default;
-        public IReadOnlyList<Device> AvailableDevices => AvailableSpotifyDevices.Select(d => _deiceMapper.Map<SpotifyDevice, Device>(d)).ToList();
+        public IReadOnlyList<Device> AvailableDevices => AvailableSpotifyDevices.Select(d => _deviceMapper.Map<SpotifyDevice, Device>(d)).ToList();
         private List<SpotifyDevice> AvailableSpotifyDevices = new List<SpotifyDevice>();
         private System.Windows.Forms.Timer _trackFetcherTimer = new System.Windows.Forms.Timer();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private readonly Mapper _deiceMapper;
+        private readonly Mapper _deviceMapper;
+
+        public event TrackChangedEventHandler TrackChanged;
+
+        public event TrackProgressionChangedEventHandler TrackDurationChanged;
+
+        public event TrackPlayStateChangedEventHandler TrackPlayStateChanged;
+
+        public event ActiveDeviceChangedEventHandler DeviceChanged;
 
         public SpotifyPlayerHost()
+        {
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<SpotifyDevice, Device>());
+            this._deviceMapper = new Mapper(config);
+            this.httpClient = new HttpClient();
+        }
+
+
+        public Task StartAsync(CancellationToken cancellationToken = default)
         {
             try
             {
@@ -251,24 +268,20 @@ namespace Listener.Player.Spotify
                 }
                 System.Threading.Thread.Sleep(1000);
             }
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<SpotifyDevice, Device>());
-            _deiceMapper = new Mapper(config);
+
             this.client = webApiClient;
-            this.httpClient = new HttpClient();
             _trackFetcherTimer.Interval = 1000;
             _trackFetcherTimer.Tick += async (s, e) => await GetAsync();
             _trackFetcherTimer.Start();
+            return Task.CompletedTask;
         }
 
-
-        public event TrackChangedEventHandler TrackChanged;
-
-        public event TrackProgressionChangedEventHandler TrackDurationChanged;
-
-        public event TrackPlayStateChangedEventHandler TrackPlayStateChanged;
-
-        public event ActiveDeviceChangedEventHandler DeviceChanged;
-
+        public Task StopAsync(CancellationToken cancellationToken = default)
+        {
+            _trackFetcherTimer?.Stop();
+            _trackFetcherTimer?.Dispose();
+            return Task.CompletedTask;
+        }
 
         public override string ToString()
         {
@@ -299,7 +312,7 @@ namespace Listener.Player.Spotify
                     var currentActiveDevice = devices.Find(x => x.IsActive);
                     if (ActiveDevice.Id != currentActiveDevice.Id)
                     {
-                        ActiveDevice = _deiceMapper.Map<SpotifyDevice, Device>(currentActiveDevice);
+                        ActiveDevice = _deviceMapper.Map<SpotifyDevice, Device>(currentActiveDevice);
                         DeviceChanged?.Invoke(ActiveDevice);
                     }
 
@@ -545,6 +558,7 @@ namespace Listener.Player.Spotify
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
     }
 
 }
