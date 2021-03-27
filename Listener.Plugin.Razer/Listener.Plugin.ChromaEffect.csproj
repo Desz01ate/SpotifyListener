@@ -7,6 +7,10 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Listener.Core.Framework\Listener.Core.Framework.csproj" />
     <ProjectReference Include="..\Submodules\VirtualGrid\VirtualGrid\VirtualGrid.csproj" />
