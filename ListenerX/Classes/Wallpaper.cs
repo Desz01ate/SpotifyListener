@@ -31,7 +31,6 @@ namespace ListenerX.Classes
         public const uint SPIF_SENDWININICHANGE = 0x02;
 
         private readonly string _fontFamily;
-        private readonly IPlayerHost _player;
         private readonly string OriginalBackgroundImagePath;
         private readonly uint OriginalAccentColor, OriginalColorizationAfterglow, OriginalColorizationColor;
         private readonly uint OriginalStartColorMenu, OriginalAccentColorMenu;
@@ -40,7 +39,7 @@ namespace ListenerX.Classes
         private bool disposed = false;
         private string _temporaryWaitForDeleteFiles = "";
 
-        public Wallpaper(IPlayerHost player, string fontFamily)
+        public Wallpaper(string fontFamily)
         {
             var backgroundImagePathCache = Properties.Settings.Default.BackgroundImagePath;
 
@@ -57,7 +56,6 @@ namespace ListenerX.Classes
                 Properties.Settings.Default.Save();
             }
 
-            this._player = player;
             this._fontFamily = fontFamily;
 
             using var dwmKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\DWM", true);
@@ -71,10 +69,10 @@ namespace ListenerX.Classes
             //Disable();
         }
 
-        public void Enable()
+        public void Enable(IPlayerHost player)
         {
-            using var image = CalculateBackgroundImage((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
-            var color = this._player.AlbumArtwork.GetDominantColors(1).First();
+            using var image = CalculateBackgroundImage(player, (int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
+            var color = player.AlbumArtwork.GetDominantColors(1).First();
 
             DeleteTempFile();
             SetDesktopWallpaper(image, Wallpaper.Style.Stretched);
@@ -196,11 +194,11 @@ namespace ListenerX.Classes
             return backgroundImg;
         }
 
-        private Image CalculateBackgroundImage(int width, int height)
+        private Image CalculateBackgroundImage(IPlayerHost player, int width, int height)
         {
             var highlightSize = (int)Math.Round(height * 0.555);
 
-            var artwork = _player.AlbumArtwork;
+            var artwork = player.AlbumArtwork;
             using var background = ImageProcessing.CalculateBackgroundSource(
                 artwork,
                 width,
@@ -231,9 +229,9 @@ namespace ListenerX.Classes
                 var image = CalculateBackgroundImage(
                     highlight,
                     background,
-                    _player.Track,
-                    _player.Album,
-                    _player.Artist,
+                    player.Track,
+                    player.Album,
+                    player.Artist,
                     width,
                     height);
                 return image;
@@ -242,15 +240,15 @@ namespace ListenerX.Classes
 
         }
 
-        public string GetWallpaperImage()
+        public string GetWallpaperImage(IPlayerHost player)
         {
             if (File.Exists(_temporaryWaitForDeleteFiles))
                 return _temporaryWaitForDeleteFiles;
 
-            var fileName = "10." + RegularExpressionHelpers.AlphabetCleaner($"{_player.Track}-{_player.Album}-{_player.Artist}") + ".jpg";
+            var fileName = "10." + RegularExpressionHelpers.AlphabetCleaner($"{player.Track}-{player.Album}-{player.Artist}") + ".jpg";
             if (!CacheFileManager.IsFileExists(fileName))
             {
-                using var image = this.CalculateBackgroundImage((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
+                using var image = this.CalculateBackgroundImage(player, (int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
                 var bytes = image.ToByteArray(ImageFormat.Jpeg);
                 CacheFileManager.SaveCache(fileName, bytes);
             }

@@ -159,6 +159,7 @@
       <Project>{868E0F87-0F7F-4D5C-8FEB-95895051066C}</Project>
       <Name>Listener.ImageProcessing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Listener.Player.AppleMusic\Listener.Player.AppleMusic.csproj" />
     <ProjectReference Include="..\Listener.Player.Spotify\Listener.Player.Spotify.csproj">
       <Project>{7064fa7b-102f-4883-a75f-ea969f9ec272}</Project>
       <Name>Listener.Player.Spotify</Name>

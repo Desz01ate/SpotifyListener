@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace Listener.Core.Framework.Players
 {
-    public interface IPlayerHost : INotifyPropertyChanged, IDisposable
+    public interface IPlayerHost : INotifyPropertyChanged, IPlayerModule, IDisposable
     {
         string Track { get; }
         string Album { get; }

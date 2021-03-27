@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using VirtualGrid.Interfaces;
 using VirtualGrid.Razer;
 using VirtualGrid.Asus;
+using Listener.Core.Framework.DataStructure;
 
 namespace ListenerX
 {

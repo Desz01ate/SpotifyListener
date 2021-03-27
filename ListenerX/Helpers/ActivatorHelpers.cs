@@ -1,30 +1,49 @@
 ﻿using Listener.Core.Framework.Metadata;
 using Listener.Core.Framework.Players;
 using Listener.Core.Framework.Plugins;
+using Listener.Player.AppleMusic;
+using Listener.Player.Spotify;
 using Listener.Plugin.ChromaEffect.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Navigation;
+using Unosquare.Swan;
 
 namespace ListenerX.Helpers
 {
-    public static class ActivatorHelpers
+    public class ActivatorHelpers
     {
         //public static IPlayerMetadata Metadata { get; private set; }
 
-        private static IReadOnlyList<IChromaEffect> _effects;
-        public static IReadOnlyList<IChromaEffect> Effects = _effects ??= LoadChromaPlugins();
+        private IReadOnlyDictionary<string, IStreamablePlayerHost> _players;
+        public IReadOnlyDictionary<string, IStreamablePlayerHost> Players => _players ??= LoadPlayerHosts();
+        private IStreamablePlayerHost _activePlayerModule { get; set; }
 
-        public static IStreamablePlayerHost LoadPlayerHost<T>() where T : IStreamablePlayerHost
+        private IReadOnlyList<IChromaEffect> _effects;
+        public IReadOnlyList<IChromaEffect> Effects => _effects ??= LoadChromaPlugins();
+
+        public static readonly ActivatorHelpers Instance = new ActivatorHelpers();
+
+        public event EventHandler PlayerModuleChanged;
+        private ActivatorHelpers()
         {
-            var type = typeof(T);
-            var assembly = type.Assembly;
-            //Metadata = AssemblyHelpers.LoadInstance<IPlayerMetadata>(assembly);
-            var instance = Activator.CreateInstance(type) as IStreamablePlayerHost;
-            return instance;
+
         }
 
-        public static IEnumerable<IListenerPlugin> LoadPlugins()
+        private Dictionary<string, IStreamablePlayerHost> LoadPlayerHosts()
+        {
+            var players = new Dictionary<string, IStreamablePlayerHost>
+            {
+                { "Spotify", new SpotifyPlayerHost() },
+                { "Apple Music", new AppleMusicPlayerHost() }
+            };
+            return players;
+        }
+
+        public IEnumerable<IListenerPlugin> LoadPlugins()
         {
             var pluginDir = Path.Combine(Directory.GetCurrentDirectory(), "plugins");
             Directory.CreateDirectory(pluginDir);
@@ -40,7 +59,7 @@ namespace ListenerX.Helpers
             }
         }
 
-        private static List<IChromaEffect> LoadChromaPlugins()
+        private List<IChromaEffect> LoadChromaPlugins()
         {
             var effects = new List<IChromaEffect>();
             var type = typeof(IChromaEffect);
@@ -60,6 +79,26 @@ namespace ListenerX.Helpers
             }
 
             return effects;
+        }
+
+        public void LoadPlayerModule(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(name);
+            if (Players.TryGetValue(name, out var module))
+            {
+                _activePlayerModule?.StopAsync();
+                _activePlayerModule = module;
+                _activePlayerModule.StartAsync();
+                PlayerModuleChanged?.Invoke(_activePlayerModule, null);
+            }
+        }
+
+        public IStreamablePlayerHost GetDefaultPlayerHost()
+        {
+            var playerName = Properties.Settings.Default.ActiveModule;
+            LoadPlayerModule(playerName);
+            return _activePlayerModule;
         }
     }
 }
