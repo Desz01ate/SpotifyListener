@@ -44,7 +44,7 @@ namespace ListenerX
         private Wallpaper wallpaper;
         private SearchPanel searchPanel;
 
-        private readonly IStreamablePlayerHost player;
+        private IStreamablePlayerHost player;
 
         private readonly double InitWidth, InitHeight;
 
@@ -62,11 +62,49 @@ namespace ListenerX
                 ResizeMode = ResizeMode.CanMinimize;
                 Visibility = Visibility.Hidden;
 
-                //player = ActivatorHelpers.LoadPlayerHost<Listener.Player.Spotify.SpotifyPlayerHost>();
-                player = new Listener.Player.Spotify.SpotifyPlayerHost();
-                plugins = ActivatorHelpers.LoadPlugins().ToArray();
+                if (string.IsNullOrWhiteSpace(Properties.Settings.Default.ActiveModule))
+                {
+                    System.Windows.MessageBox.Show($"No active module were found, restore to Spotify as a default module.", "ListenerX");
+                    Properties.Settings.Default.ActiveModule = "Spotify";
+                    Properties.Settings.Default.Save();
+                }
 
-                var maxEffectCount = ActivatorHelpers.Effects.Count - 1;
+                ActivatorHelpers.Instance.PlayerModuleChanged += (s, _) =>
+                {
+                    this.player?.Dispose();
+                    this.player = (IStreamablePlayerHost)s;
+                    this.player.TrackChanged += OnTrackChanged;
+                    this.player.DeviceChanged += Player_OnDeviceChanged;
+                    this.player.TrackDurationChanged += (p) =>
+                    {
+                        this.VolumePath.Fill = p.IsMute ? pauseColor : playColor;
+                    };
+                    this.player.TrackPlayStateChanged += (state) =>
+                    {
+                        Dispatcher.InvokeAsync(() =>
+                        {
+                            StreamGeometry buttonShape;
+                            SolidColorBrush color;
+                            if (state == PlayState.Play)
+                            {
+                                buttonShape = (StreamGeometry)this.FindResource("pausePath");
+                                color = playColor;
+                            }
+                            else
+                            {
+                                buttonShape = (StreamGeometry)this.FindResource("playPath");
+                                color = pauseColor;
+                            }
+                            this.PlayPath.Data = buttonShape;
+                            this.PlayProgress.Foreground = color;
+                        });
+                    };
+                    this.DataContext = this.player;
+                };
+                player = ActivatorHelpers.Instance.GetDefaultPlayerHost();
+                plugins = ActivatorHelpers.Instance.LoadPlugins().ToArray();
+
+                var maxEffectCount = ActivatorHelpers.Instance.Effects.Count - 1;
                 if (Properties.Settings.Default.RenderStyle > maxEffectCount)
                 {
                     Properties.Settings.Default.RenderStyle = maxEffectCount;
@@ -76,33 +114,7 @@ namespace ListenerX
                 VolumePath.Fill = playColor;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
 
-                player.TrackChanged += OnTrackChanged;
-                player.DeviceChanged += Player_OnDeviceChanged;
-                player.TrackDurationChanged += (p) =>
-                {
-                    this.VolumePath.Fill = p.IsMute ? pauseColor : playColor;
-                };
 
-                player.TrackPlayStateChanged += (state) =>
-                {
-                    Dispatcher.InvokeAsync(() =>
-                    {
-                        StreamGeometry buttonShape;
-                        SolidColorBrush color;
-                        if (state == PlayState.Play)
-                        {
-                            buttonShape = (StreamGeometry)this.FindResource("pausePath");
-                            color = playColor;
-                        }
-                        else
-                        {
-                            buttonShape = (StreamGeometry)this.FindResource("playPath");
-                            color = pauseColor;
-                        }
-                        this.PlayPath.Data = buttonShape;
-                        this.PlayProgress.Foreground = color;
-                    });
-                };
 
                 KeyDown += MainWindowGrid_PreviewKeyDown;
                 Loaded += MainWindow_Loaded;
@@ -129,7 +141,6 @@ namespace ListenerX
             }
 
             this.Visibility = Visibility.Visible;
-            this.DataContext = player;
         }
 
         private void Player_OnDeviceChanged(Device device)
@@ -149,7 +160,7 @@ namespace ListenerX
 
             #region get current background image
 
-            wallpaper = new Wallpaper(this.player, this.FontFamily.ToString());
+            wallpaper = new Wallpaper(this.FontFamily.ToString());
             #endregion
         }
 
@@ -192,7 +203,7 @@ namespace ListenerX
 
                 if (Properties.Settings.Default.ArtworkWallpaperEnable)
                 {
-                    wallpaper.Enable();
+                    wallpaper.Enable(this.player);
                 }
                 else
                 {
@@ -229,7 +240,7 @@ namespace ListenerX
         {
             try
             {
-                var effect = ActivatorHelpers.Effects[Properties.Settings.Default.RenderStyle];
+                var effect = ActivatorHelpers.Instance.Effects[Properties.Settings.Default.RenderStyle];
                 double[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(effect.RequiredSpectrumRange).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
                 chroma.SetEffect(effect, spectrumData, this.player.CalculatedPosition);
                 chroma.ApplyAsync().Wait();
@@ -258,7 +269,7 @@ namespace ListenerX
             hashtag = RegularExpressionHelpers.AlphabetCleaner(hashtag);
             var requestText =
                 $"https://www.facebook.com/dialog/share?app_id={app_id}&text=test&display=page&href={href}&redirect_uri={redirect_uri}&hashtag={hashtag}";
-            Process.Start(requestText);
+            OpenerHelpers.Open(requestText);
         }
 
         private void MainWindowGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -375,7 +386,7 @@ namespace ListenerX
             //    path = CacheFileManager.SaveCache(fileName, image.ToByteArray(ImageFormat.Jpeg));
             //    //path = wallpaper.GetWallpaperImage();
             //}
-            var path = wallpaper.GetWallpaperImage();
+            var path = wallpaper.GetWallpaperImage(player);
             OpenerHelpers.Open(path);
         }
 

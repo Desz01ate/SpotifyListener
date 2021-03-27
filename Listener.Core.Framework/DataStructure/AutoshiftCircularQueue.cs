@@ -9,7 +9,7 @@ namespace Listener.Core.Framework.DataStructure
 {
     public class AutoshiftCirculaQueue<T> : CircularQueue<T>, IDisposable
     {
-        private readonly static Lazy<AutoshiftCirculaQueue<T>> _emptySource = new Lazy<AutoshiftCirculaQueue<T>>();
+        private readonly static Lazy<AutoshiftCirculaQueue<T>> _emptySource = new Lazy<AutoshiftCirculaQueue<T>>(() => new AutoshiftCirculaQueue<T>());
         public static AutoshiftCirculaQueue<T> Empty => _emptySource.Value;
 
         private readonly Timer shiftTimer;
