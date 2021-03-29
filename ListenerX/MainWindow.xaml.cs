@@ -69,28 +69,16 @@ namespace ListenerX
                     Properties.Settings.Default.Save();
                 }
 
-                ActivatorHelpers.Instance.PlayerModuleChanged += (s, _) =>
-                {
-                    if(this.player != null)
-                    {
-                        this.player.TrackChanged -= Player_OnTrackChanged;
-                        this.player.DeviceChanged -= Player_OnDeviceChanged;
-                        this.player.TrackDurationChanged -= Player_TrackDurationChanged;
-                        this.player.TrackPlayStateChanged -= Player_TrackPlayStateChanged;
-                        this.player.Dispose();
-                    }
-                    
-                    this.player = (IStreamablePlayerHost)s;
-                    this.player.TrackChanged += Player_OnTrackChanged;
-                    this.player.DeviceChanged += Player_OnDeviceChanged;
-                    this.player.TrackDurationChanged += Player_TrackDurationChanged;
-                    this.player.TrackPlayStateChanged += Player_TrackPlayStateChanged;
-                    this.DataContext = this.player;
-                };
-                player = ActivatorHelpers.Instance.GetDefaultPlayerHost();
-                plugins = ActivatorHelpers.Instance.LoadPlugins().ToArray();
+                this.player = ModuleActivator.Instance.GetDefaultPlayerHost();
+                this.player.TrackChanged += Player_OnTrackChanged;
+                this.player.DeviceChanged += Player_OnDeviceChanged;
+                this.player.TrackDurationChanged += Player_TrackDurationChanged;
+                this.player.TrackPlayStateChanged += Player_TrackPlayStateChanged;
+                this.DataContext = this.player;
 
-                var maxEffectCount = ActivatorHelpers.Instance.Effects.Count - 1;
+                plugins = ModuleActivator.Instance.LoadPlugins().ToArray();
+
+                var maxEffectCount = ModuleActivator.Instance.Effects.Count - 1;
                 if (Properties.Settings.Default.RenderStyle > maxEffectCount)
                 {
                     Properties.Settings.Default.RenderStyle = maxEffectCount;
@@ -252,7 +240,7 @@ namespace ListenerX
         {
             try
             {
-                var effect = ActivatorHelpers.Instance.Effects[Properties.Settings.Default.RenderStyle];
+                var effect = ModuleActivator.Instance.Effects[Properties.Settings.Default.RenderStyle];
                 double[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(effect.RequiredSpectrumRange).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
                 chroma.SetEffect(effect, spectrumData, this.player.CalculatedPosition);
                 chroma.ApplyAsync().Wait();

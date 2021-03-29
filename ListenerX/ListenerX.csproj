@@ -4,6 +4,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>WinExe</OutputType>
+    <!--<OutputType>Exe</OutputType>
+    <DisableWinExeOutputInference>true</DisableWinExeOutputInference>-->
     <RootNamespace>ListenerX</RootNamespace>
     <AssemblyName>ListenerX</AssemblyName>
     <FileAlignment>512</FileAlignment>

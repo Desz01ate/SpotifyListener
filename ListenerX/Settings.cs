@@ -20,7 +20,7 @@ namespace ListenerX
             InitializeComponent();
             this.Icon = Properties.Resources.listenerx;
 
-            this.RenderStyleCombobox.Items.AddRange(ActivatorHelpers.Instance.Effects.Select(x => x.EffectName).ToArray());
+            this.RenderStyleCombobox.Items.AddRange(ModuleActivator.Instance.Effects.Select(x => x.EffectName).ToArray());
             this.RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyle;
 
             ChromaSDKEnable.Checked = Properties.Settings.Default.ChromaSDKEnable;
@@ -52,16 +52,17 @@ namespace ListenerX
                 OutputDevice.ChangeActiveDevice(devices[index].Item1);
             };
 
-            var activeModules = ActivatorHelpers.Instance.Players.Keys.ToArray();
+            var activeModules = ModuleActivator.Instance.Players.Keys.ToArray();
             var activeModuleIndex = Array.FindIndex(activeModules, x => x == Properties.Settings.Default.ActiveModule);
             this.ModuleSelector.Items.AddRange(activeModules);
             this.ModuleSelector.SelectedIndex = activeModuleIndex;
             this.ModuleSelector.SelectedIndexChanged += (s, e) =>
             {
                 var index = (s as ComboBox).Text;
-                ActivatorHelpers.Instance.LoadPlayerModule(index);
+                //ActivatorHelpers.Instance.LoadPlayerModule(index);
                 Properties.Settings.Default.ActiveModule = index;
                 Properties.Settings.Default.Save();
+                MessageBox.Show($"Active player module has been changed to {index}, please restart the application to take effect.", "Listener X", MessageBoxButtons.OK, MessageBoxIcon.Information);
             };
 
             this.virtualKeyboard = new VirtualKeyboardComponent();

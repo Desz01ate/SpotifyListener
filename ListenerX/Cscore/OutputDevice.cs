@@ -22,6 +22,7 @@ namespace ListenerX.Cscore
         private ISoundOut _soundOut;
         private IWaveSource _source;
         private LineSpectrum _lineSpectrum;
+        private ISampleSource _sampleSource;
 
         public string DeviceId { get; private set; }
         public static OutputDevice ActiveDevice { get; private set; }
@@ -98,6 +99,11 @@ namespace ListenerX.Cscore
                 _source.Dispose();
                 _source = null;
             }
+            if (_sampleSource != null)
+            {
+                _sampleSource.Dispose();
+                _sampleSource = null;
+            }
         }
 
         private void SetupSampleSource(ISampleSource aSampleSource)
@@ -125,7 +131,7 @@ namespace ListenerX.Cscore
             notificationSource.SingleBlockRead += (s, a) => spectrumProvider.Add(a.Left, a.Right);
 
             _source = notificationSource.ToWaveSource(16);
-
+            _sampleSource = aSampleSource;
         }
 
         public double[] GetSpectrums(int? barCount = null)

@@ -14,31 +14,30 @@ using Unosquare.Swan;
 
 namespace ListenerX.Helpers
 {
-    public class ActivatorHelpers
+    public class ModuleActivator
     {
         //public static IPlayerMetadata Metadata { get; private set; }
 
-        private IReadOnlyDictionary<string, IStreamablePlayerHost> _players;
-        public IReadOnlyDictionary<string, IStreamablePlayerHost> Players => _players ??= LoadPlayerHosts();
-        private IStreamablePlayerHost _activePlayerModule { get; set; }
+        private IReadOnlyDictionary<string, Type> _players;
+        public IReadOnlyDictionary<string, Type> Players => _players ??= LoadPlayerHosts();
 
         private IReadOnlyList<IChromaEffect> _effects;
         public IReadOnlyList<IChromaEffect> Effects => _effects ??= LoadChromaPlugins();
 
-        public static readonly ActivatorHelpers Instance = new ActivatorHelpers();
+        public static readonly ModuleActivator Instance = new ModuleActivator();
 
-        public event EventHandler PlayerModuleChanged;
-        private ActivatorHelpers()
+        private ModuleActivator()
         {
 
         }
 
-        private Dictionary<string, IStreamablePlayerHost> LoadPlayerHosts()
+        private Dictionary<string, Type> LoadPlayerHosts()
         {
-            var players = new Dictionary<string, IStreamablePlayerHost>
+            var players = new Dictionary<string, Type>
             {
-                { "Spotify", new SpotifyPlayerHost() },
-                { "Apple Music", new AppleMusicPlayerHost() }
+
+                { "Spotify", typeof(SpotifyPlayerHost) },
+                { "Apple Music", typeof(AppleMusicPlayerHost) }
             };
             return players;
         }
@@ -81,24 +80,25 @@ namespace ListenerX.Helpers
             return effects;
         }
 
-        public void LoadPlayerModule(string name)
+        private IStreamablePlayerHost LoadPlayerModule(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(name);
+
             if (Players.TryGetValue(name, out var module))
             {
-                _activePlayerModule?.StopAsync();
-                _activePlayerModule = module;
-                _activePlayerModule.StartAsync();
-                PlayerModuleChanged?.Invoke(_activePlayerModule, null);
+                var activePlayerModule = (IStreamablePlayerHost)Activator.CreateInstance(module);
+                activePlayerModule.StartAsync();
+                return activePlayerModule;
             }
+
+            return null;
         }
 
         public IStreamablePlayerHost GetDefaultPlayerHost()
         {
             var playerName = Properties.Settings.Default.ActiveModule;
-            LoadPlayerModule(playerName);
-            return _activePlayerModule;
+            return LoadPlayerModule(playerName); ;
         }
     }
 }
