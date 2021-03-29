@@ -1,8 +1,7 @@
 ﻿using Listener.Core.Framework.Helpers;
 using ListenerX.Components;
-using ListenerX.Cscore;
-using ListenerX.Helpers;
 using ListenerX.Visualization;
+using ListenerX.Helpers;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -42,14 +41,14 @@ namespace ListenerX
 
             //this.lbl_Metadata.Text = $"Active module : {ActivatorHelpers.Metadata.ModuleName} {ActivatorHelpers.Metadata.VersionName}";
 
-            var devices = OutputDevice.GetDevices().ToArray();
-            var activeIndex = Array.FindIndex(devices, x => x.Item1 == OutputDevice.ActiveDevice.DeviceId);
-            this.cb_OutputDevice.Items.AddRange(devices.Select(x => x.Item2).ToArray());
+            var devices = RealTimePlayback.EnumerateLoopbackDevices().ToArray();
+            var activeIndex = Array.FindIndex(devices, x => x.IsDefaultDevice);
+            this.cb_OutputDevice.Items.AddRange(devices.Select(x => x.Device.FriendlyName).ToArray());
             this.cb_OutputDevice.SelectedIndex = activeIndex;
             this.cb_OutputDevice.SelectedIndexChanged += (s, e) =>
             {
                 var index = (s as ComboBox).SelectedIndex;
-                OutputDevice.ChangeActiveDevice(devices[index].Item1);
+                RealTimePlayback.InitLoopbackCapture(devices[index].Device);
             };
 
             var activeModules = ModuleActivator.Instance.Players.Keys.ToArray();

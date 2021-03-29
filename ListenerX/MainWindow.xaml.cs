@@ -17,7 +17,7 @@ using Listener.ImageProcessing;
 using ListenerX.ChromaExtension;
 using ListenerX.Classes;
 using ListenerX.Helpers;
-using ListenerX.Cscore;
+using ListenerX.Visualization;
 using ListenerX.Extensions;
 using Listener.Core.Framework.Plugins;
 using System.Drawing;
@@ -50,11 +50,15 @@ namespace ListenerX
 
         private readonly IListenerPlugin[] plugins;
 
+        private RealTimePlayback playback => RealTimePlayback.ActivePlayback;
+
         public MainWindow()
         {
             try
             {
                 InitializeComponent();
+
+                this.playback?.Start();
                 this.Background = System.Windows.Media.Brushes.Gray;
 
                 InitWidth = this.Width;
@@ -209,7 +213,7 @@ namespace ListenerX
                 {
                     wallpaper.Disable();
                 }
-                GC.Collect();
+                //GC.Collect();
             });
         }
 
@@ -240,10 +244,14 @@ namespace ListenerX
         {
             try
             {
-                var effect = ModuleActivator.Instance.Effects[Properties.Settings.Default.RenderStyle];
-                double[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(effect.RequiredSpectrumRange).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
-                chroma.SetEffect(effect, spectrumData, this.player.CalculatedPosition);
-                chroma.ApplyAsync().Wait();
+                var effect = ActivatorHelpers.Instance.Effects[Properties.Settings.Default.RenderStyle];
+                //float[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(effect.RequiredSpectrumRange).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
+                if (playback.GetFrequency(effect.RequiredSpectrumRange, out var source))
+                {
+                    var spectrumData = source.Select(x => Math.Min(x.Value * Properties.Settings.Default.Amplitude, 100)).ToArray();
+                    chroma.SetEffect(effect, spectrumData.Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray(), this.player.CalculatedPosition);
+                    chroma.ApplyAsync().Wait();
+                }
             }
             catch (Exception ex)
             {
@@ -364,11 +372,10 @@ namespace ListenerX
             this.Hide();
             searchPanel?.Close();
             chromaTimer?.Dispose();
-            //defaultAudioEndpointTimer?.Dispose();
             wallpaper?.Dispose();
             player?.Dispose();
             chroma?.Dispose();
-            OutputDevice.ActiveDevice?.Dispose();
+            playback?.Stop();
             base.OnClosing(e);
         }
 
