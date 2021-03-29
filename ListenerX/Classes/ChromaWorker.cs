@@ -30,17 +30,14 @@ namespace ListenerX
 
             private AutoshiftCirculaQueue<ChromaColor> _albumColors;
 
-            public readonly IVirtualLedGrid FullGridArray;
+            private readonly IVirtualLedGrid _virtualGrid;
 
             public readonly bool IsError;
-
-            //private static Lazy<ChromaWorker> _instance = new Lazy<ChromaWorker>(() => new ChromaWorker(), true);
-            //public static ChromaWorker Instance => _instance.Value;
 
             public ChromaWorker(IVirtualLedGrid virtualGrid)
             {
                 this._albumColors = AutoshiftCirculaQueue<ChromaColor>.Empty;
-                this.FullGridArray = virtualGrid;//VirtualGrid.VirtualLedGrid.CreateDefaultGrid();
+                this._virtualGrid = virtualGrid;
                 try
                 {
                     var adapters = new List<IPhysicalDeviceAdapter>();
@@ -73,14 +70,14 @@ namespace ListenerX
                 {
                     foreach (var adapter in _deviceAdapters)
                     {
-                        await adapter?.ApplyAsync(FullGridArray);
+                        await adapter?.ApplyAsync(_virtualGrid);
                     }
                 }
             }
 
             public void SDKDisable()
             {
-                this.FullGridArray.Set(ChromaColor.Black);
+                this._virtualGrid.Set(ChromaColor.Black);
                 ApplyAsync().Wait();
             }
             /// <summary>
@@ -102,8 +99,8 @@ namespace ListenerX
             {
                 var colors = image.GetDominantColors(2);
 
-                var width = this.FullGridArray.ColumnCount;
-                var height = this.FullGridArray.RowCount;
+                var width = this._virtualGrid.ColumnCount;
+                var height = this._virtualGrid.RowCount;
 
                 using var source = (Bitmap)ImageProcessing.Cut((Bitmap)image, width, height);
                 using var resizedImage = (Bitmap)source.Resize(width, height);
@@ -113,7 +110,7 @@ namespace ListenerX
 
             internal void SetEffect(IChromaEffect effect, double[] spectrumValues, double playingPosition)
             {
-                effect.SetEffect(this.FullGridArray, this._primaryColor, this._secondaryColor, this._albumColors, this._albumBackgroundSource, spectrumValues, playingPosition, Properties.Settings.Default.BackgroundBrightness);
+                effect.SetEffect(this._virtualGrid, this._primaryColor, this._secondaryColor, this._albumColors, this._albumBackgroundSource, spectrumValues, playingPosition, Properties.Settings.Default.BackgroundBrightness);
             }
 
             private bool disposed = false;

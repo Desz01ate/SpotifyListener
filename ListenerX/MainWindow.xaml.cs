@@ -23,6 +23,7 @@ using Listener.Core.Framework.Plugins;
 using System.Drawing;
 using System.Web;
 using System.Net.Http;
+using VirtualGrid.Interfaces;
 
 namespace ListenerX
 {
@@ -55,14 +56,17 @@ namespace ListenerX
 
         private readonly ModuleActivator _moduleActivator;
 
+        private readonly IVirtualLedGrid _virtualLedGrid;
         public MainWindow(ChromaWorker chromaWorker,
-                          ModuleActivator moduleActivator)
+                          ModuleActivator moduleActivator,
+                          IVirtualLedGrid virtualLedGrid)
         {
             try
             {
                 InitializeComponent();
 
                 this._moduleActivator = moduleActivator;
+                this._virtualLedGrid = virtualLedGrid;
                 this.playback?.Start();
                 this.Background = System.Windows.Media.Brushes.Gray;
 
@@ -250,10 +254,9 @@ namespace ListenerX
             {
                 var effect = _moduleActivator.Effects[Properties.Settings.Default.RenderStyle];
                 //float[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(effect.RequiredSpectrumRange).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
-                if (playback.GetFrequency(effect.RequiredSpectrumRange, out var source))
+                if (playback.GetFrequency(effect.RequiredSpectrumRange, Properties.Settings.Default.Amplitude, out var source))
                 {
-                    var spectrumData = source.Select(x => Math.Min(x.Value * Properties.Settings.Default.Amplitude, 100)).ToArray();
-                    chroma.SetEffect(effect, spectrumData.Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray(), this.player.CalculatedPosition);
+                    chroma.SetEffect(effect, source, this.player.CalculatedPosition);
                     chroma.ApplyAsync().Wait();
                 }
             }
@@ -414,7 +417,7 @@ namespace ListenerX
         {
             try
             {
-                using var settings = new Settings(this.chroma.FullGridArray, this._moduleActivator);
+                using var settings = new Settings(this._virtualLedGrid, this._moduleActivator);
                 settings.ShowDialog();
             }
             catch (Exception ex)

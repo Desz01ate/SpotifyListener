@@ -29,6 +29,8 @@ namespace ListenerX.Visualization
         private int _maxFftIndex => this._fftSize / 2 - 1;
 
         private int _barCount;
+        private double[] _backedDataPoints;
+
         public int BarCount
         {
             get { return _barCount; }
@@ -39,6 +41,7 @@ namespace ListenerX.Visualization
                 if (_barCount == value)
                     return;
                 _barCount = value;
+                _backedDataPoints = new double[value];
                 UpdateFrequencyMapping();
             }
         }
@@ -142,7 +145,8 @@ namespace ListenerX.Visualization
                 }
             }
         }
-        public bool GetFrequency(int n, out IReadOnlyList<SpectrumPointData> data)
+
+        public bool GetFrequency(int n, double amplitudeMultiplier, out double[] data)
         {
             var fftBuffer = new float[this._fftLength];
             if (!GetFFTData(fftBuffer))
@@ -154,8 +158,6 @@ namespace ListenerX.Visualization
             {
                 BarCount = n;
             }
-
-            var dataPoints = new List<SpectrumPointData>();
 
             double value0 = 0, value = 0;
             double lastValue = 0;
@@ -195,18 +197,19 @@ namespace ListenerX.Visualization
                     if (useAverage && spectrumPointIndex > 0)
                         value = (lastValue + value) / 2.0;
 
-                    dataPoints.Add(new SpectrumPointData { SpectrumPointIndex = spectrumPointIndex, Value = value });
+                    //dataPoints.Add(new SpectrumPointData { SpectrumPointIndex = spectrumPointIndex, Value = value });
+                    //_backedDataPoints.Add(value * amplitudeMultiplier);
+                    // code smell it is, i know but memory cost are at stake!
+                    _backedDataPoints[spectrumPointIndex] = Math.Min(value * amplitudeMultiplier, 100);
 
                     lastValue = value;
                     value = 0.0;
                     spectrumPointIndex++;
                     recalc = false;
                 }
-
-                //value = 0;
             }
 
-            data = dataPoints;
+            data = _backedDataPoints;
             return true;
         }
         public int GetFftBandIndex(float frequency)
