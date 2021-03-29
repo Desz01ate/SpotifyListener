@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using VirtualGrid.Interfaces;
 
 namespace ListenerX
 {
@@ -14,12 +15,14 @@ namespace ListenerX
         private readonly VirtualKeyboardComponent virtualKeyboard;
         private bool firstLaunch = true;
         private VirtualKeyboard virtualKeyboardDisplayPanel;
-        public Settings()
+
+        public Settings(IVirtualLedGrid virtualLedGrid,
+                        ModuleActivator moduleActivator)
         {
             InitializeComponent();
             this.Icon = Properties.Resources.listenerx;
 
-            this.RenderStyleCombobox.Items.AddRange(ModuleActivator.Instance.Effects.Select(x => x.EffectName).ToArray());
+            this.RenderStyleCombobox.Items.AddRange(moduleActivator.Effects.Select(x => x.EffectName).ToArray());
             this.RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyle;
 
             ChromaSDKEnable.Checked = Properties.Settings.Default.ChromaSDKEnable;
@@ -51,7 +54,7 @@ namespace ListenerX
                 RealTimePlayback.InitLoopbackCapture(devices[index].Device);
             };
 
-            var activeModules = ModuleActivator.Instance.Players.Keys.ToArray();
+            var activeModules = moduleActivator.Players.Keys.ToArray();
             var activeModuleIndex = Array.FindIndex(activeModules, x => x == Properties.Settings.Default.ActiveModule);
             this.ModuleSelector.Items.AddRange(activeModules);
             this.ModuleSelector.SelectedIndex = activeModuleIndex;
@@ -64,7 +67,7 @@ namespace ListenerX
                 MessageBox.Show($"Active player module has been changed to {index}, please restart the application to take effect.", "Listener X", MessageBoxButtons.OK, MessageBoxIcon.Information);
             };
 
-            this.virtualKeyboard = new VirtualKeyboardComponent();
+            this.virtualKeyboard = new VirtualKeyboardComponent(virtualLedGrid);
             this.virtualKeyboard.SizeMode = PictureBoxSizeMode.AutoSize;
             this.virtualKeyboard.OnImageChanged += VirtualKeyboard_OnImageChanged;
             this.virtualKeyboard.Start();

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Windows.Navigation;
 using Unosquare.Swan;
@@ -16,20 +17,11 @@ namespace ListenerX.Helpers
 {
     public class ModuleActivator
     {
-        //public static IPlayerMetadata Metadata { get; private set; }
-
         private IReadOnlyDictionary<string, Type> _players;
         public IReadOnlyDictionary<string, Type> Players => _players ??= LoadPlayerHosts();
 
         private IReadOnlyList<IChromaEffect> _effects;
         public IReadOnlyList<IChromaEffect> Effects => _effects ??= LoadChromaPlugins();
-
-        public static readonly ModuleActivator Instance = new ModuleActivator();
-
-        private ModuleActivator()
-        {
-
-        }
 
         private Dictionary<string, Type> LoadPlayerHosts()
         {
@@ -98,7 +90,7 @@ namespace ListenerX.Helpers
         public IStreamablePlayerHost GetDefaultPlayerHost()
         {
             var playerName = Properties.Settings.Default.ActiveModule;
-            return LoadPlayerModule(playerName); ;
+            return LoadPlayerModule(playerName);
         }
     }
 }

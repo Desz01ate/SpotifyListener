@@ -75,7 +75,7 @@ namespace ListenerX.Classes
             var color = player.AlbumArtwork.GetDominantColors(1).First();
 
             DeleteTempFile();
-            SetDesktopWallpaper(image, Wallpaper.Style.Stretched);
+            SetDesktopWallpaper(image, Wallpaper.Style.Centered);
             SetAeroColor(color);
         }
 

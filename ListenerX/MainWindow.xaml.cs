@@ -22,6 +22,7 @@ using ListenerX.Extensions;
 using Listener.Core.Framework.Plugins;
 using System.Drawing;
 using System.Web;
+using System.Net.Http;
 
 namespace ListenerX
 {
@@ -52,12 +53,16 @@ namespace ListenerX
 
         private RealTimePlayback playback => RealTimePlayback.ActivePlayback;
 
-        public MainWindow()
+        private readonly ModuleActivator _moduleActivator;
+
+        public MainWindow(ChromaWorker chromaWorker,
+                          ModuleActivator moduleActivator)
         {
             try
             {
                 InitializeComponent();
 
+                this._moduleActivator = moduleActivator;
                 this.playback?.Start();
                 this.Background = System.Windows.Media.Brushes.Gray;
 
@@ -73,16 +78,16 @@ namespace ListenerX
                     Properties.Settings.Default.Save();
                 }
 
-                this.player = ModuleActivator.Instance.GetDefaultPlayerHost();
+                this.player = moduleActivator.GetDefaultPlayerHost();
                 this.player.TrackChanged += Player_OnTrackChanged;
                 this.player.DeviceChanged += Player_OnDeviceChanged;
                 this.player.TrackDurationChanged += Player_TrackDurationChanged;
                 this.player.TrackPlayStateChanged += Player_TrackPlayStateChanged;
                 this.DataContext = this.player;
 
-                plugins = ModuleActivator.Instance.LoadPlugins().ToArray();
+                plugins = moduleActivator.LoadPlugins().ToArray();
 
-                var maxEffectCount = ModuleActivator.Instance.Effects.Count - 1;
+                var maxEffectCount = moduleActivator.Effects.Count - 1;
                 if (Properties.Settings.Default.RenderStyle > maxEffectCount)
                 {
                     Properties.Settings.Default.RenderStyle = maxEffectCount;
@@ -103,8 +108,7 @@ namespace ListenerX
 
                 if (Properties.Settings.Default.ChromaSDKEnable)
                 {
-                    var chroma = ChromaWorker.Instance;
-                    this.chroma = chroma;
+                    this.chroma = chromaWorker;
                     chromaTimer.Interval =
                         (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
                     chromaTimer.Tick += ChromaTimer_Tick;
@@ -244,7 +248,7 @@ namespace ListenerX
         {
             try
             {
-                var effect = ModuleActivator.Instance.Effects[Properties.Settings.Default.RenderStyle];
+                var effect = _moduleActivator.Effects[Properties.Settings.Default.RenderStyle];
                 //float[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(effect.RequiredSpectrumRange).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
                 if (playback.GetFrequency(effect.RequiredSpectrumRange, out var source))
                 {
@@ -410,8 +414,8 @@ namespace ListenerX
         {
             try
             {
-                using var setting = new Settings();
-                setting.ShowDialog();
+                using var settings = new Settings(this.chroma.FullGridArray, this._moduleActivator);
+                settings.ShowDialog();
             }
             catch (Exception ex)
             {

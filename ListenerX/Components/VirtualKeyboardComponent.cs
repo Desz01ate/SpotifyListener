@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VirtualGrid.Interfaces;
 
 namespace ListenerX.Components
 {
@@ -20,12 +21,15 @@ namespace ListenerX.Components
         public event EventHandler OnImageChanged;
 
         private readonly object lockObj = new object();
-        public VirtualKeyboardComponent(bool autoStart = true)
+
+        public readonly IVirtualLedGrid VirtualGrid;
+        public VirtualKeyboardComponent(IVirtualLedGrid virtualGrid, bool autoStart = true)
         {
+            this.VirtualGrid = virtualGrid;
             this.timer = new System.Timers.Timer();
             this.timer.Interval = 33;
             this.timer.Elapsed += Timer_Tick;
-            this.gridRenderer = VirtualLedGridExtensions.CreateGridRendererInstance(ChromaWorker.Instance.FullGridArray, 50, 50);
+            this.gridRenderer = VirtualLedGridExtensions.CreateGridRendererInstance(virtualGrid, 50, 50);
             if (autoStart)
             {
                 this.timer.Start();

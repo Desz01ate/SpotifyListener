@@ -14,15 +14,17 @@ namespace ListenerX
     {
         private readonly VirtualKeyboardComponent virtualKeyboard;
         private readonly ToolTip tt = new ToolTip();
+        private readonly VirtualKeyboardComponent _component;
         public VirtualKeyboard(VirtualKeyboardComponent component)
         {
             InitializeComponent();
+            this._component = component;
             this.Width = 1520;
             this.Height = 440;
             this.pictureBox1.Width = this.Width;
             this.pictureBox1.Height = this.Height;
             this.pictureBox1.MouseMove += PictureBox1_MouseMove;
-            this.virtualKeyboard = component;
+            this.virtualKeyboard = this._component;
             this.virtualKeyboard.OnImageChanged += Timer_Tick;
         }
 
@@ -32,9 +34,9 @@ namespace ListenerX
             int y = 450 * e.Y / 450;
             var posX = (x / 50) - 1;
             var posY = (y / 50) - 1;
-            if ((0 <= posX && posX < ChromaWorker.Instance.FullGridArray.ColumnCount) && (0 <= posY && posY < ChromaWorker.Instance.FullGridArray.RowCount))
+            if ((0 <= posX && posX < this._component.VirtualGrid.ColumnCount) && (0 <= posY && posY < this._component.VirtualGrid.RowCount))
             {
-                var key = ChromaWorker.Instance.FullGridArray.Single(x => x.Index == (posX, posY));
+                var key = this._component.VirtualGrid.Single(x => x.Index == (posX, posY));
                 if (key.Type != KeyType.Invalid)
                 {
                     tt.SetToolTip(pictureBox1, $"({key.Index.X},{key.Index.Y}) {key.FriendlyName}\nType = {key.Type}\n{key.Color.ToHex()}");

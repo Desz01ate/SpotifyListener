@@ -34,15 +34,13 @@ namespace ListenerX
 
             public readonly bool IsError;
 
+            //private static Lazy<ChromaWorker> _instance = new Lazy<ChromaWorker>(() => new ChromaWorker(), true);
+            //public static ChromaWorker Instance => _instance.Value;
 
-            private static Lazy<ChromaWorker> _instance = new Lazy<ChromaWorker>(() => new ChromaWorker(), true);
-            public static ChromaWorker Instance => _instance.Value;
-
-
-            private ChromaWorker()
+            public ChromaWorker(IVirtualLedGrid virtualGrid)
             {
                 this._albumColors = AutoshiftCirculaQueue<ChromaColor>.Empty;
-                this.FullGridArray = VirtualGrid.VirtualLedGrid.CreateDefaultGrid();
+                this.FullGridArray = virtualGrid;//VirtualGrid.VirtualLedGrid.CreateDefaultGrid();
                 try
                 {
                     var adapters = new List<IPhysicalDeviceAdapter>();
