@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace ListenerX.Visualization
 {
-    public sealed class AudioSpectrumProviderContext
+    public struct SpectrumPointData
     {
-
+        public int SpectrumPointIndex;
+        public double Value;
     }
 }

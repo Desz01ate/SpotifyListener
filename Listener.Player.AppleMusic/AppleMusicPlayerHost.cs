@@ -454,7 +454,7 @@ namespace Listener.Player.AppleMusic
             {
                 using var client = new LastfmClient("b879a7b918126d4043340cdc125c1729", "ebae21e810735a742a11dd17f68d8c24");
                 var response = await client.Album.GetInfoAsync(artist, album, true);
-                return response.Content.Images.ExtraLarge?.ToString();
+                return response?.Content.Images.ExtraLarge?.ToString();
             }
             catch
             {

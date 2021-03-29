@@ -1,8 +1,7 @@
 ﻿using Listener.Core.Framework.Helpers;
 using ListenerX.Components;
-using ListenerX.Cscore;
-using ListenerX.Helpers;
 using ListenerX.Visualization;
+using ListenerX.Helpers;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -20,7 +19,7 @@ namespace ListenerX
             InitializeComponent();
             this.Icon = Properties.Resources.listenerx;
 
-            this.RenderStyleCombobox.Items.AddRange(ActivatorHelpers.Instance.Effects.Select(x => x.EffectName).ToArray());
+            this.RenderStyleCombobox.Items.AddRange(ModuleActivator.Instance.Effects.Select(x => x.EffectName).ToArray());
             this.RenderStyleCombobox.SelectedIndex = Properties.Settings.Default.RenderStyle;
 
             ChromaSDKEnable.Checked = Properties.Settings.Default.ChromaSDKEnable;
@@ -42,26 +41,27 @@ namespace ListenerX
 
             //this.lbl_Metadata.Text = $"Active module : {ActivatorHelpers.Metadata.ModuleName} {ActivatorHelpers.Metadata.VersionName}";
 
-            var devices = OutputDevice.GetDevices().ToArray();
-            var activeIndex = Array.FindIndex(devices, x => x.Item1 == OutputDevice.ActiveDevice.DeviceId);
-            this.cb_OutputDevice.Items.AddRange(devices.Select(x => x.Item2).ToArray());
+            var devices = RealTimePlayback.EnumerateLoopbackDevices().ToArray();
+            var activeIndex = Array.FindIndex(devices, x => x.IsDefaultDevice);
+            this.cb_OutputDevice.Items.AddRange(devices.Select(x => x.Device.FriendlyName).ToArray());
             this.cb_OutputDevice.SelectedIndex = activeIndex;
             this.cb_OutputDevice.SelectedIndexChanged += (s, e) =>
             {
                 var index = (s as ComboBox).SelectedIndex;
-                OutputDevice.ChangeActiveDevice(devices[index].Item1);
+                RealTimePlayback.InitLoopbackCapture(devices[index].Device);
             };
 
-            var activeModules = ActivatorHelpers.Instance.Players.Keys.ToArray();
+            var activeModules = ModuleActivator.Instance.Players.Keys.ToArray();
             var activeModuleIndex = Array.FindIndex(activeModules, x => x == Properties.Settings.Default.ActiveModule);
             this.ModuleSelector.Items.AddRange(activeModules);
             this.ModuleSelector.SelectedIndex = activeModuleIndex;
             this.ModuleSelector.SelectedIndexChanged += (s, e) =>
             {
                 var index = (s as ComboBox).Text;
-                ActivatorHelpers.Instance.LoadPlayerModule(index);
+                //ActivatorHelpers.Instance.LoadPlayerModule(index);
                 Properties.Settings.Default.ActiveModule = index;
                 Properties.Settings.Default.Save();
+                MessageBox.Show($"Active player module has been changed to {index}, please restart the application to take effect.", "Listener X", MessageBoxButtons.OK, MessageBoxIcon.Information);
             };
 
             this.virtualKeyboard = new VirtualKeyboardComponent();

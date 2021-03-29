@@ -17,7 +17,7 @@ using Listener.ImageProcessing;
 using ListenerX.ChromaExtension;
 using ListenerX.Classes;
 using ListenerX.Helpers;
-using ListenerX.Cscore;
+using ListenerX.Visualization;
 using ListenerX.Extensions;
 using Listener.Core.Framework.Plugins;
 using System.Drawing;
@@ -50,11 +50,15 @@ namespace ListenerX
 
         private readonly IListenerPlugin[] plugins;
 
+        private RealTimePlayback playback => RealTimePlayback.ActivePlayback;
+
         public MainWindow()
         {
             try
             {
                 InitializeComponent();
+
+                this.playback?.Start();
                 this.Background = System.Windows.Media.Brushes.Gray;
 
                 InitWidth = this.Width;
@@ -69,28 +73,16 @@ namespace ListenerX
                     Properties.Settings.Default.Save();
                 }
 
-                ActivatorHelpers.Instance.PlayerModuleChanged += (s, _) =>
-                {
-                    if(this.player != null)
-                    {
-                        this.player.TrackChanged -= Player_OnTrackChanged;
-                        this.player.DeviceChanged -= Player_OnDeviceChanged;
-                        this.player.TrackDurationChanged -= Player_TrackDurationChanged;
-                        this.player.TrackPlayStateChanged -= Player_TrackPlayStateChanged;
-                        this.player.Dispose();
-                    }
-                    
-                    this.player = (IStreamablePlayerHost)s;
-                    this.player.TrackChanged += Player_OnTrackChanged;
-                    this.player.DeviceChanged += Player_OnDeviceChanged;
-                    this.player.TrackDurationChanged += Player_TrackDurationChanged;
-                    this.player.TrackPlayStateChanged += Player_TrackPlayStateChanged;
-                    this.DataContext = this.player;
-                };
-                player = ActivatorHelpers.Instance.GetDefaultPlayerHost();
-                plugins = ActivatorHelpers.Instance.LoadPlugins().ToArray();
+                this.player = ModuleActivator.Instance.GetDefaultPlayerHost();
+                this.player.TrackChanged += Player_OnTrackChanged;
+                this.player.DeviceChanged += Player_OnDeviceChanged;
+                this.player.TrackDurationChanged += Player_TrackDurationChanged;
+                this.player.TrackPlayStateChanged += Player_TrackPlayStateChanged;
+                this.DataContext = this.player;
 
-                var maxEffectCount = ActivatorHelpers.Instance.Effects.Count - 1;
+                plugins = ModuleActivator.Instance.LoadPlugins().ToArray();
+
+                var maxEffectCount = ModuleActivator.Instance.Effects.Count - 1;
                 if (Properties.Settings.Default.RenderStyle > maxEffectCount)
                 {
                     Properties.Settings.Default.RenderStyle = maxEffectCount;
@@ -221,7 +213,7 @@ namespace ListenerX
                 {
                     wallpaper.Disable();
                 }
-                GC.Collect();
+                //GC.Collect();
             });
         }
 
@@ -252,10 +244,14 @@ namespace ListenerX
         {
             try
             {
-                var effect = ActivatorHelpers.Instance.Effects[Properties.Settings.Default.RenderStyle];
-                double[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(effect.RequiredSpectrumRange).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
-                chroma.SetEffect(effect, spectrumData, this.player.CalculatedPosition);
-                chroma.ApplyAsync().Wait();
+                var effect = ModuleActivator.Instance.Effects[Properties.Settings.Default.RenderStyle];
+                //float[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(effect.RequiredSpectrumRange).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
+                if (playback.GetFrequency(effect.RequiredSpectrumRange, out var source))
+                {
+                    var spectrumData = source.Select(x => Math.Min(x.Value * Properties.Settings.Default.Amplitude, 100)).ToArray();
+                    chroma.SetEffect(effect, spectrumData.Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray(), this.player.CalculatedPosition);
+                    chroma.ApplyAsync().Wait();
+                }
             }
             catch (Exception ex)
             {
@@ -376,11 +372,10 @@ namespace ListenerX
             this.Hide();
             searchPanel?.Close();
             chromaTimer?.Dispose();
-            //defaultAudioEndpointTimer?.Dispose();
             wallpaper?.Dispose();
             player?.Dispose();
             chroma?.Dispose();
-            OutputDevice.ActiveDevice?.Dispose();
+            playback?.Stop();
             base.OnClosing(e);
         }
 
