@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ListenerX.Classes;
 using NAudio.CoreAudioApi;
 using NAudio.Dsp;
 using NAudio.Wave;
@@ -18,6 +19,7 @@ namespace ListenerX.Visualization
         const int ScaleFactorSqr = 2;
 
         private IWaveIn _capture;
+        private readonly ISettings settings;
         private object _lock;
         private int _fftPos;
         private int _fftLength;
@@ -50,17 +52,25 @@ namespace ListenerX.Visualization
         private int[] _spectrumIndexMax, _spectrumLogScaleIndexMax;
 
         public event SelectDeviceChanged DeviceChanged;
-        private RealTimePlayback(IWaveIn captureDevice)
+
+        public RealTimePlayback(ISettings settings) : this(new WasapiLoopbackCapture(WasapiLoopbackCapture.GetDefaultLoopbackCaptureDevice()), settings)
+        {
+
+        }
+
+        private RealTimePlayback(IWaveIn captureDevice, ISettings settings)
         {
             this._lock = new object();
 
             this._capture = captureDevice;
+            this.settings = settings;
             this._capture.DataAvailable += this.DataAvailable;
 
             this._fftLength = 2048; // 44.1kHz.
             this._m = (int)Math.Log(this._fftLength, 2.0);
             this._fftBuffer = new Complex[this._fftLength];
             this._lastFftBuffer = new float[this._fftLength];
+            ActivePlayback = this;
         }
 
         public WaveFormat Format
@@ -166,18 +176,13 @@ namespace ListenerX.Visualization
 
             for (int i = _minimumFrequencyIndex; i <= _maximumFrequencyIndex; i++)
             {
-                switch ((ScalingStrategy)Properties.Settings.Default.ScalingStrategy)
+                value0 = (ScalingStrategy)this.settings.RgbRenderScalingStrategy switch
                 {
-                    case ScalingStrategy.Decibel:
-                        value0 = (((20 * Math.Log10(fftBuffer[i])) - MinDbValue) / DbScale) * actualMaxValue;
-                        break;
-                    case ScalingStrategy.Linear:
-                        value0 = (fftBuffer[i] * ScaleFactorLinear) * actualMaxValue;
-                        break;
-                    case ScalingStrategy.Sqrt:
-                        value0 = ((Math.Sqrt(fftBuffer[i])) * ScaleFactorSqr) * actualMaxValue;
-                        break;
-                }
+                    ScalingStrategy.Decibel => (((20 * Math.Log10(fftBuffer[i])) - MinDbValue) / DbScale) * actualMaxValue,
+                    ScalingStrategy.Linear => (fftBuffer[i] * ScaleFactorLinear) * actualMaxValue,
+                    ScalingStrategy.Sqrt => ((Math.Sqrt(fftBuffer[i])) * ScaleFactorSqr) * actualMaxValue,
+                    _ => throw new NotImplementedException()
+                };
 
                 bool recalc = true;
 
@@ -193,7 +198,7 @@ namespace ListenerX.Visualization
                     if (value > 100)
                         value = 100;
 
-                    var useAverage = Properties.Settings.Default.UseAverage;
+                    var useAverage = this.settings.RgbRenderAverageSpectrum;
                     if (useAverage && spectrumPointIndex > 0)
                         value = (lastValue + value) / 2.0;
 
@@ -272,20 +277,13 @@ namespace ListenerX.Visualization
             }
         }
 
-        public static RealTimePlayback ActivePlayback { get; private set; } = GetDefaultLoopbackDevice();
-        public static void InitLoopbackCapture(MMDevice device)
+        public static RealTimePlayback ActivePlayback { get; private set; }
+        public static void InitLoopbackCapture(MMDevice device, ISettings settings)
         {
             var oldDevice = ActivePlayback;
-            var playback = new RealTimePlayback(new WasapiLoopbackCapture(device));
+            var playback = new RealTimePlayback(new WasapiLoopbackCapture(device), settings);
             playback.Start();
-            ActivePlayback = playback;
             oldDevice?.Dispose();
-        }
-
-        public static RealTimePlayback GetDefaultLoopbackDevice()
-        {
-            var defaultDevice = WasapiLoopbackCapture.GetDefaultLoopbackCaptureDevice();
-            return new RealTimePlayback(new WasapiLoopbackCapture(defaultDevice));
         }
     }
 }

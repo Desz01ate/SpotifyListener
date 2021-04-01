@@ -112,6 +112,13 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Settings.cs" />
+    <Compile Remove="Settings.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Settings.resx" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Resources\back.png" />
   </ItemGroup>
   <ItemGroup>

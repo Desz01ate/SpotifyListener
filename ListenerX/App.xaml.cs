@@ -1,5 +1,7 @@
 ﻿using ListenerX.ChromaExtension;
+using ListenerX.Classes;
 using ListenerX.Helpers;
+using ListenerX.Visualization;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -29,10 +31,14 @@ namespace ListenerX
         {
             services.AddHttpClient();
 
+            var settings = Settings.LoadSettings();
+
             services.AddSingleton<ModuleActivator>();
             services.AddSingleton<IVirtualLedGrid>(_ => VirtualGrid.VirtualLedGrid.CreateDefaultGrid());
-
+            services.AddSingleton<Settings>(_ => settings);
+            services.AddSingleton<RealTimePlayback>(_ => new RealTimePlayback(settings));
             services.AddTransient<ChromaWorker>();
+            services.AddTransient<SettingsPage>();
             services.AddTransient<MainWindow>();
         }
 

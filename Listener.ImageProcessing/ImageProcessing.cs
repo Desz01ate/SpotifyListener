@@ -114,9 +114,16 @@ namespace Listener.ImageProcessing
         }
         public static BitmapImage ToBitmapImage(this Image src, ImageFormat format)
         {
-            using Bitmap bitmap = new Bitmap(src);
-            var result = ToBitmapImage(bitmap, format);
-            return result;
+            try
+            {
+                using Bitmap bitmap = new Bitmap(src);
+                var result = ToBitmapImage(bitmap, format);
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
         }
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
         [return: MarshalAs(UnmanagedType.Bool)]

@@ -32,16 +32,11 @@ namespace ListenerX
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly Timer chromaTimer = new Timer();
+        private readonly Timer chromaTimer = new();
         private AnimationController animation;
-
         private readonly ChromaWorker chroma;
-
-        private readonly SolidColorBrush playColor =
-            (SolidColorBrush)(new BrushConverter().ConvertFromString("#5aFF5a"));
-
-        private readonly SolidColorBrush pauseColor =
-            (SolidColorBrush)(new BrushConverter().ConvertFromString("#FF5a5a"));
+        private readonly SolidColorBrush PLAY_COLOR = (SolidColorBrush)(new BrushConverter().ConvertFromString("#FFFFFF"));
+        private readonly SolidColorBrush PAUSE_COLOR = (SolidColorBrush)(new BrushConverter().ConvertFromString("#FF5a5a"));
 
         private Wallpaper wallpaper;
         private SearchPanel searchPanel;
@@ -57,9 +52,15 @@ namespace ListenerX
         private readonly ModuleActivator _moduleActivator;
 
         private readonly IVirtualLedGrid _virtualLedGrid;
+        private readonly ISettings settings;
+        private readonly IServiceProvider serviceProvider;
+
         public MainWindow(ChromaWorker chromaWorker,
                           ModuleActivator moduleActivator,
-                          IVirtualLedGrid virtualLedGrid)
+                          IVirtualLedGrid virtualLedGrid,
+                          Settings settings,
+                          RealTimePlayback playback,
+                          IServiceProvider serviceProvider)
         {
             try
             {
@@ -75,14 +76,14 @@ namespace ListenerX
                 ResizeMode = ResizeMode.CanMinimize;
                 Visibility = Visibility.Hidden;
 
-                if (string.IsNullOrWhiteSpace(Properties.Settings.Default.ActiveModule))
+                if (string.IsNullOrWhiteSpace(settings.ActivePlayerModule))
                 {
                     System.Windows.MessageBox.Show($"No active module were found, restore to Spotify as a default module.", "ListenerX");
-                    Properties.Settings.Default.ActiveModule = "Spotify";
-                    Properties.Settings.Default.Save();
+                    settings.ActivePlayerModule = "Spotify";
+                    settings.SaveChanges();
                 }
 
-                this.player = moduleActivator.GetDefaultPlayerHost();
+                this.player = moduleActivator.GetDefaultPlayerHost(settings.ActivePlayerModule);
                 this.player.TrackChanged += Player_OnTrackChanged;
                 this.player.DeviceChanged += Player_OnDeviceChanged;
                 this.player.TrackDurationChanged += Player_TrackDurationChanged;
@@ -92,13 +93,13 @@ namespace ListenerX
                 plugins = moduleActivator.LoadPlugins().ToArray();
 
                 var maxEffectCount = moduleActivator.Effects.Count - 1;
-                if (Properties.Settings.Default.RenderStyle > maxEffectCount)
+                if (settings.RgbRenderStyle > maxEffectCount)
                 {
-                    Properties.Settings.Default.RenderStyle = maxEffectCount;
-                    Properties.Settings.Default.Save();
+                    settings.RgbRenderStyle = maxEffectCount;
+                    settings.SaveChanges();
                 }
 
-                VolumePath.Fill = playColor;
+                VolumePath.Fill = PLAY_COLOR;
                 VolumeProgress.Foreground = lbl_Album.Foreground;
 
 
@@ -110,11 +111,11 @@ namespace ListenerX
                 btn_Close.Click += (s, e) => this.Close();
                 this.AlbumImage.MouseDown += AlbumImage_MouseDown;
 
-                if (Properties.Settings.Default.ChromaSDKEnable)
+                if (settings.EnableRgbRender)
                 {
                     this.chroma = chromaWorker;
                     chromaTimer.Interval =
-                        (int)Math.Round((1000.0 / Properties.Settings.Default.RenderFPS), 0);
+                        (int)Math.Round((1000.0 / settings.RgbRenderFps), 0);
                     chromaTimer.Tick += ChromaTimer_Tick;
                     chromaTimer.Start();
                 }
@@ -127,23 +128,25 @@ namespace ListenerX
             }
 
             this.Visibility = Visibility.Visible;
+            this.settings = settings;
+            this.serviceProvider = serviceProvider;
         }
 
         private void Player_TrackPlayStateChanged(PlayState state)
         {
             Dispatcher.InvokeAsync(() =>
             {
-                StreamGeometry buttonShape;
+                Geometry buttonShape;
                 SolidColorBrush color;
                 if (state == PlayState.Play)
                 {
-                    buttonShape = (StreamGeometry)this.FindResource("pausePath");
-                    color = playColor;
+                    buttonShape = ListenerX.Resources.Geometry.GeometryCollection.PauseButton;
+                    color = PLAY_COLOR;
                 }
                 else
                 {
-                    buttonShape = (StreamGeometry)this.FindResource("playPath");
-                    color = pauseColor;
+                    buttonShape = ListenerX.Resources.Geometry.GeometryCollection.PlayButton;
+                    color = PAUSE_COLOR;
                 }
                 this.PlayPath.Data = buttonShape;
                 this.PlayProgress.Foreground = color;
@@ -152,7 +155,7 @@ namespace ListenerX
 
         private void Player_TrackDurationChanged(IPlayerHost p)
         {
-            this.VolumePath.Fill = p.IsMute ? pauseColor : playColor;
+            this.VolumePath.Fill = p.IsMute ? PAUSE_COLOR : PLAY_COLOR;
         }
 
         private void Player_OnDeviceChanged(Device device)
@@ -210,10 +213,10 @@ namespace ListenerX
                 this.AlbumImage.Source = albumImageSource;
                 this.Background = albumBackgroundSource;
 
-                this.chroma?.LoadColor(this.player.AlbumArtwork);
+                var colors = this.player.AlbumArtwork.GetDominantColors(2);
+                this.chroma?.LoadColor(this.player.AlbumArtwork, colors[0], colors[1]);
 
-
-                if (Properties.Settings.Default.ArtworkWallpaperEnable)
+                if (settings.EnableArtworkWallpaper)
                 {
                     wallpaper.Enable(this.player);
                 }
@@ -251,9 +254,9 @@ namespace ListenerX
         {
             try
             {
-                var effect = _moduleActivator.Effects[Properties.Settings.Default.RenderStyle];
+                var effect = _moduleActivator.Effects[settings.RgbRenderStyle];
                 //float[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(effect.RequiredSpectrumRange).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
-                if (playback.GetFrequency(effect.RequiredSpectrumRange, Properties.Settings.Default.Amplitude, out var source))
+                if (playback.GetFrequency(effect.RequiredSpectrumRange, settings.RgbRenderAmplitude / 10.0, out var source))
                 {
                     chroma.SetEffect(effect, source, this.player.CalculatedPosition);
                     chroma.ApplyAsync().Wait();
@@ -416,8 +419,10 @@ namespace ListenerX
         {
             try
             {
-                using var settings = new Settings(this._virtualLedGrid, this._moduleActivator);
-                settings.ShowDialog();
+                //using var settings = new Settings(this._virtualLedGrid, this._moduleActivator);
+                //settings.ShowDialog();
+                var settingsPage = (SettingsPage)serviceProvider.GetService(typeof(SettingsPage));
+                settingsPage.ShowDialog();
             }
             catch (Exception ex)
             {

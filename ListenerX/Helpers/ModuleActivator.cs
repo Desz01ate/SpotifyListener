@@ -87,10 +87,9 @@ namespace ListenerX.Helpers
             return null;
         }
 
-        public IStreamablePlayerHost GetDefaultPlayerHost()
+        public IStreamablePlayerHost GetDefaultPlayerHost(string hostName)
         {
-            var playerName = Properties.Settings.Default.ActiveModule;
-            return LoadPlayerModule(playerName);
+            return LoadPlayerModule(hostName);
         }
     }
 }

@@ -25,114 +25,6 @@ namespace ListenerX.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ChromaSDKEnable {
-            get {
-                return ((bool)(this["ChromaSDKEnable"]));
-            }
-            set {
-                this["ChromaSDKEnable"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int RefreshRate {
-            get {
-                return ((int)(this["RefreshRate"]));
-            }
-            set {
-                this["RefreshRate"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("60")]
-        public int RenderFPS {
-            get {
-                return ((int)(this["RenderFPS"]));
-            }
-            set {
-                this["RenderFPS"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public double Amplitude {
-            get {
-                return ((double)(this["Amplitude"]));
-            }
-            set {
-                this["Amplitude"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool ArtworkWallpaperEnable {
-            get {
-                return ((bool)(this["ArtworkWallpaperEnable"]));
-            }
-            set {
-                this["ArtworkWallpaperEnable"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.05")]
-        public double BackgroundBrightness {
-            get {
-                return ((double)(this["BackgroundBrightness"]));
-            }
-            set {
-                this["BackgroundBrightness"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int RenderStyle {
-            get {
-                return ((int)(this["RenderStyle"]));
-            }
-            set {
-                this["RenderStyle"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UseAverage {
-            get {
-                return ((bool)(this["UseAverage"]));
-            }
-            set {
-                this["UseAverage"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int ScalingStrategy {
-            get {
-                return ((int)(this["ScalingStrategy"]));
-            }
-            set {
-                this["ScalingStrategy"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string BackgroundImagePath {
             get {
@@ -140,18 +32,6 @@ namespace ListenerX.Properties {
             }
             set {
                 this["BackgroundImagePath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ActiveModule {
-            get {
-                return ((string)(this["ActiveModule"]));
-            }
-            set {
-                this["ActiveModule"] = value;
             }
         }
     }

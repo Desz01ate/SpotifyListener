@@ -77,10 +77,10 @@ namespace Listener.Core.Framework.Helpers
                 File.Delete(file);
             }
         }
-        public static string GetCacheSize()
+        public static double GetCacheSize()
         {
-            var totalSize = Math.Round(Directory.EnumerateFiles(CACHE_DIR).Sum(f => new FileInfo(f).Length) / 1024f / 1024f, 2);
-            return $"{totalSize} MB";
+            var totalSize = Directory.EnumerateFiles(CACHE_DIR).Sum(f => new FileInfo(f).Length) / 1024f / 1024f;
+            return totalSize;
         }
 
         public static string GetFullCachePath(string fileName)
