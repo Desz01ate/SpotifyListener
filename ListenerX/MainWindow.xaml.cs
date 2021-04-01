@@ -221,7 +221,6 @@ namespace ListenerX
                 {
                     wallpaper.Disable();
                 }
-                //GC.Collect();
             });
         }
 
