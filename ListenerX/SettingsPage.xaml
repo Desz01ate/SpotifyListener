@@ -85,6 +85,11 @@
                 <Image Width="450" Height="200" Name="img_preview_effect" Margin="0,-28,0,0" />
             </StackPanel>
         </StackPanel>
+        <StackPanel Margin="600,250,0,0">
+            <Label Content="Lightning-Enable Adapters" FontWeight="Bold" FontSize="14"/>
+            <StackPanel Name="panel_adapters">
+            </StackPanel>
+        </StackPanel>
         <Label Content="Reset" Foreground="Red" VerticalAlignment="Bottom" HorizontalAlignment="Right" Visibility="Hidden"/>
     </Grid>
 </Window>

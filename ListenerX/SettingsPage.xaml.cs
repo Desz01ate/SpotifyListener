@@ -19,7 +19,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using VirtualGrid.Asus;
 using VirtualGrid.Interfaces;
+using VirtualGrid.Razer;
 
 namespace ListenerX
 {
@@ -65,6 +67,24 @@ namespace ListenerX
             this.virtualKeyboardRenderer.OnImageChanged += VirtualKeyboardRenderer_OnImageChanged;
             this.virtualKeyboardRenderer.Start();
             this.Init = true;
+
+            IPhysicalDeviceAdapter[] adapters = new[]{
+                RazerAdapter.Instance,
+                AsusRogStrix_G15_2021_Adapter.Instance
+            };
+            foreach (var adapter in adapters)
+            {
+                if (adapter.Initialized)
+                {
+                    this.panel_adapters.Children.Add(new Label
+                    {
+                        Content = adapter.Name,
+                        Margin = new Thickness(10, 5, 0, 0)
+                    });
+                }
+            }
+
+
         }
 
         private void VirtualKeyboardRenderer_OnImageChanged(object sender, EventArgs e)

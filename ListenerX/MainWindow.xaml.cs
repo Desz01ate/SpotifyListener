@@ -256,7 +256,7 @@ namespace ListenerX
             {
                 var effect = _moduleActivator.Effects[settings.RgbRenderStyle];
                 //float[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(effect.RequiredSpectrumRange).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
-                if (playback.GetFrequency(effect.RequiredSpectrumRange, settings.RgbRenderAmplitude / 10.0, out var source))
+                if (playback.GetFrequency(effect.RequiredSpectrumRange, settings.RgbRenderAmplitude / 100.0, out var source))
                 {
                     chroma.SetEffect(effect, source, this.player.CalculatedPosition);
                     chroma.ApplyAsync().Wait();
