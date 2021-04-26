@@ -73,11 +73,11 @@ namespace ListenerX
                     activeText.HorizontalAlignment = HorizontalAlignment.Right;
                     grd_devices.Children.Add(activeText);
                 }
-                if (!device.IsActive)
+                else
                 {
-                    var button = new Button();
+                    var button = new Label();
                     button.Content = "Switch";
-                    button.Click += async (s, e) =>
+                    button.MouseDown += async (s, e) =>
                     {
                         if (initializing) return;
                         try
@@ -90,8 +90,6 @@ namespace ListenerX
                         }
                     };
                     button.Margin = new Thickness(0, (idx + 1) * spaceFactor, 20, 0);
-                    button.Width = 50;
-                    button.Height = 20;
                     button.VerticalAlignment = VerticalAlignment.Top;
                     button.HorizontalAlignment = HorizontalAlignment.Right;
                     grd_devices.Children.Add(button);

@@ -36,8 +36,10 @@
     </Window.Resources>
     <Grid>
         <TextBox x:Name="cb_searchBox" Height="30" Foreground="Black" BorderBrush="Black" BorderThickness="1"  VerticalAlignment="Top" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Margin="10,20,10,-20" Padding="10,0,0,0" />
-        <Grid x:Name="grid_searchResult" Margin="0,20,0,0">
+        <ScrollViewer Margin="0,60,0,0" VerticalScrollBarVisibility="Hidden">
+            <Grid x:Name="grid_searchResult" Margin="0,-40,0,0" >
 
-        </Grid>
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </Window>

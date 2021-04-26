@@ -109,13 +109,13 @@ namespace ListenerX.Classes
 
         public void SaveChanges()
         {
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(this);
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(this, Formatting.Indented);
             File.WriteAllText(SettingsPath, json, Encoding.UTF8);
         }
 
-        public static Settings LoadSettings()
+        public static ISettings LoadSettings()
         {
-            Settings settings;
+            ISettings settings;
             if (!File.Exists(SettingsPath))
             {
                 settings = new Settings();
@@ -123,7 +123,7 @@ namespace ListenerX.Classes
             else
             {
                 var json = File.ReadAllText(SettingsPath);
-                settings = Newtonsoft.Json.JsonConvert.DeserializeObject<Settings>(json);
+                settings = JsonConvert.DeserializeObject<Settings>(json);
             }
             return settings;
         }

@@ -10,13 +10,14 @@ namespace ListenerX.Classes
     public interface ISettings
     {
         bool EnableArtworkWallpaper { get; }
-        string ActivePlayerModule { get; }
+        string ActivePlayerModule { get; set; }
         bool EnableRgbRender { get; }
         uint RgbRenderFps { get; }
-        int RgbRenderStyle { get; }
+        int RgbRenderStyle { get; set; }
         float RgbRenderAmplitude { get; }
         float RgbRenderBackgroundMultiplier { get; }
         bool RgbRenderAverageSpectrum { get; }
         ScalingStrategy RgbRenderScalingStrategy { get; }
+        void SaveChanges();
     }
 }

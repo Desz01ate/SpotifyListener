@@ -30,7 +30,7 @@ namespace ListenerX
             private AutoshiftCirculaQueue<ChromaColor> _albumColors;
 
             public readonly bool IsError;
-            public ChromaWorker(IVirtualLedGrid virtualGrid, Settings settings)
+            public ChromaWorker(IVirtualLedGrid virtualGrid, ISettings settings)
             {
                 this._albumColors = AutoshiftCirculaQueue<ChromaColor>.Empty;
                 this._virtualGrid = virtualGrid;

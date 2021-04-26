@@ -64,7 +64,7 @@
         <Label x:Name="lbl_Album" Content="{Binding Album}" HorizontalAlignment="Center" Margin="0,350,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="18" Foreground="White" HorizontalContentAlignment="Center"/>
         <Label x:Name="lbl_Artist" Content="{Binding Artist}" HorizontalAlignment="Center" Margin="0,385,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" FontSize="18" Foreground="White" HorizontalContentAlignment="Center"/>
 
-        <ProgressBar x:Name="PlayProgress" Value="{Binding Position_ms,Mode=OneWay}" Maximum="{Binding Duration_ms,Mode=OneWay}" HorizontalAlignment="Center" Height="12" Margin="0,455,0,20" VerticalAlignment="Top" Width="630" MouseDown="PlayProgress_Click" Opacity="0">
+        <ProgressBar x:Name="PlayProgress" Value="{Binding Position_ms,Mode=OneWay}" Maximum="{Binding Duration_ms,Mode=OneWay}" HorizontalAlignment="Center" Height="12" Margin="0,455,0,20" VerticalAlignment="Top" Width="630" MouseDown="PlayProgress_Click" Opacity="0" Foreground="White">
             <ProgressBar.Background>
                 <SolidColorBrush Color="#FFE6E6E6" Opacity="0.1"/>
             </ProgressBar.Background>

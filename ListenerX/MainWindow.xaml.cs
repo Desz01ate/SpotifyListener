@@ -58,7 +58,7 @@ namespace ListenerX
         public MainWindow(ChromaWorker chromaWorker,
                           ModuleActivator moduleActivator,
                           IVirtualLedGrid virtualLedGrid,
-                          Settings settings,
+                          ISettings settings,
                           RealTimePlayback playback,
                           IServiceProvider serviceProvider)
         {
@@ -186,7 +186,6 @@ namespace ListenerX
             {
                 case MouseButton.Left:
                     player.PlayPause();
-                    //Player.PlayAsync("");
                     break;
                 case MouseButton.Right:
                     Task.Run(() => OpenerHelpers.Open(player.Url));
@@ -255,14 +254,13 @@ namespace ListenerX
             try
             {
                 var effect = _moduleActivator.Effects[settings.RgbRenderStyle];
-                //float[] spectrumData = OutputDevice.ActiveDevice.GetSpectrums(effect.RequiredSpectrumRange).Select(x => Math.Min(x * Properties.Settings.Default.Amplitude, 100)).ToArray();
                 if (playback.GetFrequency(effect.RequiredSpectrumRange, settings.RgbRenderAmplitude / 100.0, out var source))
                 {
                     chroma.SetEffect(effect, source, this.player.CalculatedPosition);
                     chroma.ApplyAsync().Wait();
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 chroma.SDKDisable();
             }
@@ -390,18 +388,6 @@ namespace ListenerX
 
         private void GenerateFormImage()
         {
-            //var fileName = "10." + RegularExpressionHelpers.AlphabetCleaner($"{player.Track}-{player.Album}-{player.Artist}") + ".jpg";
-            //string path;
-            //if (CacheFileManager.IsFileExists(fileName))
-            //{
-            //    path = CacheFileManager.GetFullCachePath(fileName);
-            //}
-            //else
-            //{
-            //    using var image = wallpaper.GetWallpaperImage(3840, 2160);
-            //    path = CacheFileManager.SaveCache(fileName, image.ToByteArray(ImageFormat.Jpeg));
-            //    //path = wallpaper.GetWallpaperImage();
-            //}
             var path = wallpaper.GetWallpaperImage(player);
             OpenerHelpers.Open(path);
         }
@@ -419,8 +405,6 @@ namespace ListenerX
         {
             try
             {
-                //using var settings = new Settings(this._virtualLedGrid, this._moduleActivator);
-                //settings.ShowDialog();
                 var settingsPage = (SettingsPage)serviceProvider.GetService(typeof(SettingsPage));
                 settingsPage.ShowDialog();
             }

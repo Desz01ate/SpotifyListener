@@ -35,11 +35,12 @@ namespace ListenerX
 
             services.AddSingleton<ModuleActivator>();
             services.AddSingleton<IVirtualLedGrid>(_ => VirtualGrid.VirtualLedGrid.CreateDefaultGrid());
-            services.AddSingleton<Settings>(_ => settings);
-            services.AddSingleton<RealTimePlayback>(_ => new RealTimePlayback(settings));
-            services.AddTransient<ChromaWorker>();
+            services.AddSingleton<ISettings>(_ => settings);
+            services.AddSingleton<RealTimePlayback>();
+            services.AddSingleton<ChromaWorker>();
+            services.AddSingleton<MainWindow>();
+
             services.AddTransient<SettingsPage>();
-            services.AddTransient<MainWindow>();
         }
 
         private void OnStartup(object sender, StartupEventArgs e)

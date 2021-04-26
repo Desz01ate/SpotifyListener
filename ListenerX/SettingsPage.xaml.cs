@@ -30,19 +30,17 @@ namespace ListenerX
     /// </summary>
     public partial class SettingsPage : Window
     {
-        private readonly Settings settings;
+        private readonly ISettings settings;
         private readonly ModuleActivator moduleActivator;
-        private readonly IVirtualLedGrid virtualGrid;
         private readonly VirtualKeyboardComponent virtualKeyboardRenderer;
-        private readonly bool Init;
-        public SettingsPage(Settings settings,
+
+        public SettingsPage(ISettings settings,
                             ModuleActivator moduleActivator,
                             IVirtualLedGrid virtualGrid)
         {
             InitializeComponent();
             this.settings = settings;
             this.moduleActivator = moduleActivator;
-            this.virtualGrid = virtualGrid;
             this.DataContext = this.settings;
 
             var providers = this.moduleActivator.Players.Select(x => x.Key);
@@ -66,7 +64,6 @@ namespace ListenerX
             this.virtualKeyboardRenderer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.virtualKeyboardRenderer.OnImageChanged += VirtualKeyboardRenderer_OnImageChanged;
             this.virtualKeyboardRenderer.Start();
-            this.Init = true;
 
             IPhysicalDeviceAdapter[] adapters = new[]{
                 RazerAdapter.Instance,
