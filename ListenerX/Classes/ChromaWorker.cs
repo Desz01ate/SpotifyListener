@@ -1,6 +1,5 @@
 ﻿using Listener.ImageProcessing;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using ListenerX.Classes;
 using System.Threading.Tasks;
@@ -9,7 +8,6 @@ using System.Drawing;
 using ListenerX.Extensions;
 using ChromaColor = VirtualGrid.Color;
 using Listener.Plugin.ChromaEffect.Interfaces;
-using System.Collections.Generic;
 using VirtualGrid.Interfaces;
 using VirtualGrid.Razer;
 using VirtualGrid.Asus;
@@ -24,9 +22,9 @@ namespace ListenerX
             private ChromaColor _primaryColor { get; set; } = ChromaColor.White;
             private ChromaColor _secondaryColor { get; set; } = ChromaColor.Black;
             private ChromaColor[][] _albumBackgroundSource;
-            private readonly IReadOnlyList<IPhysicalDeviceAdapter> _deviceAdapters;
+            private readonly IArrangeMediator _physicalDeviceMediator;
             private readonly IVirtualLedGrid _virtualGrid;
-            private readonly ISettings settings;
+            private readonly ISettings _settings;
             private AutoshiftCirculaQueue<ChromaColor> _albumColors;
 
             public readonly bool IsError;
@@ -34,14 +32,12 @@ namespace ListenerX
             {
                 this._albumColors = AutoshiftCirculaQueue<ChromaColor>.Empty;
                 this._virtualGrid = virtualGrid;
-                this.settings = settings;
+                this._settings = settings;
                 try
                 {
-                    var adapters = new List<IPhysicalDeviceAdapter>();
-                    this._deviceAdapters = adapters;
-                    adapters.Add(RazerAdapter.Instance);
-                    adapters.Add(AsusRogStrix_G15_2021_Adapter.Instance);
-
+                    this._physicalDeviceMediator = new VirtualGrid.PhysicalDeviceMediator(this._virtualGrid);
+                    this._physicalDeviceMediator.Attach<RazerAdapter>();
+                    this._physicalDeviceMediator.Attach<AsusRogStrix_G15_2021_Adapter>();
                 }
                 catch (Exception ex)
                 {
@@ -65,10 +61,7 @@ namespace ListenerX
             {
                 if (!this.IsError)
                 {
-                    foreach (var adapter in _deviceAdapters)
-                    {
-                        await adapter?.ApplyAsync(_virtualGrid);
-                    }
+                    await this._physicalDeviceMediator.ApplyAsync(cancellationToken);
                 }
             }
 
@@ -106,16 +99,18 @@ namespace ListenerX
 
             internal void SetEffect(IChromaEffect effect, double[] spectrumValues, double playingPosition)
             {
-                effect.SetEffect(this._virtualGrid, this._primaryColor, this._secondaryColor, this._albumColors, this._albumBackgroundSource, spectrumValues, playingPosition, settings.RgbRenderBackgroundMultiplier / 100.0);
+                effect.SetEffect(this._virtualGrid, this._primaryColor, this._secondaryColor, this._albumColors, this._albumBackgroundSource, spectrumValues, playingPosition, _settings.RgbRenderBackgroundMultiplier / 100.0);
             }
 
             private bool disposed = false;
             protected void Dispose(bool disposing)
             {
-                if (disposing && !disposed)
+                if (this.disposed)
+                    return;
+
+                if (disposing)
                 {
-                    foreach (var adapter in _deviceAdapters)
-                        adapter?.Dispose();
+                    this._physicalDeviceMediator?.Dispose();
                 }
                 disposed = true;
             }
@@ -124,7 +119,6 @@ namespace ListenerX
                 this.Dispose(true);
                 GC.SuppressFinalize(this);
             }
-
         }
     }
 }
