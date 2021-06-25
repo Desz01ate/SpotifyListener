@@ -1,17 +1,17 @@
-﻿using Listener.ImageProcessing;
-using System;
-using System.Linq;
-using ListenerX.Classes;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Drawing;
-using ListenerX.Extensions;
-using ChromaColor = VirtualGrid.Color;
+﻿using Listener.Core.Framework.DataStructure;
+using Listener.ImageProcessing;
 using Listener.Plugin.ChromaEffect.Interfaces;
+using ListenerX.Classes;
+using ListenerX.Extensions;
+using System;
+using System.Drawing;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using VirtualGrid.Asus;
 using VirtualGrid.Interfaces;
 using VirtualGrid.Razer;
-//using VirtualGrid.Asus;
-using Listener.Core.Framework.DataStructure;
+using ChromaColor = VirtualGrid.Color;
 
 namespace ListenerX
 {
@@ -43,7 +43,7 @@ namespace ListenerX
                     this._physicalDeviceMediator.Attach<RazerMouseAdapter>(23, 1);
                     this._physicalDeviceMediator.Attach<RazerHeadsetAdapter>(25, 7);
                     this._physicalDeviceMediator.Attach<RazerChromaLinkAdapter>(12, 9);
-                    //this._physicalDeviceMediator.Attach<AsusRogStrix_G15_2021_Adapter>();
+                    this._physicalDeviceMediator.Attach<AsusRogStrix_G15_2021_Adapter>(0, 1);
                 }
                 catch (Exception ex)
                 {

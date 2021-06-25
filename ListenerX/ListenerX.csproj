@@ -154,6 +154,7 @@
       <Project>{edd8e9c9-6e1f-4661-abaa-d9512d46c814}</Project>
       <Name>Listener.Plugin.ChromaEffect</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Submodules\VirtualGrid\VirtualGrid.Asus\VirtualGrid.Asus.csproj" />
     <ProjectReference Include="..\Submodules\VirtualGrid\VirtualGrid.Razer\VirtualGrid.Razer.csproj" />
   </ItemGroup>
   <ItemGroup>
