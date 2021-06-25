@@ -10,7 +10,7 @@ using ChromaColor = VirtualGrid.Color;
 using Listener.Plugin.ChromaEffect.Interfaces;
 using VirtualGrid.Interfaces;
 using VirtualGrid.Razer;
-using VirtualGrid.Asus;
+//using VirtualGrid.Asus;
 using Listener.Core.Framework.DataStructure;
 
 namespace ListenerX
@@ -22,22 +22,28 @@ namespace ListenerX
             private ChromaColor _primaryColor { get; set; } = ChromaColor.White;
             private ChromaColor _secondaryColor { get; set; } = ChromaColor.Black;
             private ChromaColor[][] _albumBackgroundSource;
-            private readonly IArrangeMediator _physicalDeviceMediator;
             private readonly IVirtualLedGrid _virtualGrid;
+            private readonly IArrangeMediator _physicalDeviceMediator;
             private readonly ISettings _settings;
             private AutoshiftCirculaQueue<ChromaColor> _albumColors;
 
             public readonly bool IsError;
-            public ChromaWorker(IVirtualLedGrid virtualGrid, ISettings settings)
+            public ChromaWorker(IVirtualLedGrid virtualGrid,
+                                IArrangeMediator arrangeMediator,
+                                ISettings settings)
             {
                 this._albumColors = AutoshiftCirculaQueue<ChromaColor>.Empty;
                 this._virtualGrid = virtualGrid;
                 this._settings = settings;
                 try
                 {
-                    this._physicalDeviceMediator = new VirtualGrid.PhysicalDeviceMediator(this._virtualGrid);
-                    this._physicalDeviceMediator.Attach<RazerAdapter>();
-                    this._physicalDeviceMediator.Attach<AsusRogStrix_G15_2021_Adapter>();
+                    this._physicalDeviceMediator = arrangeMediator;
+                    this._physicalDeviceMediator.Attach<RazerKeyboardAdapter>(0, 1);
+                    this._physicalDeviceMediator.Attach<RazerMousepadAdapter>(0, 0);
+                    this._physicalDeviceMediator.Attach<RazerMouseAdapter>(23, 1);
+                    this._physicalDeviceMediator.Attach<RazerHeadsetAdapter>(25, 7);
+                    this._physicalDeviceMediator.Attach<RazerChromaLinkAdapter>(12, 9);
+                    //this._physicalDeviceMediator.Attach<AsusRogStrix_G15_2021_Adapter>();
                 }
                 catch (Exception ex)
                 {

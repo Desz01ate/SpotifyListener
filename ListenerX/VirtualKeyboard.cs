@@ -37,11 +37,11 @@ namespace ListenerX
             if ((0 <= posX && posX < this._component.VirtualGrid.ColumnCount) && (0 <= posY && posY < this._component.VirtualGrid.RowCount))
             {
                 var key = this._component.VirtualGrid.Single(x => x.Index == (posX, posY));
-                if (key.Type != KeyType.Invalid)
-                {
-                    tt.SetToolTip(pictureBox1, $"({key.Index.X},{key.Index.Y}) {key.FriendlyName}\nType = {key.Type}\n{key.Color.ToHex()}");
-                    return;
-                }
+                //if (key.Type != KeyType.Invalid)
+                //{
+                //    tt.SetToolTip(pictureBox1, $"({key.Index.X},{key.Index.Y}) {key.FriendlyName}\nType = {key.Type}\n{key.Color.ToHex()}");
+                //    return;
+                //}
             }
             tt.RemoveAll();
         }

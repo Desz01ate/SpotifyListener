@@ -17,34 +17,20 @@ namespace Listener.Plugin.Razer.DebugGrid
         {
             virtualGrid.Set(Color.Black);
 
-            var keyboardGrid = virtualGrid.Where(x => x.Type == KeyType.Keyboard);
-            foreach (var key in keyboardGrid)
+            for (var row = 0; row < virtualGrid.RowCount; row++)
             {
-                key.Color = Color.Red;
-            }
-
-            var mouseGrid = virtualGrid.Where(x => x.Type == KeyType.Mouse);
-            foreach (var key in mouseGrid)
-            {
-                key.Color = Color.Blue;
-            }
-
-            var mousepadGrid = virtualGrid.Where(x => x.Type == KeyType.Mousepad);
-            foreach (var key in mousepadGrid)
-            {
-                key.Color = Color.Purple;
-            }
-
-            var extraKeyGrid = virtualGrid.Where(x => x.Type == KeyType.ExtraDevice);
-            foreach (var key in extraKeyGrid)
-            {
-                key.Color = Color.Green;
-            }
-
-            var headsetGrid = virtualGrid.Where(x => x.Type == KeyType.Headset);
-            foreach (var key in headsetGrid)
-            {
-                key.Color = Color.White;
+                for (var col = 0; col < virtualGrid.ColumnCount; col++)
+                {
+                    var segment = (float)col / virtualGrid.ColumnCount;
+                    virtualGrid[col, row] = segment switch
+                    {
+                        var x when x <= 0.2 => Color.Red,
+                        var x when x <= 0.4 => Color.Blue,
+                        var x when x <= 0.6 => Color.Purple,
+                        var x when x <= 0.8 => Color.Green,
+                        _ => Color.White,
+                    };
+                }
             }
         }
     }

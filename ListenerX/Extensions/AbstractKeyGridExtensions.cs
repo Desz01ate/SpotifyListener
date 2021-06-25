@@ -13,7 +13,6 @@ namespace ListenerX.Extensions
             private Bitmap bitmap;
             private Graphics graphics;
             private readonly Font font;
-
             internal VirtualGridRendererImpl(IVirtualLedGrid grid, int boxWidth, int boxHeight)
             {
                 this.grid = grid;
@@ -33,7 +32,7 @@ namespace ListenerX.Extensions
                 var totalHeight = (grid.RowCount + 1) * boxHeight;
 
 
-                var bitmap = GetGridBoilerplate(totalWidth, totalHeight, boxWidth, boxHeight); //new System.Drawing.Bitmap(totalWidth, totalHeight);
+                var bitmap = GetGridBoilerplate(totalWidth, totalHeight, boxWidth, boxHeight);
                 using var g = System.Drawing.Graphics.FromImage(bitmap);
                 using var font = new System.Drawing.Font("Microsoft Sans Serif", fontSize, System.Drawing.FontStyle.Regular);
 
@@ -42,33 +41,12 @@ namespace ListenerX.Extensions
                     using var block = new System.Drawing.Bitmap(boxWidth, boxHeight);
                     using var _g = System.Drawing.Graphics.FromImage(block);
                     using System.Drawing.Brush color = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(key.Color.R, key.Color.G, key.Color.B));
-                    string text;
-                    switch (key.Type)
-                    {
-                        case KeyType.Invalid:
-                            text = "";
-                            break;
-                        case KeyType.Keyboard:
-                        case KeyType.Mouse:
-                        case KeyType.Mousepad:
-                        case KeyType.Headset:
-                        case KeyType.ExtraDevice:
-                            text = key.FriendlyName;
-                            break;
-                        default:
-                            throw new NotSupportedException(key.Type.ToString());
-                    }
                     _g.FillRectangle(color, new System.Drawing.RectangleF(0, 0, boxWidth, boxHeight));
-
-                    var textMeasure = g.MeasureString(text, font);
-                    _g.DrawString(text, font, System.Drawing.Brushes.White, (int)((boxWidth - textMeasure.Width) / 2), (int)((boxHeight - textMeasure.Height) / 2));
                     g.DrawImage(block, (key.Index.X + 1) * boxWidth, (key.Index.Y + 1) * boxHeight);
-
                 }
 
                 return bitmap;
             }
-
 
             public Image VisualizeRenderingGrid2(int boxWidth = 50, int boxHeight = 50)
             {
@@ -76,36 +54,12 @@ namespace ListenerX.Extensions
                 {
                     var x = key.Index.X + 1;
                     var y = key.Index.Y + 1;
-                    string text;
-                    switch (key.Type)
-                    {
-                        case KeyType.Invalid:
-                            text = "";
-                            break;
-                        case KeyType.Keyboard:
-                        case KeyType.Mouse:
-                        case KeyType.Mousepad:
-                        case KeyType.Headset:
-                        case KeyType.ExtraDevice:
-                            text = key.FriendlyName;
-                            break;
-                        default:
-                            throw new NotSupportedException(key.Type.ToString());
-                    }
                     using System.Drawing.Brush color = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(key.Color.R, key.Color.G, key.Color.B));
                     graphics.FillRectangle(color, new System.Drawing.RectangleF(x * boxWidth, y * boxHeight, boxWidth, boxHeight));
-
-                    var textMeasure = graphics.MeasureString(text, font, boxWidth);
-                    graphics.DrawString(text, font, System.Drawing.Brushes.White, (int)(x * boxWidth), (int)(y * boxHeight));
-
-                    //g.DrawString(text, font, System.Drawing.Brushes.White, (int)((x * boxWidth + (textMeasure.Width / 2))), (int)(y * boxHeight + (textMeasure.Height / 2)));
                 }
-
-                //var tempPath = System.IO.Path.GetTempFileName().Replace(".tmp", ".jpg");
-                //bitmap.Save(tempPath);
-                //System.Diagnostics.Process.Start(tempPath);
                 return bitmap;
             }
+
             private Bitmap GetGridBoilerplate(int totalWidth, int totalHeight, int boxWidth, int boxHeight)
             {
                 var boilerplate = new Bitmap(totalWidth, totalHeight);

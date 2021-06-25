@@ -253,9 +253,9 @@ namespace ListenerX
         {
             try
             {
-                var effect = _moduleActivator.Effects[settings.RgbRenderStyle];
-                if (playback.GetFrequency(effect.RequiredSpectrumRange, settings.RgbRenderAmplitude / 100.0, out var source))
+                if (playback.GetFrequency(_virtualLedGrid.ColumnCount, settings.RgbRenderAmplitude / 100.0, out var source))
                 {
+                    var effect = _moduleActivator.Effects[settings.RgbRenderStyle];
                     chroma.SetEffect(effect, source, this.player.CalculatedPosition);
                     chroma.ApplyAsync().Wait();
                 }

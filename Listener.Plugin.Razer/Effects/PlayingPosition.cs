@@ -29,7 +29,7 @@ namespace Listener.Plugin.ChromaEffect.Effects
                 }
             }
 
-            var keyboardGrid = virtualGrid.Where(x => x.Type == KeyType.Keyboard || x.Type == KeyType.Mousepad || x.Type == KeyType.Invalid);
+            var keyboardGrid = virtualGrid;
             var keyboardRowCount = keyboardGrid.Max(e => e.Index.Y) + 1;
             for (var rowIdx = 0; rowIdx < keyboardRowCount; rowIdx++)
             {

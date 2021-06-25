@@ -34,7 +34,8 @@ namespace ListenerX
             var settings = Settings.LoadSettings();
 
             services.AddSingleton<ModuleActivator>();
-            services.AddSingleton<IVirtualLedGrid>(_ => VirtualGrid.VirtualLedGrid.CreateDefaultGrid());
+            services.AddSingleton<IVirtualLedGrid>(_ => new VirtualGrid.VirtualLedGrid(30, 10));
+            services.AddSingleton<IArrangeMediator, VirtualGrid.PhysicalDeviceMediator>();
             services.AddSingleton<ISettings>(_ => settings);
             services.AddSingleton<RealTimePlayback>();
             services.AddSingleton<ChromaWorker>();
