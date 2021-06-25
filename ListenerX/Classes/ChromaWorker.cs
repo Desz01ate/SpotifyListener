@@ -43,7 +43,7 @@ namespace ListenerX
                     this._physicalDeviceMediator.Attach<RazerMouseAdapter>(23, 1);
                     this._physicalDeviceMediator.Attach<RazerHeadsetAdapter>(25, 7);
                     this._physicalDeviceMediator.Attach<RazerChromaLinkAdapter>(12, 9);
-                    this._physicalDeviceMediator.Attach<AsusRogStrix_G15_2021_Adapter>(0, 1);
+                    this._physicalDeviceMediator.Attach<AsusRogStrix_G15_2021_Adapter>(0, 0);
                 }
                 catch (Exception ex)
                 {
